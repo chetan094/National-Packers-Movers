@@ -1,0 +1,93 @@
+.whatsappBtn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: var(--z-modal);
+  width: 60px;
+  height: 60px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.5);
+  transition: var(--transition);
+  animation: pulse-green 2.5s infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.5); }
+  50%       { box-shadow: 0 4px 32px rgba(37,211,102,0.8), 0 0 0 10px rgba(37,211,102,0.1); }
+}
+
+.whatsappBtn:hover {
+  transform: scale(1.12) translateY(-2px);
+  box-shadow: 0 8px 32px rgba(37,211,102,0.7);
+}
+
+.tooltip {
+  position: absolute;
+  right: calc(100% + 0.75rem);
+  background: var(--navy-light);
+  color: var(--white);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition);
+  border: 1px solid rgba(247,183,49,0.2);
+  box-shadow: var(--shadow-sm);
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-left-color: var(--navy-light);
+}
+
+.whatsappBtn:hover .tooltip {
+  opacity: 1;
+}
+
+.scrollTopBtn {
+  position: fixed;
+  bottom: 6.5rem;
+  right: 2.3rem; /* visually centers with the 60px wide WhatsApp button below it */
+  z-index: var(--z-modal);
+  width: 48px;
+  height: 48px;
+  background-color: var(--navy);
+  border: 2px solid var(--gold);
+  color: var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(15px) scale(0.9);
+}
+
+.scrollTopBtn:hover {
+  background-color: var(--gold);
+  color: var(--navy);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(247, 183, 49, 0.3);
+}
+
+.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+

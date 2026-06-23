@@ -1,0 +1,260 @@
+/* ── Services Overview Page ─────────────────────────────────── */
+.page { min-height: 100vh; }
+
+/* HERO */
+.hero {
+  position: relative;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  padding: 9rem 1.5rem 5rem;
+  overflow: hidden;
+}
+
+.heroBg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #080C12 0%, #0D1B2A 55%, #1A2744 100%);
+  z-index: 0;
+}
+
+.heroBg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(247,183,49,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247,183,49,0.03) 1px, transparent 1px);
+  background-size: 55px 55px;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  max-width: 750px;
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  color: var(--white);
+  line-height: 1.15;
+  margin: 1rem 0;
+}
+
+.heroTitle span { color: var(--gold); }
+
+.heroSubtitle {
+  font-size: 1.05rem;
+  color: var(--gray-300);
+  line-height: 1.75;
+  max-width: 620px;
+  margin-bottom: 2rem;
+}
+
+.heroCtas { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+/* SERVICES GRID */
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.75rem;
+}
+
+.serviceCard {
+  background: var(--grad-card);
+  border: 1px solid rgba(247,183,49,0.1);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-decoration: none;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.serviceCard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent, var(--gold)), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: var(--transition);
+}
+
+.serviceCard:hover {
+  border-color: rgba(247,183,49,0.3);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-gold);
+}
+
+.serviceCard:hover::before { transform: scaleX(1); }
+
+.serviceIconWrap {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-md);
+  background: rgba(247,183,49,0.1);
+  border: 1px solid rgba(247,183,49,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.serviceCard:hover .serviceIconWrap {
+  background: rgba(247,183,49,0.2);
+  transform: scale(1.1);
+}
+
+.serviceIcon { font-size: 1.8rem; }
+
+.serviceName {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.serviceDesc {
+  font-size: 0.88rem;
+  color: var(--gray-300);
+  line-height: 1.65;
+  flex: 1;
+}
+
+.highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.highlightItem {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.76rem;
+  color: var(--gray-300);
+}
+
+.highlightDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+.serviceArrow {
+  font-size: 0.85rem;
+  color: var(--gold);
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.serviceCard:hover .serviceArrow { letter-spacing: 1px; }
+
+/* TRUST BAR */
+.trustBar {
+  background: linear-gradient(135deg, #080C12 0%, #0D1B2A 100%);
+  padding: 2.5rem 1.5rem;
+  border-top: 1px solid rgba(247,183,49,0.1);
+  border-bottom: 1px solid rgba(247,183,49,0.1);
+}
+
+.trustGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  text-align: center;
+}
+
+.trustItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-right: 1px solid rgba(247,183,49,0.1);
+}
+
+.trustItem:last-child { border-right: none; }
+
+.trustIcon { font-size: 1.75rem; }
+
+.trustText {
+  font-size: 0.88rem;
+  color: var(--gray-300);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* CTA */
+.ctaSection {
+  position: relative;
+  overflow: hidden;
+  padding: 6rem 1.5rem;
+  text-align: center;
+}
+
+.ctaBg {
+  position: absolute;
+  inset: 0;
+  background: var(--grad-cta);
+  z-index: 0;
+}
+
+.ctaBg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.ctaContent { position: relative; z-index: 1; }
+
+.ctaTitle {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  color: var(--white);
+  margin-bottom: 1rem;
+}
+
+.ctaSubtitle {
+  color: rgba(255,255,255,0.88) !important;
+  font-size: 1.05rem;
+  margin-bottom: 2.5rem;
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctaBtns {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .servicesGrid { grid-template-columns: repeat(2, 1fr); }
+  .trustGrid { grid-template-columns: repeat(2, 1fr); }
+  .trustItem:nth-child(2) { border-right: none; }
+  .trustItem:nth-child(3) { border-right: 1px solid rgba(247,183,49,0.1); }
+}
+
+@media (max-width: 768px) {
+  .hero { padding: 7.5rem 1.2rem 3.5rem; }
+  .heroCtas { flex-direction: column; }
+  .heroCtas .btn { width: 100%; justify-content: center; }
+  .servicesGrid { grid-template-columns: 1fr; }
+  .trustGrid { grid-template-columns: repeat(2, 1fr); }
+  .ctaBtns { flex-direction: column; align-items: center; }
+}

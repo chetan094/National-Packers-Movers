@@ -1,0 +1,360 @@
+.pageWrapper {
+  background-color: var(--black);
+  min-height: 100vh;
+  padding-bottom: 5rem;
+}
+
+/* HERO SECTION */
+.heroSection {
+  background: var(--grad-hero);
+  position: relative;
+  padding: 8rem 1.5rem 5rem; /* Large top padding to sit beautifully below the absolute Header */
+  text-align: center;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.heroSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(247, 183, 49, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.heroInner {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.heroLabel {
+  font-size: 0.85rem;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  display: inline-block;
+  margin-bottom: 0.8rem;
+}
+
+.heroTitle {
+  font-family: var(--font-heading);
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.1;
+  letter-spacing: 0.5px;
+}
+
+.heroSubtitle {
+  font-size: 1.1rem;
+  color: var(--gray-300);
+  margin-top: 1rem;
+  line-height: 1.6;
+}
+
+.heroDivider {
+  width: 60px;
+  height: 3px;
+  background: var(--grad-cta);
+  margin: 1.5rem auto 0;
+  border-radius: var(--radius-full);
+}
+
+/* GRID CONTAINER */
+.gridContainer {
+  padding-top: 4rem;
+  padding-bottom: 3rem;
+}
+
+/* FILTER TABS */
+.filterTabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 3.5rem;
+}
+
+.tabBtn {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--gray-300);
+  background-color: rgba(26, 39, 68, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.tabBtn:hover {
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(26, 39, 68, 0.6);
+}
+
+.tabBtnActive {
+  background: var(--grad-gold) !important;
+  color: var(--black) !important;
+  border-color: var(--gold) !important;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+/* CARDS GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  background-color: var(--navy-mid);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: var(--transition);
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: var(--radius-md);
+  border: 1.5px solid transparent;
+  pointer-events: none;
+  transition: var(--transition);
+  z-index: 2;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md), 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.card:hover::before {
+  border-color: var(--gold);
+}
+
+/* CARD IMAGE */
+.cardImageLink {
+  display: block;
+  overflow: hidden;
+}
+
+.cardImageWrapper {
+  width: 100%;
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--navy-light);
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-slow);
+}
+
+.card:hover .cardImage {
+  transform: scale(1.06);
+}
+
+.hoverOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(8, 12, 18, 0.5);
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+
+.card:hover .hoverOverlay {
+  opacity: 1;
+}
+
+.readHoverText {
+  color: var(--gold);
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transform: translateY(10px);
+  transition: var(--transition);
+}
+
+.card:hover .readHoverText {
+  transform: translateY(0);
+}
+
+/* CARD CONTENT */
+.cardContent {
+  padding: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.categoryBadge {
+  font-size: 0.72rem;
+  background-color: rgba(247, 183, 49, 0.1);
+  color: var(--gold);
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metaInfo {
+  font-size: 0.8rem;
+  color: var(--gray-300);
+}
+
+.cardTitle {
+  font-family: var(--font-heading);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.3;
+  margin-bottom: 0.8rem;
+}
+
+.titleLink {
+  color: inherit;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.titleLink:hover {
+  color: var(--gold);
+}
+
+.cardExcerpt {
+  font-size: 0.92rem;
+  color: var(--gray-300);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.publishDate {
+  font-size: 0.82rem;
+  color: var(--gray-500);
+  font-weight: 500;
+}
+
+.readMoreBtn {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: var(--transition-fast);
+}
+
+.readMoreBtn:hover {
+  color: var(--gold-light);
+}
+
+.readMoreBtn:hover .arrow {
+  transform: translateX(3px);
+}
+
+.arrow {
+  transition: var(--transition-fast);
+}
+
+/* EMPTY STATE */
+.emptyState {
+  text-align: center;
+  padding: 5rem 2rem;
+  background-color: var(--navy-mid);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.emptyIcon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+.emptyState h3 {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--white);
+  margin-bottom: 0.5rem;
+}
+
+.emptyState p {
+  color: var(--gray-500);
+  font-size: 0.95rem;
+}
+
+/* RESPONSIVE BREAKPOINTS */
+@media (max-width: 992px) {
+  .heroTitle {
+    font-size: 2.8rem;
+  }
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    padding: 7rem 1rem 4rem;
+  }
+  .heroTitle {
+    font-size: 2.3rem;
+  }
+  .heroSubtitle {
+    font-size: 0.98rem;
+  }
+  .gridContainer {
+    padding-top: 2.5rem;
+  }
+}

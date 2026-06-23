@@ -1,0 +1,29 @@
+.typewriter {
+  display: inline;
+}
+
+/* Blinking cursor */
+.cursor {
+  display: inline-block;
+  color: var(--gold);
+  font-weight: 300;
+  margin-left: 2px;
+  animation: cursorBlink 0.75s step-end infinite;
+  user-select: none;
+}
+
+/* After typing is done: blink a few times then fade out */
+.cursorDone {
+  animation: cursorFadeOut 2.5s ease forwards;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes cursorFadeOut {
+  0%   { opacity: 1; }
+  60%  { opacity: 1; }
+  100% { opacity: 0; }
+}

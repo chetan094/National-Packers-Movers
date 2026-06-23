@@ -1,0 +1,265 @@
+.gallerySection {
+  background-color: var(--navy);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.carouselContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-top: 3rem;
+}
+
+.slidesViewport {
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.slidesTrack {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+.slideItem {
+  flex-shrink: 0;
+  padding: 0 0.75rem;
+  box-sizing: border-box;
+}
+
+.imageCard {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(247, 183, 49, 0.15);
+  background: rgba(8, 12, 18, 0.4);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.imageCard:hover {
+  transform: translateY(-5px);
+  border-color: var(--gold);
+  box-shadow: 0 8px 24px rgba(247, 183, 49, 0.15);
+}
+
+.slideImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.imageCard:hover .slideImg {
+  transform: scale(1.08);
+}
+
+/* Image fallback styling for placeholders before customer uploads actual files */
+.imgFallback {
+  background: linear-gradient(135deg, #101F30 0%, #0A1420 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.fallbackLabel {
+  display: none;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.imgFallback .fallbackLabel {
+  display: block;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(8, 12, 18, 0.95) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.25rem;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: var(--transition);
+  pointer-events: none;
+}
+
+.imageCard:hover .imageOverlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Force overlay visible in fallback mock mode */
+.imgFallback .imageOverlay {
+  display: none;
+}
+
+.imageTag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--red-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.25rem;
+}
+
+.imageTitle {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--white);
+  margin: 0;
+}
+
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(8, 12, 18, 0.8);
+  border: 1px solid rgba(247, 183, 49, 0.3);
+  color: var(--gold);
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: var(--transition-fast);
+}
+
+.navBtn:hover:not(:disabled) {
+  background: var(--gold);
+  color: var(--navy);
+  border-color: var(--gold);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 15px rgba(247, 183, 49, 0.4);
+}
+
+.navBtn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.prevBtn {
+  left: -22px;
+}
+
+.nextBtn {
+  right: -22px;
+}
+
+.indicators {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: var(--transition-fast);
+}
+
+.dot:hover {
+  background: rgba(247, 183, 49, 0.4);
+}
+
+.dotActive {
+  background: var(--gold);
+  transform: scale(1.2);
+}
+
+.textIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.progressLineContainer {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressLineBar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), #ffcf75);
+  border-radius: 2px;
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.indicatorText {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.galleryCTA {
+  text-align: center;
+  margin-top: 2.5rem;
+}
+
+/* Responsive Overrides */
+@media (max-width: 1200px) {
+  .prevBtn {
+    left: -10px;
+  }
+  .nextBtn {
+    right: -10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .slideItem {
+    padding: 0 0.25rem;
+  }
+  .prevBtn {
+    left: 5px;
+  }
+  .nextBtn {
+    right: 5px;
+  }
+  .navBtn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
+  }
+}

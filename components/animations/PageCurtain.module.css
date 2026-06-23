@@ -1,0 +1,27 @@
+.curtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Gold-Navy-Red gradient — matches brand perfectly */
+  background: linear-gradient(
+    105deg,
+    #080C12 0%,
+    #1A2744 30%,
+    #F7B731 65%,
+    #C1121F 100%
+  );
+  z-index: 9999;
+  pointer-events: none;
+  will-change: transform;
+  animation: curtainWipe 0.75s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+@keyframes curtainWipe {
+  /* Starts off-screen left, sweeps through, exits off-screen right */
+  0%   { transform: translateX(-101%); }
+  38%  { transform: translateX(0%); }
+  62%  { transform: translateX(0%); }
+  100% { transform: translateX(101%); }
+}

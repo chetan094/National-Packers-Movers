@@ -1,0 +1,266 @@
+.articlePage {
+  background-color: var(--black);
+  color: var(--white);
+  min-height: 100vh;
+  padding: 8rem 1.5rem 6rem; /* Large top padding to avoid Header overlaps */
+  font-family: var(--font-body);
+}
+
+.articleContainer {
+  max-width: 800px; /* Professional, narrow reading grid for typography convenience */
+  margin: 0 auto;
+}
+
+.breadcrumb {
+  margin-bottom: 2rem;
+}
+
+.backBtn {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gray-300);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition-fast);
+}
+
+.backBtn:hover {
+  color: var(--gold);
+}
+
+.backBtn span {
+  transition: var(--transition-fast);
+}
+
+.backBtn:hover span {
+  transform: translateX(-3px);
+}
+
+/* HEADER SECTION */
+.articleHeader {
+  margin-bottom: 3rem;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.categoryBadge {
+  font-size: 0.75rem;
+  background-color: rgba(247, 183, 49, 0.15);
+  color: var(--gold);
+  font-weight: 700;
+  padding: 0.2rem 0.7rem;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metaDivider {
+  color: var(--gray-500);
+  font-size: 0.8rem;
+}
+
+.metaText {
+  font-size: 0.85rem;
+  color: var(--gray-300);
+}
+
+.articleTitle {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.5px;
+}
+
+.articleExcerpt {
+  font-size: 1.15rem;
+  color: var(--gray-100);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  border-left: 3.5px solid var(--red);
+  padding-left: 1.2rem;
+  font-style: italic;
+}
+
+.coverImageWrapper {
+  width: 100%;
+  height: 450px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background-color: var(--navy-light);
+}
+
+.coverImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* TYPOGRAPHY & BODY */
+.articleBody {
+  margin-bottom: 4rem;
+}
+
+.articleContent {
+  font-size: 1.08rem;
+  line-height: 1.75;
+  color: var(--gray-100);
+}
+
+.articleContent h1,
+.articleContent h2,
+.articleContent h3 {
+  font-family: var(--font-heading);
+  color: var(--white);
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 0.8rem;
+  line-height: 1.2;
+}
+
+.articleContent h1 {
+  font-size: 2rem;
+}
+
+.articleContent h2 {
+  font-size: 1.7rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.4rem;
+}
+
+.articleContent h3 {
+  font-size: 1.35rem;
+}
+
+.articleContent p {
+  margin-bottom: 1.4rem;
+}
+
+.articleContent ul,
+.articleContent ol {
+  margin-bottom: 1.4rem;
+  padding-left: 2rem;
+}
+
+.articleContent ul {
+  list-style-type: square;
+}
+
+.articleContent li {
+  margin-bottom: 0.5rem;
+}
+
+.articleContent blockquote {
+  border-left: 4px solid var(--gold);
+  background-color: rgba(247, 183, 49, 0.04);
+  padding: 1.2rem 1.8rem;
+  font-style: italic;
+  margin: 1.8rem 0;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-size: 1.1rem;
+}
+
+.articleContent strong {
+  color: var(--white);
+  font-weight: 600;
+}
+
+/* CALL TO ACTION (CTA) BANNER */
+.articleFooter {
+  margin-top: 5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 3rem;
+}
+
+.ctaBanner {
+  background: var(--grad-cta);
+  border-radius: var(--radius-md);
+  padding: 2.5rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  box-shadow: var(--shadow-red);
+}
+
+.ctaTextContainer {
+  flex: 1;
+}
+
+.ctaTitle {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.5px;
+}
+
+.ctaText {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
+}
+
+.ctaBtn {
+  padding: 0.9rem 1.8rem;
+  background-color: var(--white);
+  color: var(--black);
+  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.ctaBtn:hover {
+  transform: translateY(-2px);
+  background-color: var(--gold-light);
+  color: var(--black);
+}
+
+.ctaBtn:active {
+  transform: translateY(0);
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .articlePage {
+    padding: 7rem 1rem 4rem;
+  }
+  
+  .articleTitle {
+    font-size: 2.2rem;
+  }
+  
+  .coverImageWrapper {
+    height: 280px;
+  }
+  
+  .ctaBanner {
+    flex-direction: column;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .ctaBtn {
+    width: 100%;
+    text-align: center;
+  }
+}

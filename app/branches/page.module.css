@@ -1,0 +1,236 @@
+.page {
+  background-color: var(--navy);
+  color: var(--white);
+}
+
+/* Hero Section */
+.hero {
+  position: relative;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  padding: 8rem 1.5rem 4rem;
+  overflow: hidden;
+  text-align: center;
+}
+
+.heroBg {
+  position: absolute;
+  inset: 0;
+  background: var(--grad-hero);
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.heroTitle {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  text-transform: uppercase;
+  margin-top: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.heroTitle span {
+  color: var(--gold);
+}
+
+.heroSubtitle {
+  font-size: 1.15rem;
+  color: var(--gray-300);
+  line-height: 1.6;
+}
+
+/* States Grid */
+.statesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+@media (max-width: 768px) {
+  .statesGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stateCard {
+  background: var(--grad-card);
+  border: 1px solid rgba(247,183,49,0.08);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  transition: var(--transition);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.stateCard:hover {
+  transform: translateY(-5px);
+  border-color: rgba(247,183,49,0.2);
+  box-shadow: var(--shadow-gold);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.pin {
+  font-size: 1.4rem;
+}
+
+.stateName {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  color: var(--white);
+}
+
+.badgeVirtual, .badgeSoon {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.badgeVirtual {
+  background: rgba(58, 134, 255, 0.15);
+  color: var(--info);
+  border: 1px solid rgba(58, 134, 255, 0.3);
+}
+
+.badgeSoon {
+  background: rgba(193, 18, 31, 0.15);
+  color: var(--red-light);
+  border: 1px solid rgba(193, 18, 31, 0.3);
+}
+
+.stateDesc {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--gray-300);
+  margin-bottom: 1.75rem;
+}
+
+.citiesWrapper {
+  margin-bottom: 2rem;
+  flex-grow: 1;
+}
+
+.citiesLabel {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.citiesGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.cityLink {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  color: var(--gray-300);
+  font-weight: 500;
+  transition: var(--transition-fast);
+}
+
+.cityLink:hover {
+  background: var(--gold);
+  color: var(--navy);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.noticeText {
+  font-size: 0.85rem;
+  color: var(--gray-300);
+  font-style: italic;
+}
+
+.statePageLink {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  align-self: flex-start;
+  transition: var(--transition-fast);
+}
+
+.statePageLink:hover {
+  color: var(--white);
+  transform: translateX(3px);
+}
+
+/* CTA Section */
+.ctaSection {
+  position: relative;
+  padding: 6rem 1.5rem;
+  text-align: center;
+  overflow: hidden;
+  background: var(--navy-mid);
+}
+
+.ctaBg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(247,183,49,0.08) 0%, rgba(193,18,31,0.05) 100%);
+  border-top: 1px solid rgba(247,183,49,0.1);
+  border-bottom: 1px solid rgba(247,183,49,0.1);
+  z-index: 1;
+}
+
+.ctaContent {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.ctaTitle {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-family: var(--font-heading);
+  color: var(--white);
+  margin-bottom: 1rem;
+}
+
+.ctaSubtitle {
+  font-size: 1.05rem;
+  color: var(--gray-300);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.ctaBtns {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .ctaBtns {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0 1.5rem;
+  }
+}
