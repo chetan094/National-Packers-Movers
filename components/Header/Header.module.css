@@ -534,14 +534,25 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
+  .topBar {
+    padding: 0.4rem 1rem;
+  }
+  .nav {
+    padding: 0.8rem 1rem;
+  }
   .navLinks, .ctaBtn { display: none; }
   .hamburger { display: flex; }
   .mobileMenu { display: block; }
   .topContact .topText { display: none; }
 }
 
+@media (max-width: 768px) {
+  .logoTagline {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
   .topBar { display: none; }
-  .logoName { font-size: 0.95rem; }
-  .logoSub  { font-size: 0.85rem; }
+  .logoName { font-size: 0.9rem; }
 }
