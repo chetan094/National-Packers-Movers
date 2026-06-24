@@ -1,8 +1,6 @@
-'use client';
-import { useState } from 'react';
 import Link from 'next/link';
 import styles from './ServicePage.module.css';
-import SlotCounter from '@/components/animations/SlotCounter';
+import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
 
 /* ── Universal 6-Step Process ─────────────────────────────── */
 const PROCESS_STEPS = [
@@ -39,10 +37,6 @@ const PROCESS_STEPS = [
 ];
 
 export default function ServicePage({ service }) {
-  const [openFaq, setOpenFaq] = useState(null);
-
-  const toggleFaq = (i) => setOpenFaq(prev => (prev === i ? null : i));
-
   return (
     <div className={styles.page}>
 
@@ -71,7 +65,7 @@ export default function ServicePage({ service }) {
           {service.stats.map((stat, i) => (
             <div key={i} className={styles.statItem} data-reveal="up" data-delay={i * 100}>
               <div className={styles.statNumber}>
-                <SlotCounter end={stat.number} suffix={stat.suffix} duration={2000} />
+                {stat.number}{stat.suffix}
               </div>
               <div className={styles.statLabel}>{stat.label}</div>
             </div>
@@ -232,27 +226,14 @@ export default function ServicePage({ service }) {
             <div className="divider" />
           </div>
           <div className={styles.faqList}>
-            {service.faqs.map((faq, i) => (
-              <div
-                key={i}
-                className={`${styles.faqItem} ${openFaq === i ? styles.faqOpen : ''}`}
-                data-reveal="up"
-                data-delay={i * 60}
-              >
-                <button
-                  className={styles.faqQuestion}
-                  onClick={() => toggleFaq(i)}
-                  id={`faq-${service.slug}-${i}`}
-                  aria-expanded={openFaq === i}
-                >
-                  <span>{faq.q}</span>
-                  <span className={styles.faqIcon}>{openFaq === i ? '−' : '+'}</span>
-                </button>
-                <div className={styles.faqAnswer}>
-                  <p>{faq.a}</p>
-                </div>
-              </div>
-            ))}
+            <FaqAccordion
+              faqs={service.faqs}
+              itemClass={styles.faqItem}
+              questionClass={styles.faqQuestion}
+              iconClass={styles.faqIcon}
+              answerClass={styles.faqAnswer}
+              isServicePage={true}
+            />
           </div>
         </div>
       </section>

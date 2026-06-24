@@ -1,19 +1,16 @@
-'use client';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import styles from './page.module.css';
-import SlotCounter from '@/components/animations/SlotCounter';
 import GalleryCarousel from '@/components/GalleryCarousel/GalleryCarousel';
 import ClientMarquee from '@/components/ClientMarquee/ClientMarquee';
+import TrustStats from '@/components/TrustStats/TrustStats';
+import HeroSlideshow from '@/components/HeroSlideshow/HeroSlideshow';
+import TestimonialsSlider from '@/components/TestimonialsSlider/TestimonialsSlider';
 
-
-
-const trustStats = [
-  { number: 38, suffix: '+', label: 'Years of Trust' },
-  { number: 30000, suffix: '+', label: 'Successful Moves' },
-  { number: 6, suffix: '', label: 'States Covered' },
-  { number: 15, suffix: '+', label: 'Cities Served' },
-];
+export const metadata = {
+  title: 'National Packers & Movers — Trusted Since 1987 | All India Service',
+  description: 'National Packers & Movers — India\'s trusted relocation experts since 1987. Household, Corporate, Industrial & Vehicle relocation across Jharkhand, West Bengal, Bihar, MP, UP, Odisha. Get a free quote today.',
+  keywords: 'packers and movers india, national packers movers, household relocation, corporate shifting, industrial transport, vehicle relocation, packers movers dhanbad, packers movers jharkhand',
+};
 
 const serviceCategories = [
   {
@@ -62,33 +59,6 @@ const howItWorks = [
   { step: '04', title: 'Safe Delivery', desc: 'We deliver, unpack, and arrange everything at your new destination.' },
 ];
 
-const testimonials = [
-  {
-    name: 'Vinod Ram',
-    city: 'Dhanbad to Singrauli (Interstate)',
-    service: 'Household Shifting',
-    rating: 5,
-    text: 'Amazing service by National Packers and Movers. They provided fast loading, safe packing and transit for me. I shifted from Dhanbad to Singrauli. I strongly recommend this packers for safe relocation across states.',
-    initials: 'VR',
-  },
-  {
-    name: 'Aniket Kumar',
-    city: 'Patna to Delhi (National Shifting)',
-    service: 'Household Relocation',
-    rating: 5,
-    text: 'I recently used National Packers & Movers for my relocation from Patna to Delhi, and I couldn\'t be more impressed! Their team was punctual, professional, and handled my belongings with utmost care. Best packers and movers in Patna.',
-    initials: 'AK',
-  },
-  {
-    name: 'Harman',
-    city: 'Kolkata to Chennai (South Transit)',
-    service: 'Household Relocation',
-    rating: 5,
-    text: 'I recently used National Packers & Movers for my relocation from Salt Lake, Kolkata to Chennai, and I couldn\'t be happier! Exceptional response, transparent billing, and stress-free transit.',
-    initials: 'H',
-  },
-];
-
 const branches = [
   { state: 'Jharkhand', cities: ['Dhanbad (HQ)', 'Ranchi', 'Bokaro', 'Deoghar'], slug: 'jharkhand' },
   { state: 'West Bengal', cities: ['Kolkata', 'Durgapur', 'Asansol'], slug: 'west-bengal' },
@@ -98,38 +68,7 @@ const branches = [
   { state: 'Uttar Pradesh', cities: ['Coming Soon'], slug: 'uttar-pradesh' },
 ];
 
-const heroSlides = [
-  { src: '/images/hero-ops-1.png', alt: 'National Packers & Movers — Professional Packing Shifting' },
-  { src: '/images/hero-ops-2.png', alt: 'National Packers & Movers — Closed Container Truck Loading' },
-  { src: '/images/hero-ops-3.png', alt: 'National Packers & Movers — Secure Car Carrier Transit' },
-];
-
 export default function HomePage() {
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const [activeSlide, setActiveSlide] = useState(0);
-
-  const handlePrevTestimonial = () => {
-    setActiveTestimonial(prev => (prev - 1 + testimonials.length) % testimonials.length);
-  };
-
-  const handleNextTestimonial = () => {
-    setActiveTestimonial(prev => (prev + 1) % testimonials.length);
-  };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveTestimonial(prev => (prev + 1) % testimonials.length);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const slideTimer = setInterval(() => {
-      setActiveSlide(prev => (prev + 1) % heroSlides.length);
-    }, 4000);
-    return () => clearInterval(slideTimer);
-  }, []);
-
   return (
     <div className={styles.page}>
 
@@ -174,47 +113,11 @@ export default function HomePage() {
             <a href="tel:9934166164" className={styles.heroPhone}>📞 9934166164</a>
           </div>
         </div>
-        <div className={styles.heroImageSide}>
-          <div className={styles.heroPhotoWrapper}>
-            {heroSlides.map((slide, idx) => (
-              <img
-                key={idx}
-                src={slide.src}
-                alt={slide.alt}
-                className={styles.heroPhoto}
-                style={{
-                  opacity: idx === activeSlide ? 1 : 0,
-                  transition: 'opacity 1s ease-in-out',
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
-              />
-            ))}
-            <div className={styles.heroPhotoOverlay} />
-            <div className={styles.heroBadgeFloat}>
-              <span className={styles.heroBadgeNum}>38+</span>
-              <span className={styles.heroBadgeTxt}>Years of<br/>Trust</span>
-            </div>
-          </div>
-        </div>
+        <HeroSlideshow />
       </section>
 
       {/* ── TRUST BAR ─────────────────────────────────────── */}
-      <section className={styles.trustBar}>
-        <div className={`${styles.trustGrid} container`}>
-          {trustStats.map((stat, i) => (
-            <div key={i} className={styles.trustItem} data-reveal="up" data-delay={i * 110}>
-              <div className={styles.trustNumber}>
-                <SlotCounter end={stat.number} suffix={stat.suffix} duration={2200} />
-              </div>
-              <div className={styles.trustLabel}>{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <TrustStats />
 
       {/* ── B2B / PSU CLIENT MARQUEE ──────────────────────── */}
       <ClientMarquee />
@@ -307,15 +210,15 @@ export default function HomePage() {
           </div>
           <div className={styles.corporateGrid}>
             <div className={styles.corporateStat} data-reveal="up" data-delay="0">
-              <div className="stat-number"><SlotCounter end={500} suffix="+" duration={2000} /></div>
+              <div className="stat-number">500+</div>
               <div className="stat-label">Corporate Moves</div>
             </div>
             <div className={styles.corporateStat} data-reveal="up" data-delay="120">
-              <div className="stat-number"><SlotCounter end={50} suffix="+" duration={2000} /></div>
+              <div className="stat-number">50+</div>
               <div className="stat-label">PSU Clients</div>
             </div>
             <div className={styles.corporateStat} data-reveal="up" data-delay="240">
-              <div className="stat-number"><SlotCounter end={100} suffix="%" duration={1800} /></div>
+              <div className="stat-number">100%</div>
               <div className="stat-label">Client Satisfaction</div>
             </div>
           </div>
@@ -378,56 +281,7 @@ export default function HomePage() {
             <h2 className="section-title">What Our <span>Clients Say</span></h2>
             <div className="divider" />
           </div>
-          <div className={styles.testimonialsSliderContainer}>
-            <button 
-              type="button" 
-              className={`${styles.sliderArrow} ${styles.prevArrow}`} 
-              onClick={handlePrevTestimonial}
-              aria-label="Previous review"
-            >
-              ‹
-            </button>
-
-            <div className={styles.testimonialsCarousel}>
-              {testimonials.map((t, i) => (
-                <div
-                  key={i}
-                  className={`${styles.testimonialCard} ${i === activeTestimonial ? styles.testimonialActive : ''}`}
-                >
-                  <div className={styles.testimonialStars}>
-                    {'⭐'.repeat(t.rating)}
-                  </div>
-                  <p className={styles.testimonialText}>"{t.text}"</p>
-                  <div className={styles.testimonialAuthor}>
-                    <div className={styles.testimonialAvatar}>{t.initials}</div>
-                    <div>
-                      <div className={styles.testimonialName}>{t.name}</div>
-                      <div className={styles.testimonialMeta}>{t.city} — {t.service}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <button 
-              type="button" 
-              className={`${styles.sliderArrow} ${styles.nextArrow}`} 
-              onClick={handleNextTestimonial}
-              aria-label="Next review"
-            >
-              ›
-            </button>
-          </div>
-          <div className={styles.testimonialDots}>
-            {testimonials.map((_, i) => (
-              <button
-                key={i}
-                className={`${styles.dot} ${i === activeTestimonial ? styles.dotActive : ''}`}
-                onClick={() => setActiveTestimonial(i)}
-                aria-label={`Testimonial ${i + 1}`}
-              />
-            ))}
-          </div>
+          <TestimonialsSlider />
           <div style={{ textAlign: 'center', marginTop: '2rem' }}>
             <Link href="/testimonials" className="btn btn-secondary">View All Reviews</Link>
           </div>

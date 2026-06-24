@@ -1,4 +1,3 @@
-'use client';
 import styles from './ClientMarquee.module.css';
 
 // ── Custom Monochromatic SVG Logos ───────────────────────────────────

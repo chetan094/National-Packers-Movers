@@ -758,6 +758,15 @@
   font-weight: 600;
   color: var(--white);
   transition: var(--transition-fast);
+  background: none;
+  border: none;
+  cursor: pointer;
+  list-style: none;
+  outline: none;
+}
+
+.faqQuestion::-webkit-details-marker {
+  display: none;
 }
 
 .faqQuestion:hover {
@@ -768,6 +777,14 @@
   font-size: 1.3rem;
   color: var(--gold);
   line-height: 1;
+}
+
+.faqToggleIcon::after {
+  content: '+';
+}
+
+.faqItem[open] .faqToggleIcon::after {
+  content: '−';
 }
 
 .faqAnswer {
@@ -784,13 +801,13 @@
   color: var(--gray-300);
 }
 
-.faqOpen {
+.faqItem[open] {
   border-color: rgba(247,183,49,0.3);
   box-shadow: 0 4px 15px rgba(0,0,0,0.25);
 }
 
-.faqOpen .faqAnswer {
-  max-height: 250px; /* Large enough to fit any answer */
+.faqItem[open] .faqAnswer {
+  max-height: 250px;
 }
 
 .ctaSection {
