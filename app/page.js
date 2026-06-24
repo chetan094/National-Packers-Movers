@@ -108,6 +108,14 @@ export default function HomePage() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [activeSlide, setActiveSlide] = useState(0);
 
+  const handlePrevTestimonial = () => {
+    setActiveTestimonial(prev => (prev - 1 + testimonials.length) % testimonials.length);
+  };
+
+  const handleNextTestimonial = () => {
+    setActiveTestimonial(prev => (prev + 1) % testimonials.length);
+  };
+
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveTestimonial(prev => (prev + 1) % testimonials.length);
@@ -370,25 +378,45 @@ export default function HomePage() {
             <h2 className="section-title">What Our <span>Clients Say</span></h2>
             <div className="divider" />
           </div>
-          <div className={styles.testimonialsCarousel}>
-            {testimonials.map((t, i) => (
-              <div
-                key={i}
-                className={`${styles.testimonialCard} ${i === activeTestimonial ? styles.testimonialActive : ''}`}
-              >
-                <div className={styles.testimonialStars}>
-                  {'⭐'.repeat(t.rating)}
-                </div>
-                <p className={styles.testimonialText}>"{t.text}"</p>
-                <div className={styles.testimonialAuthor}>
-                  <div className={styles.testimonialAvatar}>{t.initials}</div>
-                  <div>
-                    <div className={styles.testimonialName}>{t.name}</div>
-                    <div className={styles.testimonialMeta}>{t.city} — {t.service}</div>
+          <div className={styles.testimonialsSliderContainer}>
+            <button 
+              type="button" 
+              className={`${styles.sliderArrow} ${styles.prevArrow}`} 
+              onClick={handlePrevTestimonial}
+              aria-label="Previous review"
+            >
+              ‹
+            </button>
+
+            <div className={styles.testimonialsCarousel}>
+              {testimonials.map((t, i) => (
+                <div
+                  key={i}
+                  className={`${styles.testimonialCard} ${i === activeTestimonial ? styles.testimonialActive : ''}`}
+                >
+                  <div className={styles.testimonialStars}>
+                    {'⭐'.repeat(t.rating)}
+                  </div>
+                  <p className={styles.testimonialText}>"{t.text}"</p>
+                  <div className={styles.testimonialAuthor}>
+                    <div className={styles.testimonialAvatar}>{t.initials}</div>
+                    <div>
+                      <div className={styles.testimonialName}>{t.name}</div>
+                      <div className={styles.testimonialMeta}>{t.city} — {t.service}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            <button 
+              type="button" 
+              className={`${styles.sliderArrow} ${styles.nextArrow}`} 
+              onClick={handleNextTestimonial}
+              aria-label="Next review"
+            >
+              ›
+            </button>
           </div>
           <div className={styles.testimonialDots}>
             {testimonials.map((_, i) => (

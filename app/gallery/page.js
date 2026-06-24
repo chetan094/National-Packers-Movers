@@ -548,17 +548,37 @@ export default function GalleryPage() {
             </button>
           </div>
 
-          {/* Grid Indicators (Dots) */}
-          <div className={styles.gridIndicators}>
-            {Array.from({ length: totalPages }).map((_, idx) => (
-              <button 
-                key={idx}
-                type="button" 
-                className={`${styles.gridDot} ${gridPage === idx ? styles.gridDotActive : ''}`} 
-                onClick={() => setGridPage(idx)}
-                aria-label={`Photos page ${idx + 1}`}
-              />
-            ))}
+          {/* Grid Indicators (Dots with Adjacent Arrows) */}
+          <div className={styles.gridIndicatorsContainer}>
+            <button 
+              type="button" 
+              className={`${styles.indicatorArrowBtn} ${styles.leftIndicatorArrow}`}
+              onClick={handlePrevPage}
+              disabled={gridPage === 0}
+              aria-label="Previous page"
+            >
+              ‹
+            </button>
+            <div className={styles.gridIndicators}>
+              {Array.from({ length: totalPages }).map((_, idx) => (
+                <button 
+                  key={idx}
+                  type="button" 
+                  className={`${styles.gridDot} ${gridPage === idx ? styles.gridDotActive : ''}`} 
+                  onClick={() => setGridPage(idx)}
+                  aria-label={`Photos page ${idx + 1}`}
+                />
+              ))}
+            </div>
+            <button 
+              type="button" 
+              className={`${styles.indicatorArrowBtn} ${styles.rightIndicatorArrow}`}
+              onClick={handleNextPage}
+              disabled={gridPage === totalPages - 1}
+              aria-label="Next page"
+            >
+              ›
+            </button>
           </div>
 
         </div>

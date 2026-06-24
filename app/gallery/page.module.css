@@ -231,12 +231,47 @@
 }
 
 /* ── GRID INDICATORS (DOTS) ───────────────────────── */
+.gridIndicatorsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+
 .gridIndicators {
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  margin-top: 1rem;
-  margin-bottom: 2rem;
+}
+
+.indicatorArrowBtn {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(8, 12, 18, 0.85);
+  border: 1px solid rgba(247, 183, 49, 0.25);
+  color: var(--gold);
+  font-size: 1.4rem;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  padding: 0;
+  line-height: 1;
+}
+
+.indicatorArrowBtn:hover:not(:disabled) {
+  background: var(--gold);
+  color: var(--navy);
+  border-color: var(--gold);
+}
+
+.indicatorArrowBtn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
 }
 
 .gridDot {
@@ -653,6 +688,9 @@
   }
   .gridRightArrow {
     right: 0rem;
+  }
+  .indicatorArrowBtn {
+    display: flex;
   }
 }
 

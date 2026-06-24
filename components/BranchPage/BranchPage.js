@@ -237,6 +237,14 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
     return list;
   }, [data.testimonials, isCity, stateData, cityKey]);
 
+  const handlePrevTestimonial = () => {
+    setActiveTestimonial(prev => (prev - 1 + displayTestimonials.length) % displayTestimonials.length);
+  };
+
+  const handleNextTestimonial = () => {
+    setActiveTestimonial(prev => (prev + 1) % displayTestimonials.length);
+  };
+
   useEffect(() => {
     if (!displayTestimonials || displayTestimonials.length <= 1) return;
     setActiveTestimonial(0);
@@ -1170,23 +1178,43 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
               <h2 className="section-title">What {data.name} <span>Clients Say</span></h2>
               <div className="divider" />
             </div>
-            <div className={styles.testimonialsCarousel} data-reveal="up">
-              {displayTestimonials.map((t, i) => (
-                <div 
-                  key={i} 
-                  className={`${styles.testimonialCard} ${i === activeTestimonial ? styles.testimonialActive : ''}`} 
-                >
-                  <div className={styles.stars}>⭐⭐⭐⭐⭐</div>
-                  <p className={styles.testimonialText}>&ldquo;{t.text}&rdquo;</p>
-                  <div className={styles.authorRow}>
-                    <div className={styles.avatar}>{t.initials}</div>
-                    <div>
-                      <strong className={styles.authorName}>{t.name}</strong>
-                      <p className={styles.authorMeta}>{data.name} Branch Client</p>
+            <div className={styles.testimonialsSliderContainer} data-reveal="up">
+              <button 
+                type="button" 
+                className={`${styles.sliderArrow} ${styles.prevArrow}`} 
+                onClick={handlePrevTestimonial}
+                aria-label="Previous review"
+              >
+                ‹
+              </button>
+
+              <div className={styles.testimonialsCarousel}>
+                {displayTestimonials.map((t, i) => (
+                  <div 
+                    key={i} 
+                    className={`${styles.testimonialCard} ${i === activeTestimonial ? styles.testimonialActive : ''}`} 
+                  >
+                    <div className={styles.stars}>⭐⭐⭐⭐⭐</div>
+                    <p className={styles.testimonialText}>&ldquo;{t.text}&rdquo;</p>
+                    <div className={styles.authorRow}>
+                      <div className={styles.avatar}>{t.initials}</div>
+                      <div>
+                        <strong className={styles.authorName}>{t.name}</strong>
+                        <p className={styles.authorMeta}>{data.name} Branch Client</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              <button 
+                type="button" 
+                className={`${styles.sliderArrow} ${styles.nextArrow}`} 
+                onClick={handleNextTestimonial}
+                aria-label="Next review"
+              >
+                ›
+              </button>
             </div>
 
             {displayTestimonials.length > 1 && (

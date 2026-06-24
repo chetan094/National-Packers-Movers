@@ -548,11 +548,29 @@
 
 @media (max-width: 768px) {
   .logoTagline {
-    display: none;
+    display: block;
+    font-size: 0.55rem;
+    letter-spacing: 0.3px;
   }
 }
 
 @media (max-width: 480px) {
   .topBar { display: none; }
-  .logoName { font-size: 0.9rem; }
+  .logo {
+    gap: 0.5rem;
+  }
+  .logoImg {
+    width: 38px;
+    height: 38px;
+  }
+  .logoName {
+    font-size: 0.85rem;
+  }
+  .logoTagline {
+    font-size: 0.5rem;
+    letter-spacing: 0.1px;
+  }
+  .nav {
+    padding: 0.7rem 0.75rem;
+  }
 }

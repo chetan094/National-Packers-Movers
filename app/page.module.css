@@ -548,11 +548,58 @@
 /* ── TESTIMONIALS ──────────────────────────────────────── */
 .testimonialsSection {}
 
+.testimonialsSliderContainer {
+  position: relative;
+  max-width: 840px; /* 720px card + 60px space on each side for arrows */
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.sliderArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(8, 12, 18, 0.85);
+  border: 1px solid rgba(247, 183, 49, 0.25);
+  color: var(--gold);
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: var(--transition-fast);
+  padding: 0;
+  line-height: 1;
+}
+
+.sliderArrow:hover {
+  background: var(--gold);
+  color: var(--navy);
+  border-color: var(--gold);
+  box-shadow: 0 0 15px rgba(247, 183, 49, 0.35);
+}
+
+.prevArrow {
+  left: 0;
+}
+
+.nextArrow {
+  right: 0;
+}
+
 .testimonialsCarousel {
   position: relative;
+  width: 100%;
   max-width: 720px;
-  margin: 0 auto 1.5rem;
   min-height: 220px;
+  margin-bottom: 1.5rem;
 }
 
 .testimonialCard {
@@ -714,6 +761,10 @@
   .trustGrid { grid-template-columns: repeat(2, 1fr); }
   .stepsGrid { grid-template-columns: repeat(2, 1fr); }
   .branchGrid { grid-template-columns: repeat(2, 1fr); }
+  .testimonialsSliderContainer {
+    max-width: 100%;
+    padding: 0 0.5rem;
+  }
 }
 
 @media (max-width: 640px) {
@@ -726,4 +777,18 @@
   .trustItem::after { display: none; }
   .heroCtas { flex-direction: column; align-items: center; }
   .ctaBtns { flex-direction: column; align-items: center; }
+  .sliderArrow {
+    width: 36px;
+    height: 36px;
+    font-size: 1.4rem;
+  }
+  .prevArrow {
+    left: 8px;
+  }
+  .nextArrow {
+    right: 8px;
+  }
+  .testimonialsCarousel {
+    min-height: 280px;
+  }
 }

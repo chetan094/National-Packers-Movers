@@ -290,6 +290,23 @@ export default function GalleryCarousel() {
     setCurrentIndex(prev => Math.max(prev - 1, 0));
   };
 
+  const getVisibleDotIndices = () => {
+    const maxDots = 5;
+    const half = Math.floor(maxDots / 2);
+    let start = Math.max(0, currentIndex - half);
+    let end = Math.min(maxIndex, start + maxDots - 1);
+    
+    if (end - start + 1 < maxDots) {
+      start = Math.max(0, end - maxDots + 1);
+    }
+    
+    const indices = [];
+    for (let i = start; i <= end; i++) {
+      indices.push(i);
+    }
+    return indices;
+  };
+
   const slideWidth = 100 / itemsPerView;
 
   return (
@@ -368,32 +385,67 @@ export default function GalleryCarousel() {
           </button>
         </div>
 
-        {/* Carousel Indicators (Dots or Text Progress Bar) */}
-        {GALLERY_PHOTOS.length <= 12 ? (
-          <div className={styles.indicators}>
-            {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
+        {/* Desktop Carousel Indicators */}
+        <div className={styles.desktopIndicators}>
+          {GALLERY_PHOTOS.length <= 12 ? (
+            <div className={styles.indicators}>
+              {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  className={`${styles.dot} ${idx === currentIndex ? styles.dotActive : ''}`}
+                  onClick={() => setCurrentIndex(idx)}
+                  aria-label={`Go to slide group ${idx + 1}`}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className={styles.textIndicator}>
+              <div className={styles.progressLineContainer}>
+                <div 
+                  className={styles.progressLineBar} 
+                  style={{ width: `${((currentIndex + itemsPerView) / GALLERY_PHOTOS.length) * 100}%` }}
+                />
+              </div>
+              <span className={styles.indicatorText}>
+                Viewing {currentIndex + 1} - {Math.min(currentIndex + itemsPerView, GALLERY_PHOTOS.length)} of {GALLERY_PHOTOS.length} Photos
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile/Tablet Dots & Arrow Navigation */}
+        <div className={styles.mobileNavContainer}>
+          <button 
+            type="button" 
+            className={styles.mobileArrowBtn} 
+            onClick={handlePrev}
+            disabled={currentIndex === 0}
+            aria-label="Previous photos"
+          >
+            ‹
+          </button>
+          <div className={styles.mobileDots}>
+            {getVisibleDotIndices().map((idx) => (
               <button
                 key={idx}
                 type="button"
-                className={`${styles.dot} ${idx === currentIndex ? styles.dotActive : ''}`}
+                className={`${styles.mobileDot} ${idx === currentIndex ? styles.mobileDotActive : ''}`}
                 onClick={() => setCurrentIndex(idx)}
-                aria-label={`Go to slide group ${idx + 1}`}
+                aria-label={`Go to photo ${idx + 1}`}
               />
             ))}
           </div>
-        ) : (
-          <div className={styles.textIndicator}>
-            <div className={styles.progressLineContainer}>
-              <div 
-                className={styles.progressLineBar} 
-                style={{ width: `${((currentIndex + itemsPerView) / GALLERY_PHOTOS.length) * 100}%` }}
-              />
-            </div>
-            <span className={styles.indicatorText}>
-              Viewing {currentIndex + 1} - {Math.min(currentIndex + itemsPerView, GALLERY_PHOTOS.length)} of {GALLERY_PHOTOS.length} Photos
-            </span>
-          </div>
-        )}
+          <button 
+            type="button" 
+            className={styles.mobileArrowBtn} 
+            onClick={handleNext}
+            disabled={currentIndex >= maxIndex}
+            aria-label="Next photos"
+          >
+            ›
+          </button>
+        </div>
 
 
         {/* View Gallery Link */}
