@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import styles from '@/app/contact/page.module.css';
+import { trackEvent } from '@/lib/analytics';
 
 export default function ContactForm() {
   const [form, setForm] = useState({ name: '', phone: '', email: '', message: '' });
@@ -22,6 +23,7 @@ export default function ContactForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSending(true);
+    trackEvent('click', 'contact_submit');
 
     try {
       const res = await fetch('/api/enquiry', {

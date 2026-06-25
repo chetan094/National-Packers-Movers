@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import styles from '@/app/get-quote/page.module.css';
+import { trackEvent } from '@/lib/analytics';
 
 const STEPS = ['Move Details', 'Move Type', 'Contact Info', 'Confirm & Send'];
 
@@ -139,6 +140,7 @@ export default function QuoteWizard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSending(true);
+    trackEvent('click', 'quote_submit');
 
     try {
       const res = await fetch('/api/enquiry', {

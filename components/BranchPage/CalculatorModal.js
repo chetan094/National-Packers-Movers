@@ -1,6 +1,7 @@
 'use client';
 import { useState, useMemo } from 'react';
 import styles from './BranchPage.module.css';
+import { trackEvent } from '@/lib/analytics';
 
 const INVENTORY_ITEMS = [
   { id: 'doubleBed', name: 'Double Bed (with Mattress)', volume: 60, icon: '🛏️', category: 'Furniture' },
@@ -143,6 +144,7 @@ export default function CalculatorModal({ cityName }) {
     }
 
     setLoading(true);
+    trackEvent('click', 'calculator_submit');
 
     const selectedItems = INVENTORY_ITEMS
       .filter(item => inventory[item.id] > 0)

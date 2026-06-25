@@ -3,6 +3,7 @@ import { branchesData } from '@/data/branchesData';
 import styles from './page.module.css';
 import TestimonialsFeed from '@/components/TestimonialsFeed/TestimonialsFeed';
 import TestimonialsForms from '@/components/TestimonialsForms/TestimonialsForms';
+import YouTubePlayer from '@/components/YouTubePlayer/YouTubePlayer';
 
 // Collage Images
 const COLLAGE_IMAGES = [
@@ -216,14 +217,7 @@ export default function TestimonialsPage() {
             {YT_REVIEWS.map((vid) => (
               <div key={vid.id} className={styles.videoCard}>
                 <div className={styles.videoWrapper}>
-                  <iframe
-                    src={`https://www.youtube.com/embed/${vid.id}`}
-                    title={vid.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                    loading="lazy"
-                  />
+                  <YouTubePlayer videoId={vid.id} title={vid.title} />
                 </div>
                 <div className={styles.videoMeta}>
                   <span className={styles.videoTag}>🎥 Verified Feedback</span>

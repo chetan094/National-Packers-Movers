@@ -5,6 +5,7 @@ import Footer from '@/components/Footer/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton/WhatsAppButton';
 import PageCurtain from '@/components/animations/PageCurtain';
 import GlobalAnimations from '@/components/animations/GlobalAnimations';
+import AnalyticsTracker from '@/components/AnalyticsTracker/AnalyticsTracker';
 
 const inter = Inter({ subsets: ['latin'], variable: '--inter', display: 'swap' });
 const rajdhani = Rajdhani({ subsets: ['latin'], weight: ['400','500','600','700'], variable: '--rajdhani', display: 'swap' });
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
       <body className={`${inter.variable} ${rajdhani.variable} ${barlowCondensed.variable}`}>
         <PageCurtain />
         <GlobalAnimations />
+        <AnalyticsTracker />
         <Header />
         <main>{children}</main>
         <Footer />

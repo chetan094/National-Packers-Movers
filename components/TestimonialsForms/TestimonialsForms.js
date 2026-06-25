@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import styles from '@/app/testimonials/page.module.css';
+import { trackEvent } from '@/lib/analytics';
 
 export default function TestimonialsForms() {
   // Shifting Review Form state
@@ -16,6 +17,7 @@ export default function TestimonialsForms() {
   // Review Form Submit
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    trackEvent('click', 'review_submit');
     if (!formData.name.trim() || !formData.text.trim()) {
       setFormError('Name and review description cannot be blank.');
       return;
@@ -46,6 +48,7 @@ export default function TestimonialsForms() {
 
   const handleEnquirySubmit = async (e) => {
     e.preventDefault();
+    trackEvent('click', 'testimonials_submit');
     if (!enquiryData.name.trim() || !enquiryData.phone.trim() || !enquiryData.message.trim()) {
       return;
     }

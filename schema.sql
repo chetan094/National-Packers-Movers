@@ -58,3 +58,23 @@ CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_leads_phone ON leads(phone);
 CREATE INDEX IF NOT EXISTS idx_leads_name ON leads(name);
 
+
+-- ========================================================================
+-- Analytics and User Behavior Tracking Table
+-- ========================================================================
+
+CREATE TABLE IF NOT EXISTS analytics_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_type VARCHAR NOT NULL, -- 'page_view', 'click', 'time_spent', 'video_play', 'image_view'
+  event_name VARCHAR, -- e.g., 'whatsapp_click', 'call_click', 'calculator_submit', image title, video title, or duration in seconds
+  page_path VARCHAR NOT NULL, -- e.g., '/', '/contact', '/branches/jharkhand/ranchi'
+  session_id VARCHAR NOT NULL, -- Unique per browser tab session (sessionStorage)
+  referrer VARCHAR, -- Client referrer link
+  device_type VARCHAR DEFAULT 'desktop', -- 'mobile', 'tablet', 'desktop'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexing for optimized dashboard analytics queries
+CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON analytics_events(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON analytics_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_analytics_session_id ON analytics_events(session_id);

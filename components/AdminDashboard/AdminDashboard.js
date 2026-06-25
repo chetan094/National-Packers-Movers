@@ -40,6 +40,13 @@ export default function AdminDashboard() {
   const [deleteLeadConfirmOpen, setDeleteLeadConfirmOpen] = useState(false);
   const [leadToDelete, setLeadToDelete] = useState(null);
 
+  // Analytics states
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [loadingAnalytics, setLoadingAnalytics] = useState(false);
+  const [analyticsError, setAnalyticsError] = useState('');
+  const [showAllPages, setShowAllPages] = useState(false);
+  const [pageSearchQuery, setPageSearchQuery] = useState('');
+
   // Auto-generate slug from title
   useEffect(() => {
     if (!editingBlogId) {
@@ -117,6 +124,47 @@ export default function AdminDashboard() {
       fetchLeads();
     }
   }, [activeTab, authorized]);
+
+  const fetchAnalytics = async (silent = false) => {
+    if (!silent) setLoadingAnalytics(true);
+    setAnalyticsError('');
+    try {
+      const res = await fetch('/api/admin/analytics');
+      if (res.ok) {
+        const data = await res.json();
+        setAnalyticsData(data);
+      } else {
+        const errData = await res.json();
+        setAnalyticsError(errData.error || 'Failed to fetch analytics summary');
+      }
+    } catch (err) {
+      console.error('Error fetching analytics data:', err);
+      setAnalyticsError('Network error fetching analytics data');
+    } finally {
+      if (!silent) setLoadingAnalytics(false);
+    }
+  };
+
+  useEffect(() => {
+    if (authorized && activeTab === 'analytics') {
+      fetchAnalytics();
+      
+      const interval = setInterval(() => {
+        fetchAnalytics(true);
+      }, 15000); // 15 seconds live auto-refresh
+      
+      return () => clearInterval(interval);
+    }
+  }, [activeTab, authorized]);
+
+  const formatDuration = (secondsStr) => {
+    const seconds = parseInt(secondsStr, 10);
+    if (isNaN(seconds)) return '0s';
+    if (seconds < 60) return `${seconds}s`;
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
+  };
 
   const handleUpdateLeadStatus = async (id, status) => {
     setLeadActionLoading(true);
@@ -471,6 +519,13 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('leads')}
           >
             📥 Leads Panel
+          </button>
+          <button
+            type="button"
+            className={`${styles.navItem} ${activeTab === 'analytics' ? styles.navItemActive : ''}`}
+            onClick={() => setActiveTab('analytics')}
+          >
+            📊 Analytics
           </button>
         </nav>
 
@@ -913,6 +968,359 @@ export default function AdminDashboard() {
                       ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <div className={styles.analyticsModuleWrapper}>
+            <header className={styles.analyticsHeader}>
+              <div>
+                <h1 className={styles.panelTitle}>Traffic & Engagement Analytics</h1>
+                <p className={styles.panelSubtitle}>Live monitoring of visitor page views, CTA interactions, and media play triggers</p>
+              </div>
+              <button 
+                type="button" 
+                className={styles.refreshBtn}
+                onClick={() => fetchAnalytics()}
+                disabled={loadingAnalytics}
+              >
+                {loadingAnalytics ? '⏳ Refreshing...' : '🔄 Refresh Live Data'}
+              </button>
+            </header>
+
+            {loadingAnalytics && !analyticsData ? (
+              <div className={styles.tableSpinnerWrapper}>
+                <div className={styles.spinner}></div>
+                <p>Connecting to live visitor stream...</p>
+              </div>
+            ) : analyticsError ? (
+              <div className={styles.errorBanner}>
+                <p>⚠️ {analyticsError}</p>
+                <button type="button" className={styles.retryBtn} onClick={() => fetchAnalytics()}>Retry Connection</button>
+              </div>
+            ) : !analyticsData ? (
+              <div className={styles.noDataBox}>
+                <p>No traffic event data recorded yet. Visit the homepage to initiate logging.</p>
+              </div>
+            ) : (
+              <div className={styles.analyticsContent}>
+                {/* KPI STATS ROW */}
+                <div className={styles.analyticsStatsGrid}>
+                  <div className={styles.analyticsStatCard}>
+                    <div className={styles.statIcon}>👥</div>
+                    <div className={styles.statValue}>{analyticsData.summary.unique_visitors}</div>
+                    <div className={styles.statLabel}>Unique Visitors</div>
+                  </div>
+                  <div className={styles.analyticsStatCard}>
+                    <div className={styles.statIcon}>👀</div>
+                    <div className={styles.statValue}>{analyticsData.summary.total_page_views}</div>
+                    <div className={styles.statLabel}>Total Page Views</div>
+                  </div>
+                  <div className={styles.analyticsStatCard}>
+                    <div className={styles.statIcon}>⏱️</div>
+                    <div className={styles.statValue}>{formatDuration(analyticsData.summary.avg_duration)}</div>
+                    <div className={styles.statLabel}>Avg. Time / Page</div>
+                  </div>
+                  <div className={styles.analyticsStatCard}>
+                    <div className={styles.statIcon}>⏳</div>
+                    <div className={styles.statValue}>{formatDuration(analyticsData.summary.total_duration)}</div>
+                    <div className={styles.statLabel}>Total Time Spent</div>
+                  </div>
+                  <div className={styles.analyticsStatCard}>
+                    <div className={styles.statIcon}>📥</div>
+                    <div className={styles.statValue}>{analyticsData.summary.total_leads}</div>
+                    <div className={styles.statLabel}>Total Leads Generated</div>
+                  </div>
+                  <div className={styles.analyticsStatCard}>
+                    <div className={styles.statIcon}>📈</div>
+                    <div className={styles.statValue}>{analyticsData.summary.conversion_rate}%</div>
+                    <div className={styles.statLabel}>Lead Conversion Rate</div>
+                  </div>
+                </div>
+
+                {/* VISUAL LAYOUT GRID */}
+                <div className={styles.analyticsGrid}>
+                  
+                  {/* TOP PERFORMING PAGES */}
+                  <div className={styles.analyticsCard}>
+                    <div className={styles.cardHeaderWithBadge}>
+                      <h3 className={styles.cardHeader}>📄 Top Performing Pages</h3>
+                      {analyticsData.pages_breakdown.length > 8 && (
+                        <button 
+                          type="button" 
+                          className={styles.showAllBtn}
+                          onClick={() => {
+                            setShowAllPages(!showAllPages);
+                            setPageSearchQuery(''); // Clear search on toggle
+                          }}
+                        >
+                          {showAllPages ? '▲ Show Top 8' : `🔍 Show All (${analyticsData.pages_breakdown.length})`}
+                        </button>
+                      )}
+                    </div>
+
+                    {showAllPages && (
+                      <div className={styles.pageSearchBox}>
+                        <input 
+                          type="text" 
+                          placeholder="🔍 Filter by page path (e.g. /branches/jharkhand)..." 
+                          value={pageSearchQuery}
+                          onChange={e => setPageSearchQuery(e.target.value)}
+                          className={styles.compactSearchInput}
+                        />
+                        {pageSearchQuery && (
+                          <button 
+                            type="button" 
+                            className={styles.clearSearchBtn}
+                            onClick={() => setPageSearchQuery('')}
+                          >
+                            ✖
+                          </button>
+                        )}
+                      </div>
+                    )}
+
+                    <div className={`${styles.tableResponsiveCompact} ${showAllPages ? styles.tableScrollContainer : ''}`}>
+                      <table className={styles.compactTable}>
+                        <thead>
+                          <tr>
+                            <th>Page Path</th>
+                            <th>Page Views</th>
+                            <th>Avg. Duration</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(() => {
+                            const filtered = showAllPages
+                              ? analyticsData.pages_breakdown.filter(pg => 
+                                  pg.path.toLowerCase().includes(pageSearchQuery.toLowerCase())
+                                )
+                              : analyticsData.pages_breakdown.slice(0, 8);
+
+                            if (filtered.length === 0) {
+                              return (
+                                <tr>
+                                  <td colSpan="3" className={styles.emptyRow}>
+                                    {pageSearchQuery ? 'No matching pages found.' : 'No page views registered.'}
+                                  </td>
+                                </tr>
+                              );
+                            }
+
+                            return filtered.map((pg, i) => (
+                              <tr key={i}>
+                                <td className={styles.pathText}><code>{pg.path}</code></td>
+                                <td className={styles.numText}>{pg.views}</td>
+                                <td className={styles.numText}>{formatDuration(pg.avg_duration)}</td>
+                              </tr>
+                            ));
+                          })()}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* VISITOR DEVICE SPLITS */}
+                  <div className={styles.analyticsCard}>
+                    <h3 className={styles.cardHeader}>📱 Device Type Divisions</h3>
+                    <div className={styles.deviceSplitWrapper}>
+                      {(() => {
+                        const splits = analyticsData.device_splits || { desktop: 0, mobile: 0, tablet: 0 };
+                        const total = (splits.desktop || 0) + (splits.mobile || 0) + (splits.tablet || 0) || 1;
+                        const pcDesktop = ((splits.desktop || 0) / total * 100).toFixed(1);
+                        const pcMobile = ((splits.mobile || 0) / total * 100).toFixed(1);
+                        const pcTablet = ((splits.tablet || 0) / total * 100).toFixed(1);
+                        return (
+                          <>
+                            <div className={styles.deviceBarContainer}>
+                              <div 
+                                className={`${styles.deviceBar} ${styles.deviceBarDesktop}`} 
+                                style={{ width: `${pcDesktop}%` }}
+                                title={`Desktop: ${pcDesktop}% (${splits.desktop || 0})`}
+                              />
+                              <div 
+                                className={`${styles.deviceBar} ${styles.deviceBarMobile}`} 
+                                style={{ width: `${pcMobile}%` }}
+                                title={`Mobile: ${pcMobile}% (${splits.mobile || 0})`}
+                              />
+                              <div 
+                                className={`${styles.deviceBar} ${styles.deviceBarTablet}`} 
+                                style={{ width: `${pcTablet}%` }}
+                                title={`Tablet: ${pcTablet}% (${splits.tablet || 0})`}
+                              />
+                            </div>
+                            <div className={styles.deviceLegend}>
+                              <div className={styles.legendItem}>
+                                <span className={`${styles.legendDot} ${styles.dotDesktop}`} />
+                                <span className={styles.legendName}>Desktop</span>
+                                <strong className={styles.legendValue}>{pcDesktop}% <span className={styles.legendCount}>({splits.desktop || 0})</span></strong>
+                              </div>
+                              <div className={styles.legendItem}>
+                                <span className={`${styles.legendDot} ${styles.dotMobile}`} />
+                                <span className={styles.legendName}>Mobile</span>
+                                <strong className={styles.legendValue}>{pcMobile}% <span className={styles.legendCount}>({splits.mobile || 0})</span></strong>
+                              </div>
+                              <div className={styles.legendItem}>
+                                <span className={`${styles.legendDot} ${styles.dotTablet}`} />
+                                <span className={styles.legendName}>Tablet</span>
+                                <strong className={styles.legendValue}>{pcTablet}% <span className={styles.legendCount}>({splits.tablet || 0})</span></strong>
+                              </div>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* INTERACTIVE CALLS & CONVERSIONS */}
+                  <div className={styles.analyticsCard}>
+                    <h3 className={styles.cardHeader}>⚡ Buttons & Form Conversions</h3>
+                    <div className={styles.interactionList}>
+                      {(() => {
+                        const cl = analyticsData.clicks_breakdown || {};
+                        const items = [
+                          { label: '📞 Direct Call Button Clicks', value: cl.call_click || 0, colorClass: styles.barGold },
+                          { label: '💬 WhatsApp Header/Footer Clicks', value: cl.whatsapp_click || 0, colorClass: styles.barGreen },
+                          { label: '🟢 WhatsApp Floating Button Clicks', value: cl.whatsapp_float_click || 0, colorClass: styles.barGreenLight },
+                          { label: '📊 Cargo Calculator Forms Solved', value: cl.calculator_submit || 0, colorClass: styles.barRed },
+                          { label: '📝 Quote Wizard Leads Submitted', value: cl.quote_submit || 0, colorClass: styles.barRedLight },
+                          { label: '📬 Contact Page Queries Sent', value: cl.contact_submit || 0, colorClass: styles.barBlue },
+                          { label: '⭐ Testimonial Forms Submitted', value: cl.testimonials_submit || cl.review_submit || 0, colorClass: styles.barPurple }
+                        ];
+                        const maxVal = Math.max(...items.map(item => item.value), 1);
+                        return items.map((item, index) => (
+                          <div key={index} className={styles.interactionRow}>
+                            <div className={styles.interactionLabelRow}>
+                              <span className={styles.interactionLabel}>{item.label}</span>
+                              <strong className={styles.interactionValue}>{item.value}</strong>
+                            </div>
+                            <div className={styles.interactionBarOuter}>
+                              <div 
+                                className={`${styles.interactionBarInner} ${item.colorClass}`} 
+                                style={{ width: `${(item.value / maxVal) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* MEDIA ENGAGEMENT PERFORMANCE */}
+                  <div className={styles.analyticsCard}>
+                    <h3 className={styles.cardHeader}>🎬 Media Engagement (Video & Image)</h3>
+                    <div className={styles.mediaEngagementTabs}>
+                      <div className={styles.mediaEngagementColumn}>
+                        <h4 className={styles.mediaHeaderSub}>YouTube Video Plays</h4>
+                        <div className={styles.mediaList}>
+                          {Object.entries(analyticsData.media_engagement?.video || {}).length === 0 ? (
+                            <p className={styles.emptyMedia}>No video plays recorded.</p>
+                          ) : (
+                            Object.entries(analyticsData.media_engagement.video)
+                              .sort((a, b) => b[1] - a[1])
+                              .slice(0, 5)
+                              .map(([vid, count], idx) => (
+                                <div key={idx} className={styles.mediaRow}>
+                                  <span className={styles.mediaTitle}>🎥 {vid}</span>
+                                  <strong className={styles.mediaCount}>{count} plays</strong>
+                                </div>
+                              ))
+                          )}
+                        </div>
+                      </div>
+                      <div className={styles.mediaEngagementColumn}>
+                        <h4 className={styles.mediaHeaderSub}>Photo Lightbox Views</h4>
+                        <div className={styles.mediaList}>
+                          {Object.entries(analyticsData.media_engagement?.image || {}).length === 0 ? (
+                            <p className={styles.emptyMedia}>No gallery photo clicks recorded.</p>
+                          ) : (
+                            Object.entries(analyticsData.media_engagement.image)
+                              .sort((a, b) => b[1] - a[1])
+                              .slice(0, 5)
+                              .map(([img, count], idx) => (
+                                <div key={idx} className={styles.mediaRow}>
+                                  <span className={styles.mediaTitle}>🖼️ {img}</span>
+                                  <strong className={styles.mediaCount}>{count} views</strong>
+                                </div>
+                              ))
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* LIVE VISITORS ACTIVITY FEED */}
+                <div className={`${styles.analyticsCard} ${styles.fullWidthCard}`}>
+                  <div className={styles.cardHeaderWithBadge}>
+                    <h3 className={styles.cardHeader}>🟢 Real-Time Visitor Activity Stream</h3>
+                    <span className={styles.liveBadgePulse}>Live Feed</span>
+                  </div>
+                  <div className={styles.activityFeedWrapper}>
+                    <div className={styles.activityFeed}>
+                      {analyticsData.recent_activity.map((act) => {
+                        const deviceIcon = act.device_type === 'mobile' ? '📱' : act.device_type === 'tablet' ? '📁' : '💻';
+                        let actionMsg = '';
+                        let typeClass = '';
+                        
+                        if (act.event_type === 'page_view') {
+                          actionMsg = 'Visited page';
+                          typeClass = styles.actView;
+                        } else if (act.event_type === 'time_spent') {
+                          actionMsg = `Spent ${formatDuration(act.event_name)} on page`;
+                          typeClass = styles.actTime;
+                        } else if (act.event_type === 'click') {
+                          actionMsg = `Clicked: ${act.event_name.replace(/_/g, ' ')}`;
+                          typeClass = styles.actClick;
+                        } else if (act.event_type === 'video_play') {
+                          actionMsg = `Played Video: "${act.event_name}"`;
+                          typeClass = styles.actVideo;
+                        } else if (act.event_type === 'image_view') {
+                          actionMsg = `Opened Gallery Photo: "${act.event_name}"`;
+                          typeClass = styles.actImage;
+                        }
+
+                        return (
+                          <div key={act.id} className={styles.feedItem}>
+                            <div className={styles.feedIconCol}>
+                              <span className={`${styles.feedIconBadge} ${typeClass}`}>
+                                {act.event_type === 'page_view' && '👀'}
+                                {act.event_type === 'time_spent' && '⏱️'}
+                                {act.event_type === 'click' && '⚡'}
+                                {act.event_type === 'video_play' && '🎥'}
+                                {act.event_type === 'image_view' && '🖼️'}
+                              </span>
+                            </div>
+                            <div className={styles.feedInfoCol}>
+                              <p className={styles.feedAction}>
+                                <strong>{actionMsg}</strong> 
+                                <span className={styles.feedPath}><code>{act.page_path}</code></span>
+                              </p>
+                              <div className={styles.feedMeta}>
+                                <span className={styles.feedDevice}>{deviceIcon} {act.device_type}</span>
+                                <span className={styles.feedDot}>•</span>
+                                <span className={styles.feedLoc}>📍 {act.visitor_location}</span>
+                                <span className={styles.feedDot}>•</span>
+                                <span className={styles.feedIp}>🔒 {act.ip_address}</span>
+                                <span className={styles.feedDot}>•</span>
+                                <span className={styles.feedTime}>
+                                  {new Date(act.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {analyticsData.recent_activity.length === 0 && (
+                        <p className={styles.emptyFeed}>No active logs registered.</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
               </div>
             )}
           </div>

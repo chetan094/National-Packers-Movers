@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import styles from '@/app/gallery/page.module.css';
+import { trackEvent } from '@/lib/analytics';
 
 const PHOTOS = [
   // Page 1 (0-7)
@@ -372,7 +373,10 @@ export default function GalleryGrid() {
                     <div 
                       key={globalIndex} 
                       className={styles.photoCard}
-                      onClick={() => setActivePhoto(globalIndex)}
+                      onClick={() => {
+                        setActivePhoto(globalIndex);
+                        trackEvent('image_view', photo.title || photo.alt);
+                      }}
                     >
                       <div className={styles.imageWrap}>
                         <img 

@@ -27,12 +27,12 @@ export default function PrivacyPolicyPage() {
 
           <div className={styles.section}>
             <h2>1. Information We Collect</h2>
-            <p>To plan and execute your relocation, we collect the following categories of information:</p>
+            <p>To plan and execute your relocation and optimize our digital portal, we collect the following categories of information:</p>
             <ul>
               <li><strong>Contact Details:</strong> Name, phone numbers, and email address.</li>
               <li><strong>Relocation Details:</strong> Moving Origin address, Destination address, and requested shifting date.</li>
               <li><strong>Inventory Data:</strong> Itemized list of household or corporate items, estimated volume (Cubic Feet / CFT), and recommended transport vehicle.</li>
-              <li><strong>Technical Metadata:</strong> IP address, device type, and cookies used to analyze website performance.</li>
+              <li><strong>First-Party Analytics &amp; Metadata:</strong> To maintain site speed and security, we log user interactions in the background (such as page paths visited, buttons clicked, duration spent on pages, and media interactions) along with technical indicators including device classification (Mobile/Desktop/Tablet), client IP address, and general location (City/State) resolved via standard network routing headers. We do not prompt you for GPS device permissions or share this data.</li>
             </ul>
           </div>
 

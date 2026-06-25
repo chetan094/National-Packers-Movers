@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Footer.module.css';
+import { trackEvent } from '@/lib/analytics';
 
 const branches = [
   { state: 'Jharkhand', slug: 'jharkhand', cities: ['Dhanbad','Ranchi','Bokaro','Deoghar'] },
@@ -46,8 +47,8 @@ export default function Footer() {
               "Honesty is not our policy, but our Principle."
             </p>
             <div className={styles.footerContact}>
-              <a href="tel:9835168368" className={styles.footerPhone}>📞 9835168368</a>
-              <a href="tel:9934166164" className={styles.footerPhone}>📞 9934166164</a>
+              <a href="tel:9835168368" className={styles.footerPhone} onClick={() => trackEvent('click', 'call_click')}>📞 9835168368</a>
+              <a href="tel:9934166164" className={styles.footerPhone} onClick={() => trackEvent('click', 'call_click')}>📞 9934166164</a>
               <a href="mailto:npmdhanbad11@gmail.com" className={styles.footerEmail} id="footer-email-link">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="15" height="15">
                   <rect x="2" y="4" width="20" height="16" rx="2"/>

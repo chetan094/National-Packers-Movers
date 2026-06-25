@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { trackEvent } from '@/lib/analytics';
 import styles from './Header.module.css';
 
 const branches = [
@@ -116,11 +117,11 @@ export default function Header() {
       <div className={styles.topBar}>
         <div className={styles.topBarInner}>
           <div className={styles.topContact}>
-            <a href="tel:9835168368" className={styles.topLink}>
+            <a href="tel:9835168368" className={styles.topLink} onClick={() => trackEvent('click', 'call_click')}>
               📞 9835168368
             </a>
             <span className={styles.topDivider}>|</span>
-            <a href="tel:9934166164" className={styles.topLink}>
+            <a href="tel:9934166164" className={styles.topLink} onClick={() => trackEvent('click', 'call_click')}>
               📞 9934166164
             </a>
             <span className={styles.topDivider}>|</span>

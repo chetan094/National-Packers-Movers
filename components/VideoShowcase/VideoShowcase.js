@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import styles from '@/app/gallery/page.module.css';
+import YouTubePlayer from '@/components/YouTubePlayer/YouTubePlayer';
 
 const ALL_VIDEOS = [
   {
@@ -155,14 +156,7 @@ export default function VideoShowcase() {
               data-delay={index * 100}
             >
               <div className={styles.videoWrapper}>
-                <iframe
-                  src={`https://www.youtube.com/embed/${video.id}`}
-                  title={video.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  loading="lazy"
-                />
+                <YouTubePlayer videoId={video.id} title={video.title} />
               </div>
               <div className={styles.videoCardMeta}>
                 <h4 className={styles.videoCardTitle}>{video.title}</h4>
