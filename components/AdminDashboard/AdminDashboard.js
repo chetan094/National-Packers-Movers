@@ -995,7 +995,7 @@ export default function AdminDashboard() {
                 <div className={styles.spinner}></div>
                 <p>Connecting to live visitor stream...</p>
               </div>
-            ) : analyticsError ? (
+            ) : analyticsError && !analyticsData ? (
               <div className={styles.errorBanner}>
                 <p>⚠️ {analyticsError}</p>
                 <button type="button" className={styles.retryBtn} onClick={() => fetchAnalytics()}>Retry Connection</button>
@@ -1006,6 +1006,12 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <div className={styles.analyticsContent}>
+                {analyticsError && (
+                  <div className={styles.liveRefreshWarning}>
+                    <span>⚠️ Connection lost. Showing cached dashboard statistics. Retrying in background...</span>
+                    <button type="button" className={styles.warningRetryBtn} onClick={() => fetchAnalytics()}>Retry Now</button>
+                  </div>
+                )}
                 {/* KPI STATS ROW */}
                 <div className={styles.analyticsStatsGrid}>
                   <div className={styles.analyticsStatCard}>

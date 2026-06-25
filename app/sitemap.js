@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { branchesData } from '@/data/branchesData';
 import { getBlogs } from '@/lib/supabase';
 
