@@ -44,7 +44,7 @@ export default function TestimonialsForms() {
       `_Source: Testimonials Page — thenationalpackersmovers.com_`
     );
 
-  const handleEnquirySubmit = (e) => {
+  const handleEnquirySubmit = async (e) => {
     e.preventDefault();
     if (!enquiryData.name.trim() || !enquiryData.phone.trim() || !enquiryData.message.trim()) {
       return;
@@ -55,25 +55,30 @@ export default function TestimonialsForms() {
     }
     setEnquirySending(true);
 
-    // Dispatch background email alert to HQ
-    fetch('/api/enquiry', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: enquiryData.name,
-        phone: enquiryData.phone,
-        email: enquiryData.email,
-        message: enquiryData.message,
-        source: 'Testimonials Page'
-      })
-    }).catch(err => console.error('Error dispatching testimonials page background alert:', err));
+    try {
+      const res = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: enquiryData.name,
+          phone: enquiryData.phone,
+          email: enquiryData.email,
+          message: enquiryData.message,
+          source: 'Testimonials Page'
+        })
+      });
+      if (!res.ok) {
+        console.error('Enquiry API returned non-OK status');
+      }
+    } catch (err) {
+      console.error('Error dispatching testimonials page background alert:', err);
+    }
 
     const waUrl = `https://wa.me/919835168368?text=${buildEnquiryWAMsg()}`;
     window.open(waUrl, '_blank');
-    setTimeout(() => {
-      setEnquirySending(false);
-      setEnquirySubmitted(true);
-    }, 700);
+
+    setEnquirySending(false);
+    setEnquirySubmitted(true);
   };
 
   const resetEnquiryForm = () => {

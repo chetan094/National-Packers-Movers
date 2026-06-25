@@ -1,3 +1,5 @@
+import { createLead } from '@/lib/supabase';
+
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -24,6 +26,29 @@ export async function POST(request) {
         { status: 400 }
       );
     }
+
+    // Save lead to Supabase database
+    let dbLead = null;
+    try {
+      dbLead = await createLead({
+        name,
+        phone,
+        email,
+        from,
+        to,
+        date,
+        moveType,
+        notes,
+        message,
+        inventory,
+        matchedVehicle,
+        totalCft,
+        source
+      });
+    } catch (dbErr) {
+      console.error('[DATABASE SAVE ERROR] Failed to record lead:', dbErr);
+    }
+
 
     // Format fields for email display
     let formattedDate = 'N/A';

@@ -140,30 +140,36 @@ export default function QuoteWizard() {
     e.preventDefault();
     setSending(true);
 
-    fetch('/api/enquiry', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: form.name,
-        phone: form.phone,
-        email: form.email,
-        from: form.from,
-        to: form.to,
-        date: form.date,
-        moveType: form.moveType,
-        notes: form.notes,
-        source: 'Quote Wizard'
-      })
-    }).catch(err => console.error('Error dispatching quote wizard background alert:', err));
+    try {
+      const res = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          phone: form.phone,
+          email: form.email,
+          from: form.from,
+          to: form.to,
+          date: form.date,
+          moveType: form.moveType,
+          notes: form.notes,
+          source: 'Quote Wizard'
+        })
+      });
+      if (!res.ok) {
+        console.error('Enquiry API returned non-OK status');
+      }
+    } catch (err) {
+      console.error('Error dispatching quote wizard backend alert:', err);
+    }
 
     const waUrl = `https://wa.me/919835168368?text=${buildWhatsAppMessage()}`;
     window.open(waUrl, '_blank');
 
-    setTimeout(() => {
-      setSending(false);
-      setSubmitted(true);
-    }, 800);
+    setSending(false);
+    setSubmitted(true);
   };
+
 
   if (submitted) {
     return (

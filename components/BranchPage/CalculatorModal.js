@@ -39,6 +39,7 @@ export default function CalculatorModal({ cityName }) {
   const [formState, setFormState] = useState({ name: '', phone: '', email: '', from: '', to: '' });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleItemChange = (id, delta) => {
     setInventory(prev => ({
@@ -125,7 +126,7 @@ export default function CalculatorModal({ cityName }) {
     }
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     const errors = {};
     if (!formState.name.trim()) errors.name = 'Full Name is required';
@@ -141,29 +142,41 @@ export default function CalculatorModal({ cityName }) {
       return;
     }
 
+    setLoading(true);
+
     const selectedItems = INVENTORY_ITEMS
       .filter(item => inventory[item.id] > 0)
       .map(item => `${inventory[item.id]}x ${item.name.replace(/ \(with mattress\)/i, '')}`)
       .join(', ');
 
-    // Send backend alert
-    fetch('/api/enquiry', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: formState.name,
-        phone: formState.phone,
-        email: formState.email,
-        from: formState.from,
-        to: formState.to,
-        inventory: selectedItems,
-        matchedVehicle: matchedTruck.name,
-        totalCft: totalCft,
-        source: 'Calculator Modal'
-      })
-    }).catch(err => console.error('Error dispatching enquiry background alert:', err));
+    try {
+      const res = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formState.name,
+          phone: formState.phone,
+          email: formState.email,
+          from: formState.from,
+          to: formState.to,
+          inventory: selectedItems,
+          matchedVehicle: matchedTruck.name,
+          totalCft: totalCft,
+          source: 'Calculator Modal'
+        })
+      });
+      if (!res.ok) {
+        console.error('Enquiry API returned non-OK status');
+      }
+    } catch (err) {
+      console.error('Error dispatching enquiry background alert:', err);
+    }
 
+    setLoading(false);
     setFormSubmitted(true);
+
+    const waUrl = `https://wa.me/919835168368?text=Hi%20National%20Packers,%20I%20just%20submitted%20an%20inventory%20shifting%20request.%0A%0A*Name:*%20${encodeURIComponent(formState.name)}%0A*Phone:*%20${encodeURIComponent(formState.phone)}%0A*Route:*%20${encodeURIComponent(formState.from)}%20to%20${encodeURIComponent(formState.to)}%0A*Suggested%20Truck:*%20${encodeURIComponent(matchedTruck.name)}%0A*Inventory:*%20${encodeURIComponent(selectedItems)}`;
+    window.open(waUrl, '_blank');
   };
 
   return (
@@ -408,8 +421,8 @@ export default function CalculatorModal({ cityName }) {
                     {formErrors.to && <span className={styles.formError}>{formErrors.to}</span>}
                   </div>
 
-                  <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '1rem' }}>
-                    🚀 Submit Surveyor Request
+                  <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '1rem' }} disabled={loading}>
+                    {loading ? '⏳ Registering Request...' : '🚀 Submit Surveyor Request'}
                   </button>
                 </form>
               </>

@@ -19,26 +19,34 @@ export default function ContactForm() {
       `_Source: Contact Page — thenationalpackersmovers.com_`
     );
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSending(true);
 
-    // Dispatch automatic background email alert to HQ
-    fetch('/api/enquiry', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: form.name,
-        phone: form.phone,
-        email: form.email,
-        message: form.message,
-        source: 'Contact Page'
-      })
-    }).catch(err => console.error('Error dispatching contact page background alert:', err));
+    try {
+      const res = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          phone: form.phone,
+          email: form.email,
+          message: form.message,
+          source: 'Contact Page'
+        })
+      });
+      if (!res.ok) {
+        console.error('Contact API returned non-OK status');
+      }
+    } catch (err) {
+      console.error('Error dispatching contact page background alert:', err);
+    }
 
     const waUrl = `https://wa.me/919835168368?text=${buildWAMsg()}`;
     window.open(waUrl, '_blank');
-    setTimeout(() => { setSending(false); setSent(true); }, 700);
+
+    setSending(false);
+    setSent(true);
   };
 
   return (

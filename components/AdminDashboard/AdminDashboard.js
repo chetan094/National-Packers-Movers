@@ -30,6 +30,16 @@ export default function AdminDashboard() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState(null);
 
+  // Leads CRM states
+  const [leads, setLeads] = useState([]);
+  const [loadingLeads, setLoadingLeads] = useState(false);
+  const [leadFilterStatus, setLeadFilterStatus] = useState('All');
+  const [leadSearchQuery, setLeadSearchQuery] = useState('');
+  const [editingLead, setEditingLead] = useState(null);
+  const [leadActionLoading, setLeadActionLoading] = useState(false);
+  const [deleteLeadConfirmOpen, setDeleteLeadConfirmOpen] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState(null);
+
   // Auto-generate slug from title
   useEffect(() => {
     if (!editingBlogId) {
@@ -85,6 +95,149 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Logout failed:', error);
     }
+  };
+
+  const fetchLeads = async () => {
+    setLoadingLeads(true);
+    try {
+      const res = await fetch('/api/admin/leads');
+      if (res.ok) {
+        const data = await res.json();
+        setLeads(data);
+      }
+    } catch (err) {
+      console.error('Error fetching leads:', err);
+    } finally {
+      setLoadingLeads(false);
+    }
+  };
+
+  useEffect(() => {
+    if (authorized && activeTab === 'leads') {
+      fetchLeads();
+    }
+  }, [activeTab, authorized]);
+
+  const handleUpdateLeadStatus = async (id, status) => {
+    setLeadActionLoading(true);
+    try {
+      const res = await fetch('/api/admin/leads', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, updates: { status } })
+      });
+      if (res.ok) {
+        setLeads(prev => prev.map(lead => lead.id === id ? { ...lead, status } : lead));
+      } else {
+        alert('Failed to update lead status');
+      }
+    } catch (err) {
+      console.error('Failed to update lead status:', err);
+    } finally {
+      setLeadActionLoading(false);
+    }
+  };
+
+  const handleSaveLeadEdit = async (e) => {
+    e.preventDefault();
+    if (!editingLead) return;
+    setLeadActionLoading(true);
+    try {
+      const res = await fetch('/api/admin/leads', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingLead.id,
+          updates: {
+            name: editingLead.name,
+            phone: editingLead.phone,
+            email: editingLead.email,
+            from_city: editingLead.from_city,
+            to_city: editingLead.to_city,
+            moving_date: editingLead.moving_date,
+            notes: editingLead.notes,
+            status: editingLead.status
+          }
+        })
+      });
+      if (res.ok) {
+        setLeads(prev => prev.map(lead => lead.id === editingLead.id ? { ...lead, ...editingLead } : lead));
+        setEditingLead(null);
+      } else {
+        alert('Failed to save lead updates');
+      }
+    } catch (err) {
+      console.error('Failed to save lead edit:', err);
+    } finally {
+      setLeadActionLoading(false);
+    }
+  };
+
+  const handleDeleteLead = async (id) => {
+    setLeadActionLoading(true);
+    try {
+      const res = await fetch(`/api/admin/leads?id=${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setLeads(prev => prev.filter(lead => lead.id !== id));
+      } else {
+        alert('Failed to delete lead');
+      }
+    } catch (err) {
+      console.error('Failed to delete lead:', err);
+    } finally {
+      setLeadActionLoading(false);
+    }
+  };
+
+  const handleDownloadCSV = () => {
+    const filteredLeads = leads.filter(lead => {
+      const matchesStatus = leadFilterStatus === 'All' || lead.status === leadFilterStatus;
+      
+      const query = leadSearchQuery.toLowerCase();
+      const matchesSearch = 
+        lead.name.toLowerCase().includes(query) ||
+        lead.phone.toLowerCase().includes(query) ||
+        (lead.email && lead.email.toLowerCase().includes(query)) ||
+        (lead.from_city && lead.from_city.toLowerCase().includes(query)) ||
+        (lead.to_city && lead.to_city.toLowerCase().includes(query)) ||
+        lead.source.toLowerCase().includes(query);
+
+      return matchesStatus && matchesSearch;
+    });
+
+    const headers = ['Date Submitted', 'Source', 'Name', 'Phone', 'Email', 'From City', 'To City', 'Moving Date', 'Status', 'Notes', 'Inventory', 'Truck Suggested', 'Volume (CFT)'];
+    const rows = filteredLeads.map(lead => [
+      new Date(lead.created_at).toLocaleString('en-IN'),
+      lead.source,
+      lead.name,
+      lead.phone,
+      lead.email || 'N/A',
+      lead.from_city || 'N/A',
+      lead.to_city || 'N/A',
+      lead.moving_date || 'N/A',
+      lead.status,
+      (lead.notes || '').replace(/"/g, '""'),
+      (lead.inventory || '').replace(/"/g, '""'),
+      lead.matched_vehicle || 'N/A',
+      lead.total_cft || 0
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(val => `"${val}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `NPM_Leads_Export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleFormSubmit = async (e) => {
@@ -317,7 +470,7 @@ export default function AdminDashboard() {
             className={`${styles.navItem} ${activeTab === 'leads' ? styles.navItemActive : ''}`}
             onClick={() => setActiveTab('leads')}
           >
-            📥 Leads Panel <span className={styles.badgeSoon}>Soon</span>
+            📥 Leads Panel
           </button>
         </nav>
 
@@ -589,17 +742,179 @@ export default function AdminDashboard() {
         )}
 
         {activeTab === 'leads' && (
-          <div className={styles.futureModuleWrapper}>
-            <div className={styles.futureCard}>
-              <div className={styles.futureIcon}>📥</div>
-              <h1>Inquiries & Leads Panel</h1>
-              <p className={styles.futureText}>
-                The unified lead capture system will catalog all inquiries from your quote request form and contact form. Admins will be able to review moving requests, assign branch estimates, and send automated quote sheets.
-              </p>
-              <div className={styles.futureAlert}>
-                ℹ&nbsp; Phase 3 Integration: The leads management CRM is scheduled to activate soon.
+          <div className={styles.leadsModuleWrapper}>
+            <div className={styles.leadsHeader}>
+              <div className={styles.leadsHeaderLeft}>
+                <h1>Leads & Enquiry CRM</h1>
+                <p>Track, modify, and manage incoming website moving requests</p>
+              </div>
+              <button 
+                type="button" 
+                className={styles.downloadCsvBtn}
+                onClick={handleDownloadCSV}
+                disabled={leads.length === 0}
+              >
+                📥 Download Filtered CSV
+              </button>
+            </div>
+
+            {/* Filters Bar */}
+            <div className={styles.crmFilters}>
+              <div className={styles.searchBox}>
+                🔍 <input 
+                  type="text" 
+                  placeholder="Search by name, phone, city, source..." 
+                  value={leadSearchQuery}
+                  onChange={e => setLeadSearchQuery(e.target.value)}
+                  className={styles.crmSearchInput}
+                />
+              </div>
+              <div className={styles.statusFilters}>
+                {['All', 'New', 'In Progress', 'Completed', 'Cancelled'].map(st => (
+                  <button
+                    key={st}
+                    type="button"
+                    className={`${styles.filterPill} ${leadFilterStatus === st ? styles.filterPillActive : ''}`}
+                    onClick={() => setLeadFilterStatus(st)}
+                  >
+                    {st}
+                  </button>
+                ))}
               </div>
             </div>
+
+            {/* Leads Table Container */}
+            {loadingLeads ? (
+              <div className={styles.tableSpinnerWrapper}>
+                <div className={styles.spinner}></div>
+                <p>Loading inquiries...</p>
+              </div>
+            ) : leads.filter(lead => {
+              const matchesStatus = leadFilterStatus === 'All' || lead.status === leadFilterStatus;
+              const query = leadSearchQuery.toLowerCase();
+              const matchesSearch = 
+                lead.name.toLowerCase().includes(query) ||
+                lead.phone.toLowerCase().includes(query) ||
+                (lead.email && lead.email.toLowerCase().includes(query)) ||
+                (lead.from_city && lead.from_city.toLowerCase().includes(query)) ||
+                (lead.to_city && lead.to_city.toLowerCase().includes(query)) ||
+                lead.source.toLowerCase().includes(query);
+              return matchesStatus && matchesSearch;
+            }).length === 0 ? (
+              <div className={styles.noLeadsBox}>
+                <span className={styles.noLeadsIcon}>📭</span>
+                <h3>No leads found</h3>
+                <p>No queries match your current filter or search selections.</p>
+              </div>
+            ) : (
+              <div className={styles.tableResponsive}>
+                <table className={styles.crmTable}>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Source</th>
+                      <th>Customer</th>
+                      <th>Phone</th>
+                      <th>Route</th>
+                      <th>Moving Date</th>
+                      <th>Suggested Truck</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {leads
+                      .filter(lead => {
+                        const matchesStatus = leadFilterStatus === 'All' || lead.status === leadFilterStatus;
+                        const query = leadSearchQuery.toLowerCase();
+                        const matchesSearch = 
+                          lead.name.toLowerCase().includes(query) ||
+                          lead.phone.toLowerCase().includes(query) ||
+                          (lead.email && lead.email.toLowerCase().includes(query)) ||
+                          (lead.from_city && lead.from_city.toLowerCase().includes(query)) ||
+                          (lead.to_city && lead.to_city.toLowerCase().includes(query)) ||
+                          lead.source.toLowerCase().includes(query);
+                        return matchesStatus && matchesSearch;
+                      })
+                      .map(lead => (
+                        <tr key={lead.id} className={styles.crmRow}>
+                          <td>{new Date(lead.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
+                          <td><span className={`${styles.sourceBadge} ${styles[`source_${lead.source.replace(/\s+/g, '_')}`]}`}>{lead.source}</span></td>
+                          <td>
+                            <strong className={styles.custName}>{lead.name}</strong>
+                            {lead.email && <span className={styles.custEmail}>{lead.email}</span>}
+                          </td>
+                          <td>
+                            <div className={styles.phoneGroup}>
+                              <a href={`tel:${lead.phone}`} className={styles.phoneLink}>📞 {lead.phone}</a>
+                              <a 
+                                href={`https://wa.me/91${lead.phone.replace(/\D/g,'')}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className={styles.waIconLink}
+                                title="WhatsApp Customer"
+                              >
+                                💬
+                              </a>
+                            </div>
+                          </td>
+                          <td>
+                            {lead.from_city && lead.to_city ? (
+                              <span className={styles.routeText}>{lead.from_city} ➔ {lead.to_city}</span>
+                            ) : (
+                              <span className={styles.routeNA}>N/A</span>
+                            )}
+                          </td>
+                          <td>{lead.moving_date || 'N/A'}</td>
+                          <td>
+                            {lead.matched_vehicle ? (
+                              <span className={styles.truckName} title={lead.inventory}>🚛 {lead.matched_vehicle} ({lead.total_cft} CFT)</span>
+                            ) : (
+                              <span className={styles.truckNA}>N/A</span>
+                            )}
+                          </td>
+                          <td>
+                            <select
+                              value={lead.status}
+                              onChange={e => handleUpdateLeadStatus(lead.id, e.target.value)}
+                              className={`${styles.statusSelect} ${styles[`status_${lead.status.replace(/\s+/g, '_')}`]}`}
+                              disabled={leadActionLoading}
+                            >
+                              <option value="New">🆕 New</option>
+                              <option value="In Progress">⏳ In Progress</option>
+                              <option value="Completed">✅ Completed</option>
+                              <option value="Cancelled">❌ Cancelled</option>
+                            </select>
+                          </td>
+                          <td>
+                            <div className={styles.actionButtons}>
+                              <button
+                                type="button"
+                                className={styles.editBtn}
+                                onClick={() => setEditingLead({ ...lead })}
+                                title="Edit Details"
+                              >
+                                ✏️
+                              </button>
+                              <button
+                                type="button"
+                                className={styles.deleteBtn}
+                                onClick={() => {
+                                  setLeadToDelete(lead);
+                                  setDeleteLeadConfirmOpen(true);
+                                }}
+                                title="Delete Lead"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 
@@ -630,6 +945,164 @@ export default function AdminDashboard() {
                   onClick={() => {
                     setDeleteConfirmOpen(false);
                     setBlogToDelete(null);
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Lead Modal */}
+        {editingLead && (
+          <div className={styles.modalOverlay}>
+            <div className={`${styles.modalCard} ${styles.editLeadCard}`}>
+              <div className={styles.modalHeader}>
+                <h2>Modify Lead Details</h2>
+                <button type="button" className={styles.closeModalBtn} onClick={() => setEditingLead(null)}>✖</button>
+              </div>
+              <form onSubmit={handleSaveLeadEdit} className={styles.editLeadForm}>
+                <div className={styles.formRow2}>
+                  <div className={styles.formGroup2}>
+                    <label>Customer Name *</label>
+                    <input 
+                      type="text" 
+                      required 
+                      value={editingLead.name} 
+                      onChange={e => setEditingLead(p => ({ ...p, name: e.target.value }))}
+                      className={styles.inputStyle}
+                    />
+                  </div>
+                  <div className={styles.formGroup2}>
+                    <label>Phone Number *</label>
+                    <input 
+                      type="text" 
+                      required 
+                      value={editingLead.phone} 
+                      onChange={e => setEditingLead(p => ({ ...p, phone: e.target.value }))}
+                      className={styles.inputStyle}
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.formRow2}>
+                  <div className={styles.formGroup2}>
+                    <label>Email Address</label>
+                    <input 
+                      type="email" 
+                      value={editingLead.email || ''} 
+                      onChange={e => setEditingLead(p => ({ ...p, email: e.target.value }))}
+                      className={styles.inputStyle}
+                    />
+                  </div>
+                  <div className={styles.formGroup2}>
+                    <label>Moving Date</label>
+                    <input 
+                      type="text" 
+                      value={editingLead.moving_date || ''} 
+                      onChange={e => setEditingLead(p => ({ ...p, moving_date: e.target.value }))}
+                      className={styles.inputStyle}
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.formRow2}>
+                  <div className={styles.formGroup2}>
+                    <label>Moving From</label>
+                    <input 
+                      type="text" 
+                      value={editingLead.from_city || ''} 
+                      onChange={e => setEditingLead(p => ({ ...p, from_city: e.target.value }))}
+                      className={styles.inputStyle}
+                    />
+                  </div>
+                  <div className={styles.formGroup2}>
+                    <label>Moving To</label>
+                    <input 
+                      type="text" 
+                      value={editingLead.to_city || ''} 
+                      onChange={e => setEditingLead(p => ({ ...p, to_city: e.target.value }))}
+                      className={styles.inputStyle}
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.formGroup2}>
+                  <label>Lead Status</label>
+                  <select 
+                    value={editingLead.status} 
+                    onChange={e => setEditingLead(p => ({ ...p, status: e.target.value }))}
+                    className={styles.inputStyle}
+                  >
+                    <option value="New">New</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
+
+                <div className={styles.formGroup2}>
+                  <label>Notes / Special Instructions</label>
+                  <textarea 
+                    rows={3} 
+                    value={editingLead.notes || ''} 
+                    onChange={e => setEditingLead(p => ({ ...p, notes: e.target.value }))}
+                    className={styles.textareaStyle}
+                  />
+                </div>
+
+                {editingLead.inventory && (
+                  <div className={styles.inventoryDetailsView}>
+                    <strong>Selected Cargo Inventory Checklist:</strong>
+                    <p>{editingLead.inventory}</p>
+                    {editingLead.matched_vehicle && (
+                      <span className={styles.truckBadgeView}>Matched: 🚛 {editingLead.matched_vehicle} ({editingLead.total_cft} CFT)</span>
+                    )}
+                  </div>
+                )}
+
+                <div className={styles.modalActions}>
+                  <button type="submit" className={styles.saveBtn} disabled={leadActionLoading}>
+                    {leadActionLoading ? 'Saving...' : '💾 Save Changes'}
+                  </button>
+                  <button type="button" className={styles.modalCancelBtn} onClick={() => setEditingLead(null)}>
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Lead Confirmation Modal */}
+        {deleteLeadConfirmOpen && leadToDelete && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalCard}>
+              <div className={styles.modalIcon}>⚠️</div>
+              <h3 className={styles.modalTitle}>Confirm Lead Deletion</h3>
+              <p className={styles.modalText}>
+                Are you sure you want to permanently delete the lead from <strong>{leadToDelete.name}</strong>? This will remove all their shifting requirements and contact details.
+              </p>
+              <div className={styles.modalActions}>
+                <button
+                  type="button"
+                  className={styles.modalDeleteBtn}
+                  onClick={() => {
+                    handleDeleteLead(leadToDelete.id);
+                    setDeleteLeadConfirmOpen(false);
+                    setLeadToDelete(null);
+                  }}
+                  disabled={leadActionLoading}
+                >
+                  {leadActionLoading ? 'Deleting...' : 'Yes, Delete'}
+                </button>
+                <button
+                  type="button"
+                  className={styles.modalCancelBtn}
+                  onClick={() => {
+                    setDeleteLeadConfirmOpen(false);
+                    setLeadToDelete(null);
                   }}
                 >
                   Cancel

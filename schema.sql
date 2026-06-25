@@ -28,3 +28,33 @@ CREATE INDEX IF NOT EXISTS idx_blogs_slug ON blogs(slug);
 -- -- For simplicity and direct backend-to-Supabase REST integration:
 -- CREATE POLICY "Allow admin CRUD access" ON blogs
 --   FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+
+
+-- ========================================================================
+-- Leads Capture and CRM Tables
+-- ========================================================================
+
+CREATE TABLE IF NOT EXISTS leads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR NOT NULL,
+  phone VARCHAR NOT NULL,
+  email VARCHAR,
+  from_city VARCHAR,
+  to_city VARCHAR,
+  moving_date VARCHAR, -- Using VARCHAR to handle different browser date formats safely
+  move_type VARCHAR,
+  notes TEXT,
+  inventory TEXT,
+  matched_vehicle VARCHAR,
+  total_cft INTEGER DEFAULT 0,
+  source VARCHAR NOT NULL, -- e.g., 'Quote Wizard', 'Calculator Modal', 'Contact Page', 'Testimonials Page'
+  status VARCHAR NOT NULL DEFAULT 'New', -- 'New', 'In Progress', 'Completed', 'Cancelled'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexing for fast search and CRM dashboard loading
+CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status);
+CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_leads_phone ON leads(phone);
+CREATE INDEX IF NOT EXISTS idx_leads_name ON leads(name);
+
