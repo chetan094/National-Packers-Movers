@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getBlogs, createBlog } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
-    const blogs = await getBlogs();
+    const blogs = await getBlogs(true);
     return NextResponse.json(blogs);
   } catch (error) {
     console.error('Error in GET /api/blogs:', error);
@@ -22,7 +24,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { title, slug, excerpt, content, image_url, category } = body;
+    const { title, slug, excerpt, content, image_url, category, faqs } = body;
 
     // Validation
     if (!title || !slug || !excerpt || !content || !image_url || !category) {
@@ -36,6 +38,7 @@ export async function POST(request) {
       content,
       image_url,
       category,
+      faqs: faqs || [],
       created_at: new Date().toISOString()
     });
 

@@ -848,10 +848,6 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
             <div className={styles.faqList}>
               <FaqAccordion
                 faqs={allFaqs}
-                itemClass={styles.faqItem}
-                questionClass={styles.faqQuestion}
-                iconClass={styles.faqToggleIcon}
-                answerClass={styles.faqAnswer}
               />
             </div>
           </div>

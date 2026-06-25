@@ -17,6 +17,7 @@ export default function AdminDashboard() {
   const [excerpt, setExcerpt] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [content, setContent] = useState('');
+  const [faqs, setFaqs] = useState([]); // Array of { question, answer }
   const [editingBlogId, setEditingBlogId] = useState(null); // null means CREATE, UUID means EDIT
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState('');
@@ -299,7 +300,7 @@ export default function AdminDashboard() {
     setFormError('');
     setFormSuccess('');
 
-    const payload = { title, slug, category, excerpt, content, image_url: imageUrl };
+    const payload = { title, slug, category, excerpt, content, image_url: imageUrl, faqs };
 
     try {
       let res;
@@ -341,6 +342,7 @@ export default function AdminDashboard() {
     setExcerpt(blog.excerpt);
     setImageUrl(blog.image_url);
     setContent(blog.content);
+    setFaqs(blog.faqs || []);
     setFormError('');
     setFormSuccess('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -417,6 +419,7 @@ export default function AdminDashboard() {
     setExcerpt('');
     setImageUrl('');
     setContent('');
+    setFaqs([]);
     setUploadError('');
   };
 
@@ -734,16 +737,16 @@ export default function AdminDashboard() {
                     <div className={styles.inputGroup}>
                       <label className={styles.label}>Full Article Content (Markdown Supported) *</label>
                       <div className={styles.editorToolbar}>
-                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('bold')} title="Bold">B</button>
-                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('italic')} title="Italic">I</button>
-                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('underline')} title="Underline">U</button>
-                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('highlight')} title="Highlight Text">✒️ Highlight</button>
-                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('h2')} title="Heading 2">H2</button>
-                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('h3')} title="Heading 3">H3</button>
-                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('list')} title="Bullet List">• List</button>
-                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('link')} title="Insert Link">🔗 Link</button>
-                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('info')} title="Info Callout Box">💡 Info Box</button>
-                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('warning')} title="Warning Callout Box">⚠️ Warning Box</button>
+                        <button type="button" className={styles.toolBtn} onMouseDown={(e) => { e.preventDefault(); insertFormat('bold'); }} title="Bold">B</button>
+                        <button type="button" className={styles.toolBtn} onMouseDown={(e) => { e.preventDefault(); insertFormat('italic'); }} title="Italic">I</button>
+                        <button type="button" className={styles.toolBtn} onMouseDown={(e) => { e.preventDefault(); insertFormat('underline'); }} title="Underline">U</button>
+                        <button type="button" className={styles.toolBtn} onMouseDown={(e) => { e.preventDefault(); insertFormat('highlight'); }} title="Highlight Text">✒️ Highlight</button>
+                        <button type="button" className={styles.toolBtn} onMouseDown={(e) => { e.preventDefault(); insertFormat('h2'); }} title="Heading 2">H2</button>
+                        <button type="button" className={styles.toolBtn} onMouseDown={(e) => { e.preventDefault(); insertFormat('h3'); }} title="Heading 3">H3</button>
+                        <button type="button" className={styles.toolBtn} onMouseDown={(e) => { e.preventDefault(); insertFormat('list'); }} title="Bullet List">• List</button>
+                        <button type="button" className={styles.toolBtn} onMouseDown={(e) => { e.preventDefault(); insertFormat('link'); }} title="Insert Link">🔗 Link</button>
+                        <button type="button" className={styles.toolBtn} onMouseDown={(e) => { e.preventDefault(); insertFormat('info'); }} title="Info Callout Box">💡 Info Box</button>
+                        <button type="button" className={styles.toolBtn} onMouseDown={(e) => { e.preventDefault(); insertFormat('warning'); }} title="Warning Callout Box">⚠️ Warning Box</button>
                       </div>
                       <textarea
                         id="blogContentTextarea"
@@ -752,6 +755,71 @@ export default function AdminDashboard() {
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="Write your article body here. Markdown is fully supported (e.g. # Heading, **Bold**, - Bullet points)"
                       />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', marginTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem' }}>
+                        <label className={styles.label} style={{ margin: 0 }}>Frequently Asked Questions (FAQs) - Max 9</label>
+                        <button
+                          type="button"
+                          className={styles.toolBtn}
+                          style={{ padding: '0.4rem 0.8rem', background: 'var(--gold)', color: 'var(--black)', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.85rem' }}
+                          onClick={() => {
+                            if (faqs.length >= 9) {
+                              alert('Maximum of 9 FAQs are allowed.');
+                              return;
+                            }
+                            setFaqs(prev => [...prev, { question: '', answer: '' }]);
+                          }}
+                        >
+                          ➕ Add FAQ Row
+                        </button>
+                      </div>
+                      {faqs.length === 0 ? (
+                        <p style={{ color: 'var(--gray-400)', fontSize: '0.9rem', fontStyle: 'italic', margin: '0 0 1rem 0' }}>
+                          No custom FAQs added yet. Page will fallback to rendering 5 category-related FAQs.
+                        </p>
+                      ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+                          {faqs.map((faq, index) => (
+                            <div key={index} style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                <span style={{ fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--gold)' }}>FAQ #{index + 1}</span>
+                                <button
+                                  type="button"
+                                  style={{ background: 'none', border: 'none', color: '#c1121f', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.85rem' }}
+                                  onClick={() => setFaqs(prev => prev.filter((_, idx) => idx !== index))}
+                                >
+                                  🗑️ Delete
+                                </button>
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                <input
+                                  type="text"
+                                  className={styles.input}
+                                  placeholder={`Question #${index + 1}`}
+                                  value={faq.question}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    setFaqs(prev => prev.map((item, idx) => idx === index ? { ...item, question: val } : item));
+                                  }}
+                                  required
+                                />
+                                <textarea
+                                  className={styles.textarea}
+                                  style={{ height: '70px', minHeight: '50px' }}
+                                  placeholder={`Answer #${index + 1}`}
+                                  value={faq.answer}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    setFaqs(prev => prev.map((item, idx) => idx === index ? { ...item, answer: val } : item));
+                                  }}
+                                  required
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     {formError && <div className={styles.formError}>⚠️ {formError}</div>}

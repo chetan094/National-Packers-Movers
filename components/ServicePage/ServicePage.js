@@ -228,11 +228,6 @@ export default function ServicePage({ service }) {
           <div className={styles.faqList}>
             <FaqAccordion
               faqs={service.faqs}
-              itemClass={styles.faqItem}
-              questionClass={styles.faqQuestion}
-              iconClass={styles.faqIcon}
-              answerClass={styles.faqAnswer}
-              isServicePage={true}
             />
           </div>
         </div>

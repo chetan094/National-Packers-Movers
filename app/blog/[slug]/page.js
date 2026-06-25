@@ -2,7 +2,77 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getBlogBySlug } from '@/lib/supabase';
 import ReadingProgressBar from './ReadingProgressBar';
+import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
 import styles from './page.module.css';
+
+function getFallbackFaqs(category) {
+  const cleanCategory = category ? category.trim() : '';
+  
+  const shiftingFaqs = [
+    { question: 'How early should I start packing?', answer: 'We recommend starting the packing process at least 2 to 3 weeks before your moving date for household goods, and 3 to 4 weeks for larger office relocations.' },
+    { question: 'What items cannot be loaded onto the moving truck?', answer: 'Flammable materials (like petrol, kerosene, gas cylinders), liquid paints, paint thinners, and high-value personal belongings (like gold jewelry, property papers, cash) cannot be loaded for security reasons.' },
+    { question: 'Do you disassemble and reassemble large furniture?', answer: 'Yes, our trained crew disassembles king-size beds, wardrobes, and modular dining tables at the source, wraps them carefully, and reassembles them at your new destination.' },
+    { question: 'What packing materials are used for fragile items?', answer: 'We use high-grade multi-layer bubble wrap, micro-foam sheets, protective cardboard edge guards, and crush-resistant ply cartons for all glassware, chinaware, and electronics.' },
+    { question: 'Is transit insurance mandatory?', answer: 'While not legally mandatory, transit insurance is highly recommended. It covers accidental damage, highway collision, fire, or natural calamity risks during long-distance transport.' }
+  ];
+  
+  const allowanceFaqs = [
+    { question: 'What relocation bills are required for bank/corporate claims?', answer: 'To file a claim, you need the official consignment note (LR copy), itemized packing list, valid payment receipt, transit insurance copy, and vehicle transit bill.' },
+    { question: 'Are GST bills mandatory for relocation reimbursement?', answer: 'Yes, bills must have a valid packers and movers GSTIN, and the GST amount must be clearly itemized for the claim to be verified.' },
+    { question: 'Does the company reimburse car transport costs?', answer: 'Yes, most banks and corporations reimburse car transit charges via dynamic carriers or direct driving allowance, subject to the employee\'s grade scale limits.' },
+    { question: 'How long does it take to settle relocation claims?', answer: 'Claims are usually verified and settled within 7 to 15 working days after submitting all original bills and supporting documents.' },
+    { question: 'Is dynamic packing list weight required?', answer: 'Yes, most HR policies check the declared weight or truck category volume equivalents against the claim norms.' }
+  ];
+  
+  const corporateFaqs = [
+    { question: 'Do you provide shifting services for corporate transitions?', answer: 'Yes, we provide specialized B2B employee relocation, office inventory shifting, server packing, and warehouse storage for corporate clients.' },
+    { question: 'Can you handle commercial equipment or machinery shifting?', answer: 'Yes, we utilize specialized loaders, hydraulic cranes, and heavy-duty trucks to relocate commercial machinery safely across India.' },
+    { question: 'Are your packing services covered by company vouchers?', answer: 'Yes, we accept corporate relocation vouchers and coordinate directly with HR/Admin teams for consolidated invoicing.' },
+    { question: 'What is the policy for corporate goods transit insurance?', answer: 'We provide comprehensive multi-risk transit insurance policies backed by national insurers to cover corporate cargo values.' },
+    { question: 'How do you ensure zero business downtime during office moves?', answer: 'We coordinate weekend shifts or overnight loading operations to ensure your office relocates without affecting daily operations.' }
+  ];
+  
+  const movingGuidesFaqs = [
+    { question: 'How do I transfer my household items across state borders?', answer: 'We compile all national road permits, E-Way bills, and transit declarations to ensure smooth boundary crossing for interstate shifting.' },
+    { question: 'Do I need to clean my items before packing?', answer: 'Yes, dusting furniture, vacuuming mattresses, and defrosting your refrigerator at least 24 hours prior to packing prevents transport dampness.' },
+    { question: 'How should I pack immediate essentials?', answer: 'We recommend packing a separate essentials bag containing basic toiletries, daily medicines, property keys, chargers, and carrying it with you.' },
+    { question: 'When is the best time to book movers?', answer: 'Shifting schedules book up quickly. Booking 10 to 15 days in advance guarantees your preferred shifting date and avoids last-minute premiums.' },
+    { question: 'Do you charge extra for stairs packing?', answer: 'Staircase carrying charges are determined during our pre-move survey and are always pre-disclosed in our transparent quotes.' }
+  ];
+  
+  const vehicleFaqs = [
+    { question: 'How do you transport cars safely across India?', answer: 'We transport cars using specialized car carriers, closed container trailers, or open towing decks with high-tension wheel harnesses.' },
+    { question: 'What documents are required for vehicle transit?', answer: 'We require a photocopy of the vehicle registration certificate (RC), valid insurance paper, and pollution clearance (PUC) certificate.' },
+    { question: 'Should the car fuel tank be full during transport?', answer: 'No, we recommend keeping the fuel tank at around a quarter (1/4) full to ensure safety while driving on and off the carrier.' },
+    { question: 'Are personal items allowed inside the transported vehicle?', answer: 'No, transport authorities prohibit storing personal goods inside vehicle cabins during highway trailer transit.' },
+    { question: 'How long does vehicle transit take?', answer: 'Interstate vehicle transit typically takes 5 to 7 days, depending on route distances and highway rules.' }
+  ];
+  
+  const howToFaqs = [
+    { question: 'Should cushions and pillows be packed separately?', answer: 'Yes, detachable cushions, pillows, and sofa pads should be wrapped in dust-resistant plastic film and packed separately.' },
+    { question: 'What wrap prevents wood moisture and leather damage?', answer: 'We wrap delicate leather and fabric furniture in breathable paper sheets first, followed by thick blankets and stretch film.' },
+    { question: 'How do you pack heavy appliances?', answer: 'Appliances are wrapped in high-density foam, secured with heavy-duty straps, and loaded vertically to protect compressors.' },
+    { question: 'Can I keep books in dresser drawers during the shift?', answer: 'No, dresser drawers must be empty. Keeping heavy books in drawers can damage structural joints during vehicle movement.' },
+    { question: 'How do you protect electronic screens?', answer: 'We wrap LCD/LED screens in thick anti-static bubble wrap, place them between protective card panels, and pack them in specialized TV cartons.' }
+  ];
+
+  if (cleanCategory === 'Relocation Allowance' || cleanCategory === 'Corporate & PSU') {
+    return allowanceFaqs;
+  }
+  if (cleanCategory === 'Corporate Guides') {
+    return corporateFaqs;
+  }
+  if (cleanCategory === 'Moving Guides') {
+    return movingGuidesFaqs;
+  }
+  if (cleanCategory === 'Vehicle Transit') {
+    return vehicleFaqs;
+  }
+  if (cleanCategory === 'How To?') {
+    return howToFaqs;
+  }
+  return shiftingFaqs; // Default shifting fallback
+}
 
 // Revalidate public article page every 30s
 export const revalidate = 30;
@@ -134,6 +204,21 @@ export default async function BlogPostPage({ params }) {
 
   const howToSchema = blog.category === 'How To?' ? generateHowToSchema(blog) : null;
 
+  const faqsList = blog.faqs && blog.faqs.length > 0 ? blog.faqs : getFallbackFaqs(blog.category);
+
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': faqsList.map(faq => ({
+      '@type': 'Question',
+      'name': faq.question,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': faq.answer
+      }
+    }))
+  };
+
   // Calculate reading time
   const wordsPerMinute = 200;
   const words = blog.content ? blog.content.split(/\s+/).length : 0;
@@ -225,6 +310,14 @@ export default async function BlogPostPage({ params }) {
         />
       )}
 
+      {/* ── SEO JSON-LD FAQPage Schema ────────────────────────── */}
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
+
       {/* Scroll indicator bar at the top */}
       <ReadingProgressBar />
 
@@ -266,6 +359,14 @@ export default async function BlogPostPage({ params }) {
             className={styles.articleContent}
             dangerouslySetInnerHTML={{ __html: renderMarkdown(blog.content) }}
           />
+        </section>
+
+        {/* CRAWLER-FRIENDLY ACCORDION FAQs */}
+        <section className={styles.faqSection} id="faq-section">
+          <h2 className={styles.faqSectionTitle}>Frequently Asked Questions (FAQs)</h2>
+          <div className={styles.faqAccordionContainer}>
+            <FaqAccordion faqs={faqsList.map(f => ({ q: f.question, a: f.answer }))} />
+          </div>
         </section>
 
         {/* DYNAMIC B2B/B2C LEAD CTA */}

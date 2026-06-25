@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { updateBlog, deleteBlog } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+
 export async function PATCH(request, { params }) {
   try {
     // Auth Check

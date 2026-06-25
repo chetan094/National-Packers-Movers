@@ -4,11 +4,10 @@ import { useState, useRef, useEffect } from 'react';
 
 export default function FaqAccordion({
   faqs,
-  itemClass,
-  questionClass,
-  iconClass,
-  answerClass,
-  isServicePage = false
+  itemClass = 'centralFaqItem',
+  questionClass = 'centralFaqQuestion',
+  iconClass = 'centralFaqToggleIcon',
+  answerClass = 'centralFaqAnswer'
 }) {
   const [activeIndex, setActiveIndex] = useState(null);
   const detailsRefs = useRef([]);
@@ -99,7 +98,7 @@ export default function FaqAccordion({
               onClick={(e) => handleToggle(e, i)}
             >
               <span>{faq.q}</span>
-              <span className={iconClass}>{isServicePage ? '+' : null}</span>
+              <span className={iconClass}></span>
             </summary>
             <div
               ref={(el) => (contentRefs.current[i] = el)}
