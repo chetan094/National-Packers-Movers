@@ -147,18 +147,27 @@ export default async function BlogPostPage({ params }) {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
+    // Callout blocks - run before \n\n split
+    html = html.replace(/:::info\r?\n([\s\S]*?)\r?\n:::/g, (match, p1) => {
+      const cleanContent = p1.trim().replace(/\n/g, '<br />');
+      return `<div class="infoCallout">${cleanContent}</div>`;
+    });
+    html = html.replace(/:::warning\r?\n([\s\S]*?)\r?\n:::/g, (match, p1) => {
+      const cleanContent = p1.trim().replace(/\n/g, '<br />');
+      return `<div class="warningCallout">${cleanContent}</div>`;
+    });
+
     // Headings
     html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
     html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
     html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
 
-    // Bold
+    // Inline elements
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-    // Italic
     html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-
-    // Blockquotes
+    html = html.replace(/_(.*?)_/g, '<u>$1</u>');
+    html = html.replace(/==(.*?)==/g, '<mark class="goldHighlight">$1</mark>');
+    html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" class="blogLink">$1</a>');
     html = html.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>');
 
     // Bullet Lists
@@ -194,7 +203,9 @@ export default async function BlogPostPage({ params }) {
         trimmed.startsWith('<ul') ||
         trimmed.startsWith('<li') ||
         trimmed.startsWith('<block') ||
-        trimmed.startsWith('</ul')
+        trimmed.startsWith('</ul') ||
+        trimmed.startsWith('<div') ||
+        trimmed.startsWith('</div')
       ) {
         return p;
       }

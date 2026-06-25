@@ -420,6 +420,76 @@ export default function AdminDashboard() {
     setUploadError('');
   };
 
+  const insertFormat = (type) => {
+    const textarea = document.getElementById('blogContentTextarea');
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const value = textarea.value;
+    const selectedText = value.substring(start, end);
+
+    let replacement = '';
+    let cursorOffset = 0;
+
+    switch (type) {
+      case 'bold':
+        replacement = `**${selectedText || 'bold text'}**`;
+        cursorOffset = selectedText ? 0 : 2;
+        break;
+      case 'italic':
+        replacement = `*${selectedText || 'italic text'}*`;
+        cursorOffset = selectedText ? 0 : 1;
+        break;
+      case 'underline':
+        replacement = `_${selectedText || 'underlined text'}_`;
+        cursorOffset = selectedText ? 0 : 1;
+        break;
+      case 'highlight':
+        replacement = `==${selectedText || 'highlighted text'}==`;
+        cursorOffset = selectedText ? 0 : 2;
+        break;
+      case 'h2':
+        replacement = `\n## ${selectedText || 'Heading 2'}\n`;
+        break;
+      case 'h3':
+        replacement = `\n### ${selectedText || 'Heading 3'}\n`;
+        break;
+      case 'list':
+        replacement = `\n- ${selectedText || 'List item'}\n`;
+        break;
+      case 'link':
+        const linkText = selectedText || 'Link Text';
+        const defaultUrl = 'https://example.com';
+        replacement = `[${linkText}](${defaultUrl})`;
+        break;
+      case 'info':
+        replacement = `\n:::info\n${selectedText || 'Information callout content...'}\n:::\n`;
+        break;
+      case 'warning':
+        replacement = `\n:::warning\n${selectedText || 'Warning callout content...'}\n:::\n`;
+        break;
+      default:
+        return;
+    }
+
+    const newValue = value.substring(0, start) + replacement + value.substring(end);
+    setContent(newValue);
+
+    setTimeout(() => {
+      textarea.focus();
+      if (type === 'link') {
+        const linkText = selectedText || 'Link Text';
+        const urlStart = start + 1 + linkText.length + 2;
+        const urlEnd = urlStart + 'https://example.com'.length;
+        textarea.setSelectionRange(urlStart, urlEnd);
+      } else {
+        const newCursorPos = start + replacement.length - cursorOffset;
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 10);
+  };
+
   // Simple Markdown Parsing for Preview Panel
   const renderMarkdown = (text) => {
     if (!text) return '<p style="color:var(--gray-500)">No content written yet. Use the editor to see real-time formatting preview.</p>';
@@ -429,11 +499,27 @@ export default function AdminDashboard() {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
+    // Callout blocks - run before \n\n split
+    html = html.replace(/:::info\r?\n([\s\S]*?)\r?\n:::/g, (match, p1) => {
+      const cleanContent = p1.trim().replace(/\n/g, '<br />');
+      return `<div class="infoCallout">${cleanContent}</div>`;
+    });
+    html = html.replace(/:::warning\r?\n([\s\S]*?)\r?\n:::/g, (match, p1) => {
+      const cleanContent = p1.trim().replace(/\n/g, '<br />');
+      return `<div class="warningCallout">${cleanContent}</div>`;
+    });
+
+    // Headings
     html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
     html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
     html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+
+    // Inline elements
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    html = html.replace(/_(.*?)_/g, '<u>$1</u>');
+    html = html.replace(/==(.*?)==/g, '<mark class="goldHighlight">$1</mark>');
+    html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" class="blogLink">$1</a>');
     html = html.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>');
 
     const lines = html.split('\n');
@@ -467,7 +553,9 @@ export default function AdminDashboard() {
         trimmed.startsWith('<ul') ||
         trimmed.startsWith('<li') ||
         trimmed.startsWith('<block') ||
-        trimmed.startsWith('</ul')
+        trimmed.startsWith('</ul') ||
+        trimmed.startsWith('<div') ||
+        trimmed.startsWith('</div')
       ) {
         return p;
       }
@@ -645,7 +733,20 @@ export default function AdminDashboard() {
 
                     <div className={styles.inputGroup}>
                       <label className={styles.label}>Full Article Content (Markdown Supported) *</label>
+                      <div className={styles.editorToolbar}>
+                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('bold')} title="Bold">B</button>
+                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('italic')} title="Italic">I</button>
+                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('underline')} title="Underline">U</button>
+                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('highlight')} title="Highlight Text">✒️ Highlight</button>
+                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('h2')} title="Heading 2">H2</button>
+                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('h3')} title="Heading 3">H3</button>
+                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('list')} title="Bullet List">• List</button>
+                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('link')} title="Insert Link">🔗 Link</button>
+                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('info')} title="Info Callout Box">💡 Info Box</button>
+                        <button type="button" className={styles.toolBtn} onClick={() => insertFormat('warning')} title="Warning Callout Box">⚠️ Warning Box</button>
+                      </div>
                       <textarea
+                        id="blogContentTextarea"
                         className={`${styles.textarea} ${styles.contentArea}`}
                         value={content}
                         onChange={(e) => setContent(e.target.value)}

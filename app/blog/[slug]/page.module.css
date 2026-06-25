@@ -264,3 +264,54 @@
     text-align: center;
   }
 }
+
+/* MARKDOWN PARSING ENHANCEMENTS */
+.articleContent mark {
+  background: rgba(247, 183, 49, 0.15);
+  border-bottom: 2px solid var(--gold);
+  color: var(--gold-light);
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.articleContent u {
+  text-decoration: underline;
+  text-decoration-color: var(--gold);
+  text-underline-offset: 4px;
+}
+
+.articleContent :global(.blogLink) {
+  color: var(--gold);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  transition: var(--transition-fast);
+  font-weight: 600;
+}
+
+.articleContent :global(.blogLink):hover {
+  color: var(--white);
+  text-decoration-style: solid;
+}
+
+.articleContent :global(.infoCallout),
+.articleContent :global(.warningCallout) {
+  padding: 1.25rem 1.8rem;
+  border-radius: var(--radius-md);
+  margin: 1.8rem 0;
+  font-size: 1.02rem;
+  line-height: 1.6;
+}
+
+.articleContent :global(.infoCallout) {
+  background: rgba(58, 134, 255, 0.06);
+  border-left: 4px solid var(--info);
+  color: var(--gray-100);
+}
+
+.articleContent :global(.warningCallout) {
+  background: rgba(247, 183, 49, 0.06);
+  border-left: 4px solid var(--gold);
+  color: var(--gray-100);
+}
+
