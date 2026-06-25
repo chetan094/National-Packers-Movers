@@ -182,6 +182,11 @@
   background: linear-gradient(to right, var(--navy) 0%, rgba(13,27,42,0.3) 40%, transparent 80%);
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
 .heroBadgeFloat {
   position: absolute;
   bottom: 2rem;
