@@ -1,10 +1,34 @@
 import ServicePage from '@/components/ServicePage/ServicePage';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'Loading & Unloading Services | National Packers & Movers | Labour Service India',
-  description: 'Professional loading and unloading services — trained labour for all types of goods. Household, corporate, industrial. Available across Jharkhand, West Bengal, Bihar & more. Call 9835168368.',
-  keywords: 'loading unloading services india, labour service packers movers, loading service jharkhand, unloading labour dhanbad, goods loading service india',
-};
+export async function generateMetadata() {
+  const path = '/services/loading-unloading';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Loading & Unloading Services | National Packers & Movers | Labour Service India';
+  const description = custom?.meta_description || 'Professional loading and unloading services — trained labour for all types of goods. Household, corporate, industrial. Available across Jharkhand, West Bengal, Bihar & more. Call 9835168368.';
+  const keywords = custom?.meta_keywords || 'loading unloading services india, labour service packers movers, loading service jharkhand, unloading labour dhanbad, goods loading service india';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 const service = {
   slug: 'loading-unloading',

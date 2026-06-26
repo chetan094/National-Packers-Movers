@@ -40,7 +40,7 @@ const STATE_CITIES = {
   ]
 };
 
-const BASE_URL = 'https://thenationalpackersmovers.com';
+const BASE_URL = 'https://www.thenationalpackersmovers.com';
 
 export default async function sitemap() {
   // Core static pages

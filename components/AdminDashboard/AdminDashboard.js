@@ -2,6 +2,154 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '@/app/admin/dashboard/page.module.css';
+import { branchesData } from '@/data/branchesData';
+
+const STATE_CITIES_SEO = {
+  'jharkhand': [
+    'dhanbad', 'ranchi', 'bokaro', 'deoghar', 'jamshedpur', 'hazaribagh', 'giridih', 
+    'ramgarh', 'medininagar', 'daltonganj', 'chas', 'adityapur', 'dumka', 'chatra', 
+    'gumla', 'kodarma', 'koderma', 'pakur', 'sahibganj', 'sahebganj', 'simdega', 
+    'latehar', 'khunti', 'saraikela', 'garhwa', 'lohardaga', 'ghatsila', 'phusro', 
+    'katras', 'jharia', 'govindpur', 'dhansar', 'chirkunda', 'sindri', 'jasidih', 'madhupur'
+  ],
+  'west-bengal': [
+    'kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur', 
+    'haldia', 'bardhaman', 'burdwan', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 
+    'bankura', 'midnapore', 'medinipur', 'krishnanagar', 'barasat', 'barrackpore', 
+    'serampore', 'chinsurah', 'shantiniketan', 'bolpur', 'raniganj', 'burnpur', 'salt-lake', 'newtown', 'rajarhat'
+  ],
+  'bihar': [
+    'patna', 'bhagalpur', 'gaya', 'muzaffarpur', 'purnia', 'darbhanga', 'bihar-sharif', 
+    'ara', 'arrah', 'begusarai', 'katihar', 'munger', 'chhapra', 'danapur', 'bettiah', 
+    'saharsa', 'hajipur', 'sasaram', 'motihari', 'siwan', 'madhubani', 'buxar', 'jehanabad', 
+    'aurangabad', 'nawada', 'jamui', 'kishanganj', 'samastipur', 'lakhisarai', 'gopalganj'
+  ],
+  'madhya-pradesh': [
+    'singrauli', 'waidhan', 'bhopal', 'indore', 'jabalpur', 'gwalior', 'ujjain', 'sagar', 
+    'dewas', 'satna', 'ratlam', 'rewa', 'katni', 'morwa', 'vindhyanagar', 'jayant', 'dudhichua'
+  ],
+  'odisha': [
+    'bhubaneswar', 'cuttack', 'rourkela', 'brahmapur', 'berhampur', 'sambalpur', 'puri', 
+    'balasore', 'bhadrak', 'baripada', 'jharsuguda', 'jeypore', 'rayagada', 'angul', 'balangir', 'virtual-office'
+  ],
+  'uttar-pradesh': [
+    'lucknow', 'kanpur', 'ghaziabad', 'agra', 'meerut', 'varanasi', 'prayagraj', 'allahabad', 
+    'bareilly', 'aligarh', 'moradabad', 'saharanpur', 'gorakhpur', 'noida', 'greater-noida', 
+    'jhansi', 'muzaffarnagar', 'mathura', 'ayodhya', 'faizabad', 'firozabad', 'mirzapur', 
+    'jaunpur', 'hapur', 'loni', 'pilkhuwa', 'coming-soon'
+  ]
+};
+
+const STATIC_PATHS = [
+  { path: '/', label: '🏠 Home Page' },
+  { path: '/about', label: 'ℹ️ About Us' },
+  { path: '/contact', label: '📞 Contact Us' },
+  { path: '/gallery', label: '🖼️ Gallery Hub' },
+  { path: '/testimonials', label: '⭐ Testimonials / Reviews' },
+  { path: '/get-quote', label: '📝 Get a Quote Shifting Wizard' },
+  { path: '/blog', label: '📰 Blogs Index Hub' },
+  { path: '/branches', label: '📍 Branches index Directory' },
+  { path: '/services', label: '⚙️ Services Main index' },
+  { path: '/services/household-relocation', label: '🏠 Service: Household Relocation' },
+  { path: '/services/corporate-relocation', label: '🏢 Service: Corporate Relocation' },
+  { path: '/services/industrial-relocation', label: '🏭 Service: Industrial Relocation' },
+  { path: '/services/vehicle-relocation', label: '🚗 Service: Vehicle Relocation' },
+  { path: '/services/warehousing-storage', label: '📦 Service: Warehousing & Storage' },
+  { path: '/services/transit-insurance', label: '🛡️ Service: Transit Insurance' },
+  { path: '/services/loading-unloading', label: '📦 Service: Loading & Unloading' }
+];
+
+const ALLOWED_STATES_LABEL = {
+  'jharkhand': 'Jharkhand',
+  'west-bengal': 'West Bengal',
+  'bihar': 'Bihar',
+  'madhya-pradesh': 'Madhya Pradesh',
+  'odisha': 'Odisha',
+  'uttar-pradesh': 'Uttar Pradesh'
+};
+
+const STATIC_DEFAULTS = {
+  '/': {
+    title: 'National Packers & Movers — Trusted Since 1987 | All India Service',
+    description: "National Packers & Movers — India's trusted relocation experts since 1987. Household, Corporate, Industrial & Vehicle relocation across Jharkhand, West Bengal, Bihar, MP, UP, Odisha. Get a free quote today.",
+    keywords: 'packers and movers india, national packers movers, household relocation, corporate shifting, industrial transport, vehicle relocation, packers movers dhanbad, packers movers jharkhand'
+  },
+  '/about': {
+    title: 'About Us — National Packers & Movers | Trusted Since 1987',
+    description: 'Learn the story of National Packers & Movers — founded in 1987 by Debabrata Jhampaty. 38+ years of safe, reliable, and affordable relocation services across India. Household, Corporate, Industrial & Vehicle relocation.',
+    keywords: 'about national packers movers, packers movers history, debabrata jhampaty, trusted movers india, relocation company since 1987'
+  },
+  '/contact': {
+    title: 'Contact Us — Office Address & Phone | National Packers & Movers',
+    description: 'Get in touch with National Packers & Movers. Headquarters in Dhanbad, offices across Jharkhand, West Bengal, Bihar, MP, UP. Call 9835168368 or chat on WhatsApp.',
+    keywords: 'packers movers phone number, packers movers address, contact national packers, movers dhanbad office'
+  },
+  '/gallery': {
+    title: 'Gallery — Shifting Videos & Operations Photos | National Packers & Movers',
+    description: 'View real operational photos and customer video testimonials of National Packers & Movers. High-quality bubble wrapping, container trucks, and office moving guides.',
+    keywords: 'packers movers photos, packers movers videos, shifting pictures, national packers gallery'
+  },
+  '/testimonials': {
+    title: 'Client Testimonials — Shifting Reviews & Ratings | National Packers & Movers',
+    description: 'Real reviews and ratings from our home shifting, office relocation, and industrial transport clients. Certified by BCCL, CMPDI, and bank managers since 1987.',
+    keywords: 'packers movers reviews, national packers ratings, customer shifting feedback, IBA approved reviews'
+  },
+  '/get-quote': {
+    title: 'Get Free Shifting Quote — Shifting Charges | National Packers & Movers',
+    description: 'Request a free, transparent shifting quote from National Packers & Movers. High-quality packing, safe loading, and IBA-approved corporate billing. Response within 2 hours.',
+    keywords: 'packers movers quote, packers movers calculator, shifting cost estimator, national packers rates'
+  },
+  '/blog': {
+    title: 'Logistics Insights & Relocation Guides | National Packers & Movers',
+    description: 'Expert advice on corporate and household shifting, vehicle transit, and claiming relocation allowance in India from the leaders in logistics since 1987.',
+    keywords: 'packers and movers blog, relocation tips, home shifting guide, office moving allowance, packing tips'
+  },
+  '/branches': {
+    title: 'Our Branches — All India Relocation Network | National Packers & Movers',
+    description: 'Find a National Packers & Movers branch near you. Serving Jharkhand, West Bengal, Bihar, MP, UP, and Odisha. 100% safe household & corporate shifting.',
+    keywords: 'packers movers branches, packers movers jharkhand, packers movers west bengal, movers bihar, packers movers singrauli'
+  },
+  '/services': {
+    title: 'Our Services | National Packers & Movers | Household, Corporate & Industrial Relocation',
+    description: 'Complete relocation services by National Packers & Movers — household shifting, corporate relocation, industrial transport, vehicle relocation, warehousing and transit insurance across India.',
+    keywords: 'packers movers services india, relocation services jharkhand, household shifting, corporate relocation, vehicle transport, warehousing india'
+  },
+  '/services/household-relocation': {
+    title: 'Household Relocation Services | National Packers & Movers | Trusted Since 1987',
+    description: 'Professional household relocation services by National Packers & Movers. Serving Jharkhand, West Bengal, Bihar, MP & all India. Safe packing, insured transport, expert team. Call 9835168368.',
+    keywords: 'household relocation, home shifting services, packers movers dhanbad, house shifting jharkhand, home relocation india, trusted packers movers 1987'
+  },
+  '/services/corporate-relocation': {
+    title: 'Corporate Relocation Services | National Packers & Movers | PSU & Office Shifting',
+    description: 'Trusted corporate relocation services for PSUs, government offices & private corporations. 500+ corporate moves across 6 states. National Packers & Movers — call 9835168368.',
+    keywords: 'corporate relocation india, office shifting services, PSU relocation, employee relocation jharkhand, corporate movers dhanbad, office movers india'
+  },
+  '/services/industrial-relocation': {
+    title: 'Industrial Relocation Services | National Packers & Movers | Heavy Machinery Transport',
+    description: 'Expert industrial relocation — heavy machinery, factory equipment, industrial plants moved safely across India. Specialized handling, safety compliance. Call 9835168368.',
+    keywords: 'industrial relocation india, heavy machinery transport, factory relocation jharkhand, industrial equipment movers, plant relocation services india'
+  },
+  '/services/vehicle-relocation': {
+    title: 'Vehicle Relocation Services | Car & Bike Transport | National Packers & Movers',
+    description: 'Safe car, bike and vehicle transport across India. GPS tracked, fully insured, enclosed carrier available. National Packers & Movers — trusted vehicle relocation since 1987. Call 9835168368.',
+    keywords: 'vehicle relocation india, car transport jharkhand, bike transport service, car shifting dhanbad, vehicle transport kolkata, car carrier service india'
+  },
+  '/services/warehousing-storage': {
+    title: 'Warehousing & Storage Services | National Packers & Movers | Secure Storage India',
+    description: 'Safe, secure warehousing and storage services across Jharkhand, West Bengal, Bihar & MP. Short-term and long-term storage for household and corporate goods. Call 9835168368.',
+    keywords: 'warehousing services jharkhand, storage solutions india, secure storage dhanbad, warehouse packers movers, short term storage, long term storage india'
+  },
+  '/services/transit-insurance': {
+    title: 'Transit Insurance Services | National Packers & Movers | Goods Insurance India',
+    description: 'Comprehensive transit insurance for all your goods during relocation. Full coverage, quick claim settlement. National Packers & Movers — protecting your belongings since 1987. Call 9835168368.',
+    keywords: 'transit insurance india, goods insurance relocation, moving insurance jharkhand, insurance packers movers, goods protection transit, relocation insurance india'
+  },
+  '/services/loading-unloading': {
+    title: 'Loading & Unloading Services | National Packers & Movers | Labour Service India',
+    description: 'Professional loading and unloading services — trained labour for all types of goods. Household, corporate, industrial. Available across Jharkhand, West Bengal, Bihar & more. Call 9835168368.',
+    keywords: 'loading unloading services india, labour service packers movers, loading service jharkhand, unloading labour dhanbad, goods loading service india'
+  }
+};
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -47,6 +195,188 @@ export default function AdminDashboard() {
   const [analyticsError, setAnalyticsError] = useState('');
   const [showAllPages, setShowAllPages] = useState(false);
   const [pageSearchQuery, setPageSearchQuery] = useState('');
+
+  // SEO tab states
+  const [selectedSeoPath, setSelectedSeoPath] = useState('/');
+  const [seoMetaTitle, setSeoMetaTitle] = useState('');
+  const [seoMetaDescription, setSeoMetaDescription] = useState('');
+  const [seoMetaKeywords, setSeoMetaKeywords] = useState('');
+  const [seoIsNoindex, setSeoIsNoindex] = useState(false);
+  const [seoLoading, setSeoLoading] = useState(false);
+  const [seoSaving, setSeoSaving] = useState(false);
+  const [seoError, setSeoError] = useState('');
+  const [seoSuccess, setSeoSuccess] = useState('');
+  const [seoMetadataList, setSeoMetadataList] = useState([]);
+
+  // Helper to format city names dynamically in options
+  const formatCityName = (slug) => {
+    return slug
+      .split('-')
+      .map(word => {
+        if (word === 'hq') return '(HQ)';
+        if (word === 'bsl') return 'BSL';
+        if (word === 'psu') return 'PSU';
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join(' ');
+  };
+
+  const getDefaultMetadata = (path) => {
+    if (STATIC_DEFAULTS[path]) {
+      return STATIC_DEFAULTS[path];
+    }
+
+    const parts = path.split('/').filter(Boolean);
+    if (parts[0] === 'branches' && parts[1]) {
+      const state = parts[1];
+      if (parts[2]) {
+        const city = parts[2];
+        const cityData = branchesData.cities[city];
+        if (cityData && cityData.stateSlug === state) {
+          return {
+            title: cityData.title,
+            description: cityData.description,
+            keywords: cityData.keywords
+          };
+        } else {
+          const formattedCity = formatCityName(city);
+          const stateName = ALLOWED_STATES_LABEL[state] || formatCityName(state);
+          return {
+            title: `Best Packers and Movers in ${formattedCity} | National Packers & Movers`,
+            description: `Reliable home shifting, office relocation, and vehicle transport services in ${formattedCity}, ${stateName}. 100% insured, secure packing, transparent rates. Get a free quote.`,
+            keywords: `packers and movers ${city}, best packers movers ${city}, shifting services ${city}, house shifting ${city}, vehicle transport ${city}`
+          };
+        }
+      } else {
+        const stateData = branchesData.states[state];
+        if (stateData) {
+          return {
+            title: stateData.title,
+            description: stateData.description,
+            keywords: stateData.keywords
+          };
+        }
+      }
+    }
+
+    if (parts[0] === 'blog' && parts[1]) {
+      const slug = parts[1];
+      const blog = blogs.find(b => b.slug === slug);
+      if (blog) {
+        return {
+          title: `${blog.title} | National Packers & Movers`,
+          description: blog.excerpt,
+          keywords: `${blog.category.toLowerCase()}, packers and movers, shifting advice, ${blog.title.toLowerCase().split(' ').join(', ')}`
+        };
+      } else {
+        return {
+          title: `${formatCityName(slug)} | National Packers & Movers`,
+          description: `Read our latest blog post on ${formatCityName(slug)} by National Packers & Movers.`,
+          keywords: 'packers and movers, shifting advice'
+        };
+      }
+    }
+
+    return {
+      title: 'National Packers & Movers — Trusted Since 1987 | All India Service',
+      description: "National Packers & Movers — India's trusted relocation experts since 1987. Household, Corporate, Industrial & Vehicle relocation across Jharkhand, West Bengal, Bihar, MP, UP, Odisha. Get a free quote today.",
+      keywords: 'packers and movers india, national packers movers, household relocation, corporate shifting, industrial transport, vehicle relocation, packers movers dhanbad, packers movers jharkhand'
+    };
+  };
+
+  const fetchSeoMetadata = async (path) => {
+    setSeoLoading(true);
+    setSeoError('');
+    setSeoSuccess('');
+    try {
+      const res = await fetch(`/api/admin/metadata?path=${encodeURIComponent(path)}`);
+      const defaults = getDefaultMetadata(path);
+      if (res.ok) {
+        const data = await res.json();
+        if (data) {
+          setSeoMetaTitle(data.meta_title || defaults.title);
+          setSeoMetaDescription(data.meta_description || defaults.description);
+          setSeoMetaKeywords(data.meta_keywords || defaults.keywords);
+          setSeoIsNoindex(!!data.is_noindex);
+        } else {
+          setSeoMetaTitle(defaults.title);
+          setSeoMetaDescription(defaults.description);
+          setSeoMetaKeywords(defaults.keywords);
+          setSeoIsNoindex(false);
+        }
+      } else {
+        setSeoError('Failed to fetch custom SEO metadata details.');
+      }
+    } catch (err) {
+      console.error('Error fetching SEO metadata:', err);
+      setSeoError('Network error fetching SEO metadata.');
+    } finally {
+      setSeoLoading(false);
+    }
+  };
+
+  const fetchAllSeoMetadata = async () => {
+    try {
+      const res = await fetch('/api/admin/metadata');
+      if (res.ok) {
+        const data = await res.json();
+        setSeoMetadataList(data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching SEO metadata list:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (authorized && activeTab === 'seo') {
+      fetchAllSeoMetadata();
+      if (selectedSeoPath) {
+        fetchSeoMetadata(selectedSeoPath);
+      }
+    }
+  }, [activeTab, authorized]);
+
+  useEffect(() => {
+    if (authorized && activeTab === 'seo' && selectedSeoPath) {
+      fetchSeoMetadata(selectedSeoPath);
+    }
+  }, [selectedSeoPath]);
+
+  const handleSeoSubmit = async (e) => {
+    e.preventDefault();
+    if (!seoMetaTitle || !seoMetaDescription) {
+      setSeoError('Please fill out Meta Title and Meta Description.');
+      return;
+    }
+    setSeoSaving(true);
+    setSeoError('');
+    setSeoSuccess('');
+    try {
+      const res = await fetch('/api/admin/metadata', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          path: selectedSeoPath,
+          meta_title: seoMetaTitle,
+          meta_description: seoMetaDescription,
+          meta_keywords: seoMetaKeywords,
+          is_noindex: seoIsNoindex
+        })
+      });
+      if (res.ok) {
+        setSeoSuccess('SEO metadata saved successfully!');
+        fetchAllSeoMetadata();
+      } else {
+        const errData = await res.json();
+        setSeoError(errData.error || 'Failed to save SEO metadata');
+      }
+    } catch (err) {
+      console.error('Error saving SEO metadata:', err);
+      setSeoError('Network error occurred while saving SEO metadata.');
+    } finally {
+      setSeoSaving(false);
+    }
+  };
 
   // Auto-generate slug from title
   useEffect(() => {
@@ -617,6 +947,13 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('analytics')}
           >
             📊 Analytics
+          </button>
+          <button
+            type="button"
+            className={`${styles.navItem} ${activeTab === 'seo' ? styles.navItemActive : ''}`}
+            onClick={() => setActiveTab('seo')}
+          >
+            🔍 SEO Settings
           </button>
         </nav>
 
@@ -1498,6 +1835,170 @@ export default function AdminDashboard() {
 
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === 'seo' && (
+          <div>
+            <header className={styles.panelHeader}>
+              <div>
+                <h1 className={styles.panelTitle}>SEO &amp; Search Visibility Manager</h1>
+                <p className={styles.panelSubtitle}>Configure custom page titles, meta descriptions, and Google search visibility settings for any page</p>
+              </div>
+            </header>
+
+            <div className={styles.seoPane}>
+              <div className={styles.paneCard}>
+                <h2 className={styles.paneTitle}>🔍 Custom Meta Details</h2>
+                <form onSubmit={handleSeoSubmit} className={styles.seoForm}>
+                  <div className={styles.inputGroup}>
+                    <label className={styles.label}>Select Page Path *</label>
+                    <select
+                      className={styles.select}
+                      value={selectedSeoPath}
+                      onChange={(e) => setSelectedSeoPath(e.target.value)}
+                    >
+                      <optgroup label="Static &amp; Core Pages">
+                        {STATIC_PATHS.map(item => {
+                          const hasCustom = seoMetadataList.some(m => m.path === item.path);
+                          return (
+                            <option key={item.path} value={item.path}>
+                              {item.label} {hasCustom ? '✓ (Customized)' : ''}
+                            </option>
+                          );
+                        })}
+                      </optgroup>
+                      <optgroup label="State Branch Directories">
+                        {Object.entries(ALLOWED_STATES_LABEL).map(([slug, name]) => {
+                          const path = `/branches/${slug}`;
+                          const hasCustom = seoMetadataList.some(m => m.path === path);
+                          return (
+                            <option key={path} value={path}>
+                              📍 State: {name} ({path}) {hasCustom ? '✓' : ''}
+                            </option>
+                          );
+                        })}
+                      </optgroup>
+                      <optgroup label="All Cities of Operating States">
+                        {Object.entries(STATE_CITIES_SEO).flatMap(([stateSlug, cities]) =>
+                          cities.map(citySlug => {
+                            const path = `/branches/${stateSlug}/${citySlug}`;
+                            const hasCustom = seoMetadataList.some(m => m.path === path);
+                            const cityName = formatCityName(citySlug);
+                            const stateName = ALLOWED_STATES_LABEL[stateSlug];
+                            return (
+                              <option key={path} value={path}>
+                                🏙️ {cityName}, {stateName} ({path}) {hasCustom ? '✓' : ''}
+                              </option>
+                            );
+                          })
+                        )}
+                      </optgroup>
+                      <optgroup label="Dynamic Editorial Articles">
+                        {blogs.map(blog => {
+                          const path = `/blog/${blog.slug}`;
+                          const hasCustom = seoMetadataList.some(m => m.path === path);
+                          return (
+                            <option key={path} value={path}>
+                              📝 Blog: {blog.title} ({path}) {hasCustom ? '✓' : ''}
+                            </option>
+                          );
+                        })}
+                      </optgroup>
+                    </select>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+                    <div style={{ flex: 1, minWidth: '300px' }}>
+                      <div className={styles.inputGroup}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <label className={styles.label}>Meta Title *</label>
+                          <span style={{ fontSize: '0.75rem', color: seoMetaTitle.length > 60 ? '#c1121f' : '#b5e2fa' }}>
+                            {seoMetaTitle.length} / 60 chars (Recommended)
+                          </span>
+                        </div>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          required
+                          value={seoMetaTitle}
+                          onChange={(e) => setSeoMetaTitle(e.target.value)}
+                          placeholder="Google search snippet page title..."
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <label className={styles.label}>Meta Description *</label>
+                          <span style={{ fontSize: '0.75rem', color: seoMetaDescription.length > 160 ? '#c1121f' : '#b5e2fa' }}>
+                            {seoMetaDescription.length} / 160 chars (Recommended)
+                          </span>
+                        </div>
+                        <textarea
+                          className={styles.textarea}
+                          style={{ height: '90px' }}
+                          required
+                          value={seoMetaDescription}
+                          onChange={(e) => setSeoMetaDescription(e.target.value)}
+                          placeholder="Google search snippet summary snippet..."
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Meta Keywords (Comma separated)</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={seoMetaKeywords}
+                          onChange={(e) => setSeoMetaKeywords(e.target.value)}
+                          placeholder="e.g. packers and movers, home shifting, safe moving"
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup} style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <input
+                          type="checkbox"
+                          id="seoIsNoindexCheckbox"
+                          checked={seoIsNoindex}
+                          onChange={(e) => setSeoIsNoindex(e.target.checked)}
+                          style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                        />
+                        <label htmlFor="seoIsNoindexCheckbox" style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--white)', cursor: 'pointer', margin: 0 }}>
+                          🛑 Hide page from Google search engines (noindex)
+                        </label>
+                      </div>
+
+                      {seoError && <div className={styles.formError} style={{ marginTop: '1rem' }}>⚠️ {seoError}</div>}
+                      {seoSuccess && <div className={styles.formSuccess} style={{ marginTop: '1rem' }}>✅ {seoSuccess}</div>}
+
+                      <button type="submit" className={styles.submitBtn} style={{ marginTop: '1.5rem', width: '100%' }} disabled={seoSaving || seoLoading}>
+                        {seoSaving ? 'Saving Metadata...' : '💾 Save Meta Changes'}
+                      </button>
+                    </div>
+
+                    {/* Google Search Snippet Live Preview */}
+                    <div style={{ flex: 1, minWidth: '300px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      <label className={styles.label}>🔍 Google Search Snippet Preview</label>
+                      <div style={{ background: 'var(--black-100)', border: '1px solid rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', fontFamily: 'Arial, sans-serif' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#bdc1c6', marginBottom: '0.25rem' }}>
+                          <span>🔍 thenationalpackersmovers.com</span>
+                          <span style={{ fontSize: '0.65rem' }}>▼</span>
+                        </div>
+                        <div style={{ color: '#8ab4f8', fontSize: '1.25rem', lineHeight: '1.3', textDecoration: 'none', cursor: 'pointer', marginBottom: '0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {seoMetaTitle || 'National Packers & Movers — Trusted Since 1987'}
+                        </div>
+                        <div style={{ color: '#bdc1c6', fontSize: '0.875rem', lineHeight: '1.5', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {seoMetaDescription || "National Packers & Movers — India's trusted relocation experts since 1987. Household, Corporate, Industrial & Vehicle relocation..."}
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--gray-400)', background: 'rgba(255,255,255,0.01)', padding: '1rem', borderRadius: '6px', borderLeft: '3px solid var(--gold)', lineHeight: '1.5' }}>
+                        📌 <strong>SEO Advisory:</strong> Google typically displays up to 60 characters for the title and 160 characters for the description. Characters beyond this range will be truncated with '...' on Search Engine Results Pages (SERPs).
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
         )}
 

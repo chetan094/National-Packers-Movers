@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { branchesData } from '@/data/branchesData';
 import BranchPage from '@/components/BranchPage/BranchPage';
+import { getCustomMetadata } from '@/lib/supabase';
 
 // Enable static generation for all state routes at build time
 export async function generateStaticParams() {
@@ -22,18 +23,30 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  const path = `/branches/${stateSlug}`;
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || stateData.title;
+  const description = custom?.meta_description || stateData.description;
+  const keywords = custom?.meta_keywords || stateData.keywords;
+  const isNoindex = custom?.is_noindex ?? false;
+
   return {
-    title: stateData.title,
-    description: stateData.description,
-    keywords: stateData.keywords,
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
     alternates: {
-      canonical: `https://thenationalpackersmovers.com/branches/${stateSlug}`,
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
     },
     openGraph: {
-      title: stateData.title,
-      description: stateData.description,
+      title,
+      description,
       type: 'website',
-      url: `https://thenationalpackersmovers.com/branches/${stateSlug}`,
+      url: `https://www.thenationalpackersmovers.com${path}`,
     },
   };
 }

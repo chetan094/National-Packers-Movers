@@ -1,12 +1,36 @@
 import Link from 'next/link';
 import styles from './page.module.css';
 import ContactForm from '@/components/ContactForm/ContactForm';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'Contact Us — Office Address & Phone | National Packers & Movers',
-  description: 'Get in touch with National Packers & Movers. Headquarters in Dhanbad, offices across Jharkhand, West Bengal, Bihar, MP, UP. Call 9835168368 or chat on WhatsApp.',
-  keywords: 'packers movers phone number, packers movers address, contact national packers, movers dhanbad office',
-};
+export async function generateMetadata() {
+  const path = '/contact';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Contact Us — Office Address & Phone | National Packers & Movers';
+  const description = custom?.meta_description || 'Get in touch with National Packers & Movers. Headquarters in Dhanbad, offices across Jharkhand, West Bengal, Bihar, MP, UP. Call 9835168368 or chat on WhatsApp.';
+  const keywords = custom?.meta_keywords || 'packers movers phone number, packers movers address, contact national packers, movers dhanbad office';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 const branches = [
   {

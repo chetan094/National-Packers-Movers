@@ -1,11 +1,35 @@
 import styles from './page.module.css';
 import QuoteWizard from '@/components/QuoteWizard/QuoteWizard';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'Get Free Shifting Quote — Shifting Charges | National Packers & Movers',
-  description: 'Request a free, transparent shifting quote from National Packers & Movers. High-quality packing, safe loading, and IBA-approved corporate billing. Response within 2 hours.',
-  keywords: 'packers movers quote, packers movers calculator, shifting cost estimator, national packers rates',
-};
+export async function generateMetadata() {
+  const path = '/get-quote';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Get Free Shifting Quote — Shifting Charges | National Packers & Movers';
+  const description = custom?.meta_description || 'Request a free, transparent shifting quote from National Packers & Movers. High-quality packing, safe loading, and IBA-approved corporate billing. Response within 2 hours.';
+  const keywords = custom?.meta_keywords || 'packers movers quote, packers movers calculator, shifting cost estimator, national packers rates';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 export default function GetQuotePage() {
   return (

@@ -1,10 +1,34 @@
 import ServicePage from '@/components/ServicePage/ServicePage';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'Corporate Relocation Services | National Packers & Movers | PSU & Office Shifting',
-  description: 'Trusted corporate relocation services for PSUs, government offices & private corporations. 500+ corporate moves across 6 states. National Packers & Movers — call 9835168368.',
-  keywords: 'corporate relocation india, office shifting services, PSU relocation, employee relocation jharkhand, corporate movers dhanbad, office movers india',
-};
+export async function generateMetadata() {
+  const path = '/services/corporate-relocation';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Corporate Relocation Services | National Packers & Movers | PSU & Office Shifting';
+  const description = custom?.meta_description || 'Trusted corporate relocation services for PSUs, government offices & private corporations. 500+ corporate moves across 6 states. National Packers & Movers — call 9835168368.';
+  const keywords = custom?.meta_keywords || 'corporate relocation india, office shifting services, PSU relocation, employee relocation jharkhand, corporate movers dhanbad, office movers india';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 const service = {
   slug: 'corporate-relocation',

@@ -298,9 +298,9 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
     'description': data.introText || data.tagline || `Professional home and office shifting services in ${data.name} by National Packers & Movers.`,
     'telephone': isCity ? (data.phone ? data.phone.split('/')[0].trim() : '9835168368') : '9835168368',
     'priceRange': '$$',
-    'image': 'https://thenationalpackersmovers.com/photos/packed-goods.jpg',
-    'url': `https://thenationalpackersmovers.com/branches/${stateSlug}${isCity ? '/' + cityKey : ''}`,
-    'logo': 'https://thenationalpackersmovers.com/logo.png',
+    'image': 'https://www.thenationalpackersmovers.com/photos/packed-goods.jpg',
+    'url': `https://www.thenationalpackersmovers.com/branches/${stateSlug}${isCity ? '/' + cityKey : ''}`,
+    'logo': 'https://www.thenationalpackersmovers.com/logo.png',
     'address': {
       '@type': 'PostalAddress',
       'streetAddress': isCity ? (data.address || 'Central HQ Address') : `Serving ${data.name} Statewide`,
@@ -340,25 +340,25 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
         '@type': 'ListItem',
         'position': 1,
         'name': 'Home',
-        'item': 'https://thenationalpackersmovers.com'
+        'item': 'https://www.thenationalpackersmovers.com'
       },
       {
         '@type': 'ListItem',
         'position': 2,
         'name': 'Branches',
-        'item': 'https://thenationalpackersmovers.com#branches'
+        'item': 'https://www.thenationalpackersmovers.com#branches'
       },
       {
         '@type': 'ListItem',
         'position': 3,
         'name': stateName,
-        'item': `https://thenationalpackersmovers.com/branches/${stateSlug}`
+        'item': `https://www.thenationalpackersmovers.com/branches/${stateSlug}`
       },
       ...(isCity ? [{
         '@type': 'ListItem',
         'position': 4,
         'name': data.name.replace(/ \(hq\)/i, ''),
-        'item': `https://thenationalpackersmovers.com/branches/${stateSlug}/${cityKey}`
+        'item': `https://www.thenationalpackersmovers.com/branches/${stateSlug}/${cityKey}`
       }] : [])
     ]
   };

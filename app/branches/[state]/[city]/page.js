@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { branchesData } from '@/data/branchesData';
 import BranchPage from '@/components/BranchPage/BranchPage';
+import { getCustomMetadata } from '@/lib/supabase';
 
 const ALLOWED_STATES = {
   'jharkhand': 'Jharkhand',
@@ -103,44 +104,48 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  const path = `/branches/${state}/${city}`;
+  const custom = await getCustomMetadata(path);
+
   const cityData = branchesData.cities[city];
+  let defaultTitle = '';
+  let defaultDescription = '';
+  let defaultKeywords = '';
 
   // If registered and belongs to the correct state
   if (cityData && cityData.stateSlug === state) {
-    return {
-      title: cityData.title,
-      description: cityData.description,
-      keywords: cityData.keywords,
-      alternates: {
-        canonical: `https://thenationalpackersmovers.com/branches/${state}/${city}`,
-      },
-      openGraph: {
-        title: cityData.title,
-        description: cityData.description,
-        type: 'website',
-        url: `https://thenationalpackersmovers.com/branches/${state}/${city}`,
-      },
-    };
+    defaultTitle = cityData.title;
+    defaultDescription = cityData.description;
+    defaultKeywords = cityData.keywords;
+  } else {
+    // Programmatic fallback for unregistered cities in active states
+    const formattedCity = formatCityName(city);
+    defaultTitle = `Best Packers and Movers in ${formattedCity} | National Packers & Movers`;
+    defaultDescription = `Reliable home shifting, office relocation, and vehicle transport services in ${formattedCity}, ${stateName}. 100% insured, secure packing, transparent rates. Get a free quote.`;
+    defaultKeywords = `packers and movers ${city}, best packers movers ${city}, shifting services ${city}, house shifting ${city}, vehicle transport ${city}`;
   }
 
-  // Programmatic fallback for unregistered cities in active states
-  const formattedCity = formatCityName(city);
-  const title = `Best Packers and Movers in ${formattedCity} | National Packers & Movers`;
-  const description = `Reliable home shifting, office relocation, and vehicle transport services in ${formattedCity}, ${stateName}. 100% insured, secure packing, transparent rates. Get a free quote.`;
-  const keywords = `packers and movers ${city}, best packers movers ${city}, shifting services ${city}, house shifting ${city}, vehicle transport ${city}`;
+  const title = custom?.meta_title || defaultTitle;
+  const description = custom?.meta_description || defaultDescription;
+  const keywords = custom?.meta_keywords || defaultKeywords;
+  const isNoindex = custom?.is_noindex ?? false;
 
   return {
     title,
     description,
     keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
     alternates: {
-      canonical: `https://thenationalpackersmovers.com/branches/${state}/${city}`,
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
     },
     openGraph: {
       title,
       description,
       type: 'website',
-      url: `https://thenationalpackersmovers.com/branches/${state}/${city}`,
+      url: `https://www.thenationalpackersmovers.com${path}`,
     },
   };
 }

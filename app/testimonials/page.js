@@ -4,6 +4,7 @@ import styles from './page.module.css';
 import TestimonialsFeed from '@/components/TestimonialsFeed/TestimonialsFeed';
 import TestimonialsForms from '@/components/TestimonialsForms/TestimonialsForms';
 import YouTubePlayer from '@/components/YouTubePlayer/YouTubePlayer';
+import { getCustomMetadata } from '@/lib/supabase';
 
 // Collage Images
 const COLLAGE_IMAGES = [
@@ -19,11 +20,34 @@ const YT_REVIEWS = [
   { id: 'jB50wiVM0Zo', title: 'CMPDI executive customer feedback' }
 ];
 
-export const metadata = {
-  title: 'Client Testimonials — Shifting Reviews & Ratings | National Packers & Movers',
-  description: 'Real reviews and ratings from our home shifting, office relocation, and industrial transport clients. Certified by BCCL, CMPDI, and bank managers since 1987.',
-  keywords: 'packers movers reviews, national packers ratings, customer shifting feedback, IBA approved reviews',
-};
+export async function generateMetadata() {
+  const path = '/testimonials';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Client Testimonials — Shifting Reviews & Ratings | National Packers & Movers';
+  const description = custom?.meta_description || 'Real reviews and ratings from our home shifting, office relocation, and industrial transport clients. Certified by BCCL, CMPDI, and bank managers since 1987.';
+  const keywords = custom?.meta_keywords || 'packers movers reviews, national packers ratings, customer shifting feedback, IBA approved reviews';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 export default function TestimonialsPage() {
   // 1. Gather all unique testimonials from branchesData
@@ -90,9 +114,9 @@ export default function TestimonialsPage() {
     'description': 'Real reviews and ratings from our home shifting, office relocation, and industrial transport clients since 1987.',
     'telephone': '9835168368',
     'priceRange': '$$',
-    'image': 'https://thenationalpackersmovers.com/photos/packed-goods.jpg',
-    'url': 'https://thenationalpackersmovers.com/testimonials',
-    'logo': 'https://thenationalpackersmovers.com/logo.png',
+    'image': 'https://www.thenationalpackersmovers.com/photos/packed-goods.jpg',
+    'url': 'https://www.thenationalpackersmovers.com/testimonials',
+    'logo': 'https://www.thenationalpackersmovers.com/logo.png',
     'address': {
       '@type': 'PostalAddress',
       'streetAddress': 'Kasturba Nagar, Near Dhanbad Thana, Dhanbad',

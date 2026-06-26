@@ -5,6 +5,6 @@ export default function robots() {
       allow: '/',
       disallow: '/admin/',
     },
-    sitemap: 'https://thenationalpackersmovers.com/sitemap.xml',
+    sitemap: 'https://www.thenationalpackersmovers.com/sitemap.xml',
   };
 }

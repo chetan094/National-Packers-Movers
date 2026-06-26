@@ -2,12 +2,36 @@ import Link from 'next/link';
 import styles from './page.module.css';
 import GalleryGrid from '@/components/GalleryGrid/GalleryGrid';
 import VideoShowcase from '@/components/VideoShowcase/VideoShowcase';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'Gallery — Shifting Videos & Operations Photos | National Packers & Movers',
-  description: 'View real operational photos and customer video testimonials of National Packers & Movers. High-quality bubble wrapping, container trucks, and office moving guides.',
-  keywords: 'packers movers photos, packers movers videos, shifting pictures, national packers gallery',
-};
+export async function generateMetadata() {
+  const path = '/gallery';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Gallery — Shifting Videos & Operations Photos | National Packers & Movers';
+  const description = custom?.meta_description || 'View real operational photos and customer video testimonials of National Packers & Movers. High-quality bubble wrapping, container trucks, and office moving guides.';
+  const keywords = custom?.meta_keywords || 'packers movers photos, packers movers videos, shifting pictures, national packers gallery';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 export default function GalleryPage() {
   return (

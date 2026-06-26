@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getBlogBySlug } from '@/lib/supabase';
+import { getBlogBySlug, getCustomMetadata } from '@/lib/supabase';
 import ReadingProgressBar from './ReadingProgressBar';
 import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
 import styles from './page.module.css';
@@ -86,14 +86,31 @@ export async function generateMetadata({ params }) {
       description: 'The requested blog post could not be found.'
     };
   }
+
+  const path = `/blog/${slug}`;
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || `${blog.title} | National Packers & Movers`;
+  const description = custom?.meta_description || blog.excerpt;
+  const keywords = custom?.meta_keywords || `${blog.category.toLowerCase()}, packers and movers, shifting advice, ${blog.title.toLowerCase().split(' ').join(', ')}`;
+  const isNoindex = custom?.is_noindex ?? false;
+
   return {
-    title: `${blog.title} | National Packers & Movers`,
-    description: blog.excerpt,
-    keywords: `${blog.category.toLowerCase()}, packers and movers, shifting advice, ${blog.title.toLowerCase().split(' ').join(', ')}`,
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
     openGraph: {
-      title: blog.title,
-      description: blog.excerpt,
-      images: [{ url: blog.image_url }]
+      title,
+      description,
+      images: [{ url: blog.image_url }],
+      url: `https://www.thenationalpackersmovers.com${path}`,
     }
   };
 }

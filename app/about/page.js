@@ -1,11 +1,35 @@
 import Link from 'next/link';
 import styles from './page.module.css';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'About Us — National Packers & Movers | Trusted Since 1987',
-  description: 'Learn the story of National Packers & Movers — founded in 1987 by Debabrata Jhampaty. 38+ years of safe, reliable, and affordable relocation services across India. Household, Corporate, Industrial & Vehicle relocation.',
-  keywords: 'about national packers movers, packers movers history, debabrata jhampaty, trusted movers india, relocation company since 1987',
-};
+export async function generateMetadata() {
+  const path = '/about';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'About Us — National Packers & Movers | Trusted Since 1987';
+  const description = custom?.meta_description || 'Learn the story of National Packers & Movers — founded in 1987 by Debabrata Jhampaty. 38+ years of safe, reliable, and affordable relocation services across India. Household, Corporate, Industrial & Vehicle relocation.';
+  const keywords = custom?.meta_keywords || 'about national packers movers, packers movers history, debabrata jhampaty, trusted movers india, relocation company since 1987';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 const milestones = [
   {

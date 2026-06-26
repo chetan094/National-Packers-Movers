@@ -1,15 +1,38 @@
-import { getBlogs } from '@/lib/supabase';
+import { getBlogs, getCustomMetadata } from '@/lib/supabase';
 import BlogGrid from './BlogGrid';
 import styles from './page.module.css';
 
 // Revalidate public blog index listing page every 30s
 export const revalidate = 30;
 
-export const metadata = {
-  title: 'Logistics Insights & Relocation Guides | National Packers & Movers',
-  description: 'Expert advice on corporate and household shifting, vehicle transit, and claiming relocation allowance in India from the leaders in logistics since 1987.',
-  keywords: 'packers and movers blog, relocation tips, home shifting guide, office moving allowance, packing tips',
-};
+export async function generateMetadata() {
+  const path = '/blog';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Logistics Insights & Relocation Guides | National Packers & Movers';
+  const description = custom?.meta_description || 'Expert advice on corporate and household shifting, vehicle transit, and claiming relocation allowance in India from the leaders in logistics since 1987.';
+  const keywords = custom?.meta_keywords || 'packers and movers blog, relocation tips, home shifting guide, office moving allowance, packing tips';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 export default async function BlogIndexPage() {
   const blogs = await getBlogs();

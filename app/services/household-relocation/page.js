@@ -1,10 +1,34 @@
 import ServicePage from '@/components/ServicePage/ServicePage';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'Household Relocation Services | National Packers & Movers | Trusted Since 1987',
-  description: 'Professional household relocation services by National Packers & Movers. Serving Jharkhand, West Bengal, Bihar, MP & all India. Safe packing, insured transport, expert team. Call 9835168368.',
-  keywords: 'household relocation, home shifting services, packers movers dhanbad, house shifting jharkhand, home relocation india, trusted packers movers 1987',
-};
+export async function generateMetadata() {
+  const path = '/services/household-relocation';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Household Relocation Services | National Packers & Movers | Trusted Since 1987';
+  const description = custom?.meta_description || 'Professional household relocation services by National Packers & Movers. Serving Jharkhand, West Bengal, Bihar, MP & all India. Safe packing, insured transport, expert team. Call 9835168368.';
+  const keywords = custom?.meta_keywords || 'household relocation, home shifting services, packers movers dhanbad, house shifting jharkhand, home relocation india, trusted packers movers 1987';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 const service = {
   slug: 'household-relocation',

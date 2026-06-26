@@ -1,10 +1,34 @@
 import ServicePage from '@/components/ServicePage/ServicePage';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'Transit Insurance Services | National Packers & Movers | Goods Insurance India',
-  description: 'Comprehensive transit insurance for all your goods during relocation. Full coverage, quick claim settlement. National Packers & Movers — protecting your belongings since 1987. Call 9835168368.',
-  keywords: 'transit insurance india, goods insurance relocation, moving insurance jharkhand, insurance packers movers, goods protection transit, relocation insurance india',
-};
+export async function generateMetadata() {
+  const path = '/services/transit-insurance';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Transit Insurance Services | National Packers & Movers | Goods Insurance India';
+  const description = custom?.meta_description || 'Comprehensive transit insurance for all your goods during relocation. Full coverage, quick claim settlement. National Packers & Movers — protecting your belongings since 1987. Call 9835168368.';
+  const keywords = custom?.meta_keywords || 'transit insurance india, goods insurance relocation, moving insurance jharkhand, insurance packers movers, goods protection transit, relocation insurance india';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 const service = {
   slug: 'transit-insurance',

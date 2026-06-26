@@ -1,12 +1,36 @@
 import Link from 'next/link';
 import { branchesData } from '@/data/branchesData';
 import styles from './page.module.css';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'Our Branches — All India Relocation Network | National Packers & Movers',
-  description: 'Find a National Packers & Movers branch near you. Serving Jharkhand, West Bengal, Bihar, MP, UP, and Odisha. 100% safe household & corporate shifting.',
-  keywords: 'packers movers branches, packers movers jharkhand, packers movers west bengal, movers bihar, packers movers singrauli',
-};
+export async function generateMetadata() {
+  const path = '/branches';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Our Branches — All India Relocation Network | National Packers & Movers';
+  const description = custom?.meta_description || 'Find a National Packers & Movers branch near you. Serving Jharkhand, West Bengal, Bihar, MP, UP, and Odisha. 100% safe household & corporate shifting.';
+  const keywords = custom?.meta_keywords || 'packers movers branches, packers movers jharkhand, packers movers west bengal, movers bihar, packers movers singrauli';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 export default function BranchesIndexPage() {
   const states = Object.entries(branchesData.states);

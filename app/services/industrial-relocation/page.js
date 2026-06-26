@@ -1,10 +1,34 @@
 import ServicePage from '@/components/ServicePage/ServicePage';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'Industrial Relocation Services | National Packers & Movers | Heavy Machinery Transport',
-  description: 'Expert industrial relocation — heavy machinery, factory equipment, industrial plants moved safely across India. Specialized handling, safety compliance. Call 9835168368.',
-  keywords: 'industrial relocation india, heavy machinery transport, factory relocation jharkhand, industrial equipment movers, plant relocation services india',
-};
+export async function generateMetadata() {
+  const path = '/services/industrial-relocation';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Industrial Relocation Services | National Packers & Movers | Heavy Machinery Transport';
+  const description = custom?.meta_description || 'Expert industrial relocation — heavy machinery, factory equipment, industrial plants moved safely across India. Specialized handling, safety compliance. Call 9835168368.';
+  const keywords = custom?.meta_keywords || 'industrial relocation india, heavy machinery transport, factory relocation jharkhand, industrial equipment movers, plant relocation services india';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 const service = {
   slug: 'industrial-relocation',

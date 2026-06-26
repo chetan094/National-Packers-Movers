@@ -22,12 +22,12 @@ export const metadata = {
   description: 'National Packers & Movers — India\'s trusted relocation experts since 1987. Household, Corporate, Industrial & Vehicle relocation across Jharkhand, West Bengal, Bihar, MP, UP, Odisha. Get a free quote today.',
   keywords: 'packers and movers india, national packers movers, household relocation, corporate shifting, industrial transport, vehicle relocation, packers movers dhanbad, packers movers jharkhand',
   alternates: {
-    canonical: 'https://thenationalpackersmovers.com',
+    canonical: 'https://www.thenationalpackersmovers.com',
   },
   openGraph: {
     title: 'National Packers & Movers — Trusted Since 1987',
     description: 'Professional relocation services across India. Serving 6 states, 15+ cities since 1987.',
-    url: 'https://thenationalpackersmovers.com',
+    url: 'https://www.thenationalpackersmovers.com',
     siteName: 'National Packers & Movers',
     type: 'website',
   },

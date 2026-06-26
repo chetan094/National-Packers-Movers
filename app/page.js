@@ -5,12 +5,36 @@ import ClientMarquee from '@/components/ClientMarquee/ClientMarquee';
 import TrustStats from '@/components/TrustStats/TrustStats';
 import HeroSlideshow from '@/components/HeroSlideshow/HeroSlideshow';
 import TestimonialsSlider from '@/components/TestimonialsSlider/TestimonialsSlider';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'National Packers & Movers — Trusted Since 1987 | All India Service',
-  description: 'National Packers & Movers — India\'s trusted relocation experts since 1987. Household, Corporate, Industrial & Vehicle relocation across Jharkhand, West Bengal, Bihar, MP, UP, Odisha. Get a free quote today.',
-  keywords: 'packers and movers india, national packers movers, household relocation, corporate shifting, industrial transport, vehicle relocation, packers movers dhanbad, packers movers jharkhand',
-};
+export async function generateMetadata() {
+  const path = '/';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'National Packers & Movers — Trusted Since 1987 | All India Service';
+  const description = custom?.meta_description || "National Packers & Movers — India's trusted relocation experts since 1987. Household, Corporate, Industrial & Vehicle relocation across Jharkhand, West Bengal, Bihar, MP, UP, Odisha. Get a free quote today.";
+  const keywords = custom?.meta_keywords || 'packers and movers india, national packers movers, household relocation, corporate shifting, industrial transport, vehicle relocation, packers movers dhanbad, packers movers jharkhand';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: 'https://www.thenationalpackersmovers.com',
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: 'https://www.thenationalpackersmovers.com',
+    },
+  };
+}
 
 const serviceCategories = [
   {

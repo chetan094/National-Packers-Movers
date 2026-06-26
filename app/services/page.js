@@ -1,11 +1,35 @@
 import Link from 'next/link';
 import styles from './page.module.css';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'Our Services | National Packers & Movers | Household, Corporate & Industrial Relocation',
-  description: 'Complete relocation services by National Packers & Movers — household shifting, corporate relocation, industrial transport, vehicle relocation, warehousing and transit insurance across India.',
-  keywords: 'packers movers services india, relocation services jharkhand, household shifting, corporate relocation, vehicle transport, warehousing india',
-};
+export async function generateMetadata() {
+  const path = '/services';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Our Services | National Packers & Movers | Household, Corporate & Industrial Relocation';
+  const description = custom?.meta_description || 'Complete relocation services by National Packers & Movers — household shifting, corporate relocation, industrial transport, vehicle relocation, warehousing and transit insurance across India.';
+  const keywords = custom?.meta_keywords || 'packers movers services india, relocation services jharkhand, household shifting, corporate relocation, vehicle transport, warehousing india';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 const services = [
   {
