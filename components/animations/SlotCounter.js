@@ -11,7 +11,7 @@ import { useState, useEffect, useRef } from 'react';
  *   locale: whether to use Indian number formatting (default true)
  */
 export default function SlotCounter({ end, suffix = '', duration = 2400, locale = true }) {
-  const [display, setDisplay] = useState(0);
+  const [display, setDisplay] = useState(end);
   const [started, setStarted] = useState(false);
   const ref = useRef(null);
 
@@ -26,6 +26,8 @@ export default function SlotCounter({ end, suffix = '', duration = 2400, locale 
 
   useEffect(() => {
     if (!started) return;
+
+    setDisplay(0);
 
     const spinDuration = duration * 0.58;  // 58% rapid spin
     const settleDuration = duration * 0.42; // 42% smooth settle
