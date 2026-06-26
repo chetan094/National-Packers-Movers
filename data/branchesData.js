@@ -10,7 +10,7 @@ export const branchesData = {
       cities: ['dhanbad', 'ranchi', 'bokaro', 'deoghar'],
       stats: [
         { number: 18000, suffix: '+', label: 'Moves in Jharkhand' },
-        { number: 38, suffix: '', label: 'Years HQ in Dhanbad' },
+        { number: 38, suffix: '', label: 'Years Trusted Legacy' },
         { number: 4, suffix: '', label: 'Active Branches' },
         { number: 100, suffix: '%', label: 'Transit Safety' }
       ],
@@ -81,7 +81,7 @@ export const branchesData = {
       description: 'Coordinate relocations in Bhubaneswar, Cuttack, and all Odisha cities through our virtual office network. Secure packing and full transit insurance.',
       keywords: 'packers and movers odisha, movers in bhubaneswar, cuttack relocation',
       introTitle: 'Seamless Logistics Coordination in Odisha',
-      introText: 'National Packers & Movers services Odisha through a highly coordinated Virtual Office network. While all bookings and administration are run through our Dhanbad HQ, we dispatch specialized teams and vehicles from our neighboring hubs to execute safe, prompt relocations in Bhubaneswar, Cuttack, Rourkela, and beyond.',
+      introText: 'National Packers & Movers services Odisha through a highly coordinated Virtual Office network. While all bookings and administration are run through our regional administrative coordination network, we dispatch specialized teams and vehicles from our neighboring hubs to execute safe, prompt relocations in Bhubaneswar, Cuttack, Rourkela, and beyond.',
       cities: ['virtual-office'],
       stats: [
         { number: 950,  suffix: '+', label: 'Odisha Bookings' },
@@ -122,6 +122,7 @@ export const branchesData = {
       keywords: 'packers and movers dhanbad, best packers movers dhanbad, house shifting dhanbad, office relocation dhanbad, trusted packers 1987',
       address: 'Kasturba Nagar, Near Dhanbad Thana, Dhanbad, Jharkhand — 826001',
       phone: '9835168368 / 9934166164',
+      mapEmbed: 'https://maps.google.com/maps?q=National%20Packers%20%26%20Movers%2C%20Beside%20Green%20View%20Petrol%20Pump%2C%20Kasturba%20Nagar%2C%20Dhanbad%2C%20Jharkhand%20826001&t=&z=15&ie=UTF8&iwloc=&output=embed',
       tagline: 'Our Headquarters — The Core of Our Operations',
       introText: 'As our central headquarters, our Dhanbad branch represents the pinnacle of National Packers & Movers. Since 1987, we have been the undisputed leaders in home shifting, office relocation, and industrial transport in Dhanbad, Katras, Jharia, and surrounding coalfields. With our fully owned fleet, background-verified packing crew, and direct supervisor monitoring, your move is in safe, professional hands.',
       faqs: [
@@ -305,24 +306,6 @@ export const branchesData = {
       testimonials: [
         { name: 'Vinod Ram', text: 'Amazing service by National Packers and Movers. They provided fast loading, safe packing and transit for me. I shifted from Dhanbad to Singrauli. I strongly recommend this packers for safe relocation. Best packers and movers in Singrauli.', rating: 5, initials: 'VR' },
         { name: 'Mukesh', text: 'Best packers and movers for household relocation service. I strongly recommend National Packers & Movers. They relocated my goods from Singrauli to Delhi with a closed container truck at a very appealing cost and gave a premium service. Best packers movers Singrauli.', rating: 5, initials: 'M' }
-      ]
-    },
-    'virtual-office': {
-      name: 'Odisha (Virtual Office)',
-      stateSlug: 'odisha',
-      stateName: 'Odisha',
-      title: 'Packers and Movers in Odisha | Virtual Office Coordination',
-      description: 'Coordinate relocations in Bhubaneswar, Cuttack, and all Odisha cities. Background-verified packing crews and fully insured trucks dispatched from nearby hubs.',
-      keywords: 'packers and movers odisha, packers movers bhubaneswar, cuttack relocation',
-      address: 'Odisha Virtual Office Operations (All bookings coordinated via HQ)',
-      phone: '9835168368 / 9934166164',
-      tagline: 'Digital Coordination for Odisha Relocations',
-      introText: 'While we operate through digital coordination in Odisha, our logistics coverage is extensive. We deploy our packing teams and dedicated container trucks from our closest hubs to handle relocations in Bhubaneswar, Cuttack, Rourkela, Sambalpur, and Balasore. All planning, tracking, and customer support are centrally managed from our Dhanbad HQ to ensure high accountability.',
-      faqs: [
-        { q: 'How do you execute moves in Odisha without a physical branch?', a: 'We send our packing crew and truck from our closest regional hub. Your point of contact remains our central HQ, ensuring corporate-level oversight and verified billing.' }
-      ],
-      testimonials: [
-        { name: 'Jyoti Ranjan', text: 'My household movement from Bhubaneswar to Dhanbad was handled smoothly. The crew arrived on time and packed everything beautifully. Highly professional coordination.', rating: 5, initials: 'JR' }
       ]
     },
     'coming-soon': {

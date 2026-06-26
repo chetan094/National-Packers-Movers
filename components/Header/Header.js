@@ -291,7 +291,7 @@ export default function Header() {
                       ) : (
                         <div className={styles.cityItem}>
                           <span style={{color:'var(--gray-300)', fontSize:'0.85rem'}}>
-                            Virtual Office — All enquiries<br/>handled through HQ Dhanbad
+                            Virtual Office — All enquiries<br/>handled through HQ
                           </span>
                         </div>
                       )}

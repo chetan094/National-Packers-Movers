@@ -38,7 +38,7 @@ const STATE_CITIES = {
   ],
   'odisha': [
     'bhubaneswar', 'cuttack', 'rourkela', 'brahmapur', 'berhampur', 'sambalpur', 'puri', 
-    'balasore', 'bhadrak', 'baripada', 'jharsuguda', 'jeypore', 'rayagada', 'angul', 'balangir', 'virtual-office'
+    'balasore', 'bhadrak', 'baripada', 'jharsuguda', 'jeypore', 'rayagada', 'angul', 'balangir'
   ],
   'uttar-pradesh': [
     'lucknow', 'kanpur', 'ghaziabad', 'agra', 'meerut', 'varanasi', 'prayagraj', 'allahabad', 
@@ -187,7 +187,7 @@ export default async function CityBranchPage({ params }) {
     title: `Best Packers and Movers in ${formattedCity} | National Packers & Movers`,
     description: `Reliable home shifting, office relocation, and vehicle transport services in ${formattedCity}, ${stateName}. 100% insured, secure packing, transparent rates. Get a free quote.`,
     keywords: `packers and movers ${city}, best packers movers ${city}, shifting services ${city}, house shifting ${city}, vehicle transport ${city}`,
-    address: `Doorstep relocation service across ${formattedCity} and surrounding areas, ${stateName} — Coordinated via HQ Dhanbad`,
+    address: `Doorstep relocation service across ${formattedCity} and surrounding areas, ${stateName} — Coordinated via HQ`,
     phone: '9835168368 / 9934166164',
     tagline: `Your Trusted Shifting Partners in ${formattedCity}`,
     introText: `National Packers & Movers brings our 38+ years of logistics excellence and honest service to ${formattedCity}, ${stateName}. Specializing in household relocations, vehicle shifting, and corporate office moves, our background-verified teams coordinate complete relocations from any neighborhood in ${formattedCity} to any destination across India, backed by direct lockable container vehicles and full transit insurance.`,

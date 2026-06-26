@@ -71,12 +71,12 @@ const branches = [
   {
     state: 'Odisha',
     icon: '📍',
-    cities: [{ name: 'Virtual Office', address: 'Enquiries via HQ Dhanbad', phone: '9835168368' }],
+    cities: [{ name: 'Virtual Office', address: 'Enquiries via HQ', phone: '9835168368' }],
   },
   {
     state: 'Uttar Pradesh',
     icon: '📍',
-    cities: [{ name: 'Coming Soon', address: 'Enquiries via HQ Dhanbad', phone: '9835168368' }],
+    cities: [{ name: 'Coming Soon', address: 'Enquiries via HQ', phone: '9835168368' }],
   },
 ];
 

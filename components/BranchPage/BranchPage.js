@@ -7,6 +7,8 @@ import BranchImage from './BranchImage';
 import CalculatorModal from './CalculatorModal';
 import BranchTestimonials from './BranchTestimonials';
 import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
+import LocalOperationsShowcase from './LocalOperationsShowcase';
+
 
 const RELOCATION_SERVICES = [
   { slug: 'household-relocation', name: 'Household Relocation', icon: '🏠', desc: 'Secure home shifting with multi-layer packing.', color: '#F7B731' },
@@ -120,7 +122,7 @@ const STATE_CITIES = {
   ],
   'odisha': [
     'bhubaneswar', 'cuttack', 'rourkela', 'brahmapur', 'berhampur', 'sambalpur', 'puri', 
-    'balasore', 'bhadrak', 'baripada', 'jharsuguda', 'jeypore', 'rayagada', 'angul', 'balangir', 'virtual-office'
+    'balasore', 'bhadrak', 'baripada', 'jharsuguda', 'jeypore', 'rayagada', 'angul', 'balangir'
   ],
   'uttar-pradesh': [
     'lucknow', 'kanpur', 'ghaziabad', 'agra', 'meerut', 'varanasi', 'prayagraj', 'allahabad', 
@@ -140,14 +142,16 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
     ? `/images/branches/${stateSlug}-${cityKey}.jpg`
     : `/images/branches/${stateSlug}.jpg`;
 
-  // Aggregate testimonials (5 required minimum)
+  // Aggregate and dynamically localize testimonials (Min 4, Max 6)
   const displayTestimonials = (() => {
     let list = [...(data.testimonials || [])];
-    if (list.length < 5) {
+    const targetCount = 5; // Aim for 5 reviews for visual layout balance
+    
+    if (list.length < targetCount) {
       const addedNames = new Set(list.map(t => t.name));
       if (isCity && stateData && stateData.testimonials) {
         stateData.testimonials.forEach(t => {
-          if (list.length < 5 && !addedNames.has(t.name)) {
+          if (list.length < targetCount && !addedNames.has(t.name)) {
             list.push(t);
             addedNames.add(t.name);
           }
@@ -159,7 +163,7 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
             const siblingData = branchesData.cities[siblingSlug];
             if (siblingData && siblingData.testimonials) {
               siblingData.testimonials.forEach(t => {
-                if (list.length < 5 && !addedNames.has(t.name)) {
+                if (list.length < targetCount && !addedNames.has(t.name)) {
                   list.push(t);
                   addedNames.add(t.name);
                 }
@@ -168,11 +172,11 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
           }
         });
       }
-      if (list.length < 5) {
+      if (list.length < targetCount) {
         Object.values(branchesData.states).forEach(st => {
           if (st.testimonials) {
             st.testimonials.forEach(t => {
-              if (list.length < 5 && !addedNames.has(t.name)) {
+              if (list.length < targetCount && !addedNames.has(t.name)) {
                 list.push(t);
                 addedNames.add(t.name);
               }
@@ -180,11 +184,11 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
           }
         });
       }
-      if (list.length < 5) {
+      if (list.length < targetCount) {
         Object.values(branchesData.cities).forEach(ct => {
           if (ct.testimonials) {
             ct.testimonials.forEach(t => {
-              if (list.length < 5 && !addedNames.has(t.name)) {
+              if (list.length < targetCount && !addedNames.has(t.name)) {
                 list.push(t);
                 addedNames.add(t.name);
               }
@@ -193,7 +197,26 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
         });
       }
     }
-    return list;
+
+    // Limit displayed reviews to min 4 and max 6
+    const finalCount = Math.max(4, Math.min(6, list.length));
+    const slicedList = list.slice(0, finalCount).map(t => ({ ...t }));
+
+    // Dynamically replace Dhanbad location references on non-Dhanbad/non-Jharkhand views to optimize SEO relevance
+    const cleanCityName = data.name.replace(/ \(hq\)/i, '').replace(/ \(virtual office\)/i, '').replace(/ \(coming soon\)/i, '');
+    const shouldFilterDhanbad = (isCity && cityKey !== 'dhanbad') || (!isCity && stateSlug !== 'jharkhand');
+
+    return slicedList.map(t => {
+      if (t.text && shouldFilterDhanbad) {
+        // Global case-insensitive replacement of "Dhanbad"
+        t.text = t.text.replace(/Dhanbad/gi, cleanCityName);
+        
+        if (t.city) {
+          t.city = t.city.replace(/Dhanbad/gi, cleanCityName);
+        }
+      }
+      return t;
+    });
   })();
 
   const localitiesList = (() => {
@@ -489,6 +512,9 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
                   </div>
                 </div>
               </div>
+
+              {/* Local Operations & Fleet in Action interactive showcase */}
+              <LocalOperationsShowcase cityName={data.name} styles={styles} />
             </div>
 
             {/* Right Contact Card / Navigation Column */}
@@ -500,6 +526,21 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
                     <h3 className={styles.sidebarTitle}>📍 Branch Address</h3>
                     <div className={styles.sidebarDivider} />
                     <p className={styles.branchAddress}>{data.address}</p>
+                    
+                    {data.mapEmbed && (
+                      <div className={styles.mapEmbedContainer}>
+                        <iframe 
+                          src={data.mapEmbed}
+                          width="100%" 
+                          height="200" 
+                          style={{ border: 0, borderRadius: '6px', marginTop: '1rem', display: 'block' }} 
+                          allowFullScreen="" 
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                          title={`${data.name} Location Map`}
+                        />
+                      </div>
+                    )}
                     
                     <h3 className={styles.sidebarTitle} style={{ marginTop: '1.5rem' }}>📞 Phone Numbers</h3>
                     <div className={styles.sidebarDivider} />
