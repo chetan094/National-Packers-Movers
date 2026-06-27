@@ -14,7 +14,7 @@ const OP_TABS = [
   },
   {
     id: 'vehicle',
-    title: 'Transportation/Transit',
+    title: 'Safe Transit',
     icon: '🚛',
     image: '/photos/shifting-safe-transport.jpg',
     alt: 'Closed container transport vehicle in highway transit',
