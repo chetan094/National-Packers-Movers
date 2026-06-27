@@ -1997,6 +1997,8 @@
 .milestoneLabel {
   position: absolute;
   top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 0.72rem;
   font-weight: 600;
   color: var(--gray-400);
@@ -2004,12 +2006,6 @@
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: var(--font-heading);
   letter-spacing: 0.5px;
-}
-
-@media (max-width: 480px) {
-  .milestoneLabel {
-    font-size: 0.65rem;
-  }
 }
 
 .milestoneLabelActive {
@@ -2071,5 +2067,81 @@
 .opsPhotoWrapperActive .opsPhoto {
   transform: scale(1.08);
 }
+
+/* Mobile Responsiveness & Layout Overrides */
+@media (max-width: 768px) {
+  .opsGrid {
+    gap: 1.25rem;
+  }
+  
+  .opsTabs {
+    gap: 0.5rem;
+  }
+  
+  .opsTabBtn {
+    padding: 0.6rem 0.85rem;
+    font-size: 0.85rem;
+    min-width: auto;
+    flex: 1;
+    justify-content: center;
+  }
+  
+  .opsTabIcon {
+    font-size: 1.15rem;
+  }
+  
+  .opsContentPanel {
+    gap: 1.25rem;
+  }
+  
+  .opsDesc {
+    font-size: 0.9rem;
+    line-height: 1.45;
+    margin-bottom: 0;
+  }
+  
+  .transitTracker {
+    padding: 1.25rem 1rem 1rem 1rem;
+  }
+  
+  .transitRoad {
+    margin: 1.25rem 0.5rem 0.75rem 0.5rem;
+    height: 16px;
+  }
+  
+  .transitTruck {
+    width: 55px;
+    height: 28px;
+  }
+  
+  .milestoneNode {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .milestoneDot {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .milestoneLabel {
+    top: 18px;
+    white-space: normal;
+    width: 75px;
+    text-align: center;
+    font-size: 0.65rem;
+    line-height: 1.1;
+  }
+  
+  .transitStatus {
+    margin-top: 1rem;
+    font-size: 0.78rem;
+  }
+  
+  .opsPhotoFrame {
+    height: 185px;
+  }
+}
+
 
 
