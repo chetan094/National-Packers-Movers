@@ -5,7 +5,7 @@ import ClientMarquee from '@/components/ClientMarquee/ClientMarquee';
 import TrustStats from '@/components/TrustStats/TrustStats';
 import HeroSlideshow from '@/components/HeroSlideshow/HeroSlideshow';
 import TestimonialsSlider from '@/components/TestimonialsSlider/TestimonialsSlider';
-import { getCustomMetadata } from '@/lib/supabase';
+import { getCustomMetadata, getGalleryImages } from '@/lib/supabase';
 
 export async function generateMetadata() {
   const path = '/';
@@ -92,7 +92,9 @@ const branches = [
   { state: 'Uttar Pradesh', cities: ['Coming Soon'], slug: 'uttar-pradesh' },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const galleryPhotos = await getGalleryImages();
+
   return (
     <div className={styles.page}>
 
@@ -295,7 +297,7 @@ export default function HomePage() {
       </section>
 
       {/* ── GALLERY SECTION ────────────────────────────────── */}
-      <GalleryCarousel />
+      <GalleryCarousel photos={galleryPhotos} />
 
       {/* ── TESTIMONIALS ──────────────────────────────────── */}
       <section className={`section ${styles.testimonialsSection}`} id="testimonials">

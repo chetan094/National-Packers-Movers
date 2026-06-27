@@ -8,6 +8,7 @@ import CalculatorModal from './CalculatorModal';
 import BranchTestimonials from './BranchTestimonials';
 import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
 import LocalOperationsShowcase from './LocalOperationsShowcase';
+import { getGalleryImages } from '@/lib/supabase';
 
 
 const RELOCATION_SERVICES = [
@@ -132,7 +133,8 @@ const STATE_CITIES = {
   ]
 };
 
-export default function BranchPage({ data, isCity = false, stateData = null }) {
+export default async function BranchPage({ data, isCity = false, stateData = null }) {
+  const galleryPhotos = await getGalleryImages();
   const stateSlug = isCity ? data.stateSlug : data.name.toLowerCase().replace(' ', '-');
   const stateName = isCity ? data.stateName : data.name;
   const cityKey = isCity ? data.name.toLowerCase().replace(/ \(hq\)/i, '').replace(/ /g, '-') : null;
@@ -875,7 +877,7 @@ export default function BranchPage({ data, isCity = false, stateData = null }) {
       )}
 
       {/* ── GALLERY SECTION ────────────────────────────────── */}
-      <GalleryCarousel />
+      <GalleryCarousel photos={galleryPhotos} />
 
       {/* ── FAQ SECTION (Native details/summary tags) ── */}
       {allFaqs && allFaqs.length > 0 && (

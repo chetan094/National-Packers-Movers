@@ -261,7 +261,13 @@ const GALLERY_PHOTOS = [
   }
 ];
 
-export default function GalleryCarousel() {
+export default function GalleryCarousel({ photos = [] }) {
+  const photosToRender = photos.length > 0 ? photos.map(p => ({
+    src: p.src,
+    alt: p.alt,
+    caption: p.caption || p.title || ''
+  })) : GALLERY_PHOTOS;
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(4);
 
@@ -280,7 +286,7 @@ export default function GalleryCarousel() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const maxIndex = GALLERY_PHOTOS.length - itemsPerView;
+  const maxIndex = Math.max(0, photosToRender.length - itemsPerView);
 
   const handleNext = () => {
     setCurrentIndex(prev => Math.min(prev + 1, maxIndex));
@@ -341,7 +347,7 @@ export default function GalleryCarousel() {
                 transform: `translateX(-${currentIndex * slideWidth}%)` 
               }}
             >
-              {GALLERY_PHOTOS.map((photo, index) => (
+              {photosToRender.map((photo, index) => (
                 <div 
                   key={index} 
                   className={styles.slideItem}
@@ -387,7 +393,7 @@ export default function GalleryCarousel() {
 
         {/* Desktop Carousel Indicators */}
         <div className={styles.desktopIndicators}>
-          {GALLERY_PHOTOS.length <= 12 ? (
+          {photosToRender.length <= 12 ? (
             <div className={styles.indicators}>
               {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
                 <button
@@ -404,11 +410,11 @@ export default function GalleryCarousel() {
               <div className={styles.progressLineContainer}>
                 <div 
                   className={styles.progressLineBar} 
-                  style={{ width: `${((currentIndex + itemsPerView) / GALLERY_PHOTOS.length) * 100}%` }}
+                  style={{ width: `${((currentIndex + itemsPerView) / photosToRender.length) * 100}%` }}
                 />
               </div>
               <span className={styles.indicatorText}>
-                Viewing {currentIndex + 1} - {Math.min(currentIndex + itemsPerView, GALLERY_PHOTOS.length)} of {GALLERY_PHOTOS.length} Photos
+                Viewing {currentIndex + 1} - {Math.min(currentIndex + itemsPerView, photosToRender.length)} of {photosToRender.length} Photos
               </span>
             </div>
           )}

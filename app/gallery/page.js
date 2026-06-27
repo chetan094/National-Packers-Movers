@@ -2,7 +2,7 @@ import Link from 'next/link';
 import styles from './page.module.css';
 import GalleryGrid from '@/components/GalleryGrid/GalleryGrid';
 import VideoShowcase from '@/components/VideoShowcase/VideoShowcase';
-import { getCustomMetadata } from '@/lib/supabase';
+import { getCustomMetadata, getGalleryImages } from '@/lib/supabase';
 
 export async function generateMetadata() {
   const path = '/gallery';
@@ -33,7 +33,9 @@ export async function generateMetadata() {
   };
 }
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const galleryPhotos = await getGalleryImages();
+
   return (
     <div className={styles.galleryPage}>
       {/* ── HERO SECTION ─────────────────────────────────── */}
@@ -62,7 +64,7 @@ export default function GalleryPage() {
             </p>
           </div>
 
-          <GalleryGrid />
+          <GalleryGrid photos={galleryPhotos} />
         </div>
       </section>
 

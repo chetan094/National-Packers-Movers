@@ -208,6 +208,21 @@ export default function AdminDashboard() {
   const [seoSuccess, setSeoSuccess] = useState('');
   const [seoMetadataList, setSeoMetadataList] = useState([]);
 
+  // Gallery Manager states
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [loadingGallery, setLoadingGallery] = useState(false);
+  const [editingImageId, setEditingImageId] = useState(null);
+  const [imageTitle, setImageTitle] = useState('');
+  const [imageAlt, setImageAlt] = useState('');
+  const [imageDesc, setImageDesc] = useState('');
+  const [imageSrc, setImageSrc] = useState('');
+  const [imageOrder, setImageOrder] = useState(0);
+  const [galleryError, setGalleryError] = useState('');
+  const [gallerySuccess, setGallerySuccess] = useState('');
+  const [savingImage, setSavingImage] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
+  const [uploadGalleryError, setUploadGalleryError] = useState('');
+
   // Helper to format city names dynamically in options
   const formatCityName = (slug) => {
     return slug
@@ -488,6 +503,221 @@ export default function AdminDashboard() {
     }
   }, [activeTab, authorized]);
 
+  // Client-Side Canvas Image Auto-Compression helper
+  const compressImageClient = (file, maxWidth = 1200, quality = 0.85) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth) {
+            const ratio = maxWidth / width;
+            width = maxWidth;
+            height = height * ratio;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                let filename = file.name;
+                const lastDot = filename.lastIndexOf('.');
+                if (lastDot !== -1) {
+                  filename = filename.substring(0, lastDot);
+                }
+                const compressedFile = new File([blob], filename + ".jpg", {
+                  type: 'image/jpeg',
+                  lastModified: Date.now()
+                });
+                resolve(compressedFile);
+              } else {
+                reject(new Error('Canvas compression failed'));
+              }
+            },
+            'image/jpeg',
+            quality
+          );
+        };
+        img.onerror = (err) => reject(err);
+      };
+      reader.onerror = (err) => reject(err);
+    });
+  };
+
+  const fetchGalleryImages = async () => {
+    setLoadingGallery(true);
+    setGalleryError('');
+    try {
+      const res = await fetch('/api/admin/gallery');
+      if (res.ok) {
+        const data = await res.json();
+        setGalleryImages(data);
+      } else {
+        const errData = await res.json();
+        setGalleryError(errData.error || 'Failed to fetch gallery images');
+      }
+    } catch (err) {
+      console.error('Error fetching gallery images:', err);
+      setGalleryError('Network error fetching gallery images');
+    } finally {
+      setLoadingGallery(false);
+    }
+  };
+
+  useEffect(() => {
+    if (authorized && activeTab === 'gallery') {
+      fetchGalleryImages();
+    }
+  }, [activeTab, authorized]);
+
+  const handleGalleryImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setUploadGalleryError('Only image files are allowed.');
+      return;
+    }
+    if (file.size > 25 * 1024 * 1024) {
+      setUploadGalleryError('Image size must be less than 25MB.');
+      return;
+    }
+
+    setUploadingGallery(true);
+    setUploadGalleryError('');
+
+    try {
+      console.log(`Original gallery image size: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+      const compressedFile = await compressImageClient(file, 1200, 0.85);
+      console.log(`Compressed gallery image size: ${(compressedFile.size / 1024).toFixed(1)} KB`);
+
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setImageSrc(data.url);
+      } else {
+        const errData = await res.json();
+        setUploadGalleryError(errData.error || 'Failed to upload image.');
+      }
+    } catch (error) {
+      console.error('Gallery image upload failed:', error);
+      setUploadGalleryError('Network error occurred during image upload.');
+    } finally {
+      setUploadingGallery(false);
+    }
+  };
+
+  const handleGalleryFormSubmit = async (e) => {
+    e.preventDefault();
+    setSavingImage(true);
+    setGalleryError('');
+    setGallerySuccess('');
+
+    if (!imageSrc || !imageTitle || !imageAlt) {
+      setGalleryError('Please provide Image URL/Upload, Title, and Alt Text.');
+      setSavingImage(false);
+      return;
+    }
+
+    const payload = {
+      src: imageSrc,
+      title: imageTitle,
+      alt: imageAlt,
+      description: imageDesc || null,
+      display_order: parseInt(imageOrder) || 0
+    };
+
+    try {
+      let res;
+      if (editingImageId) {
+        res = await fetch('/api/admin/gallery', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: editingImageId, ...payload })
+        });
+      } else {
+        res = await fetch('/api/admin/gallery', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      if (res.ok) {
+        setGallerySuccess(editingImageId ? 'Image updated successfully!' : 'Image added successfully!');
+        resetGalleryForm();
+        fetchGalleryImages();
+      } else {
+        const errData = await res.json();
+        setGalleryError(errData.error || 'Failed to save image.');
+      }
+    } catch (err) {
+      console.error('Error saving gallery image:', err);
+      setGalleryError('Network error saving gallery image.');
+    } finally {
+      setSavingImage(false);
+    }
+  };
+
+  const loadGalleryImageForEdit = (img) => {
+    setEditingImageId(img.id);
+    setImageTitle(img.title || '');
+    setImageAlt(img.alt || '');
+    setImageDesc(img.description || '');
+    setImageSrc(img.src || '');
+    setImageOrder(img.display_order || 0);
+    setGalleryError('');
+    setGallerySuccess('');
+  };
+
+  const resetGalleryForm = () => {
+    setEditingImageId(null);
+    setImageTitle('');
+    setImageAlt('');
+    setImageDesc('');
+    setImageSrc('');
+    setImageOrder(0);
+    setUploadGalleryError('');
+  };
+
+  const handleDeleteGalleryImage = async (id) => {
+    setGalleryError('');
+    setGallerySuccess('');
+    try {
+      const res = await fetch(`/api/admin/gallery?id=${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setGallerySuccess('Image deleted successfully!');
+        fetchGalleryImages();
+      } else {
+        const errData = await res.json();
+        setGalleryError(errData.error || 'Failed to delete image.');
+      }
+    } catch (err) {
+      console.error('Error deleting gallery image:', err);
+      setGalleryError('Network error occurred during deletion.');
+    }
+  };
+
   const formatDuration = (secondsStr) => {
     const seconds = parseInt(secondsStr, 10);
     if (isNaN(seconds)) return '0s';
@@ -709,18 +939,22 @@ export default function AdminDashboard() {
       setUploadError('Only image files are allowed.');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setUploadError('Image size must be less than 5MB.');
+    if (file.size > 25 * 1024 * 1024) {
+      setUploadError('Image size must be less than 25MB.');
       return;
     }
 
     setUploading(true);
     setUploadError('');
 
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
+      console.log(`Original blog image size: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+      const compressedFile = await compressImageClient(file, 1200, 0.85);
+      console.log(`Compressed blog image size: ${(compressedFile.size / 1024).toFixed(1)} KB`);
+
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+
       const res = await fetch('/api/admin/upload', {
         method: 'POST',
         body: formData,
@@ -954,6 +1188,13 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('seo')}
           >
             🔍 SEO Settings
+          </button>
+          <button
+            type="button"
+            className={`${styles.navItem} ${activeTab === 'gallery' ? styles.navItemActive : ''}`}
+            onClick={() => setActiveTab('gallery')}
+          >
+            🖼️ Media Gallery
           </button>
         </nav>
 
@@ -1999,6 +2240,224 @@ export default function AdminDashboard() {
                 </form>
               </div>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'gallery' && (
+          <div>
+            <header className={styles.panelHeader}>
+              <div>
+                <h1 className={styles.panelTitle}>Media Gallery Manager</h1>
+                <p className={styles.panelSubtitle}>Add, update, and sort operational photos displayed across the site</p>
+              </div>
+              <a href="/gallery" target="_blank" className={styles.viewLiveBtn}>
+                View Public Gallery Page ↗
+              </a>
+            </header>
+
+            {/* Split pane content */}
+            <div className={styles.splitPane}>
+              {/* Left Pane: Editor */}
+              <div className={styles.editorPane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>
+                    {editingImageId ? '📝 Edit Gallery Photo' : '➕ Add New Gallery Photo'}
+                  </h2>
+
+                  <form onSubmit={handleGalleryFormSubmit} className={styles.form}>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Photo Title / Caption *</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={imageTitle}
+                          onChange={(e) => setImageTitle(e.target.value)}
+                          placeholder="e.g. Premium Cushion Sofa Wrapping"
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>SEO Alt Text *</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={imageAlt}
+                          onChange={(e) => setImageAlt(e.target.value)}
+                          placeholder="e.g. Multi-Layer Cushion Packing for Sofa Relocation"
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Display Order (Sort) *</label>
+                        <input
+                          type="number"
+                          className={styles.input}
+                          value={imageOrder}
+                          onChange={(e) => setImageOrder(parseInt(e.target.value) || 0)}
+                          placeholder="e.g. 10, 20, 30"
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Select Photo *</label>
+                        <div className={styles.imageUploadWrapper}>
+                          <input
+                            type="text"
+                            className={styles.input}
+                            value={imageSrc}
+                            onChange={(e) => setImageSrc(e.target.value)}
+                            placeholder="Paste image URL or upload file..."
+                          />
+                          <div className={styles.dividerOr}><span>or</span></div>
+                          <label className={styles.uploadBtnLabel}>
+                            {uploadingGallery ? 'Uploading...' : '📁 Upload'}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className={styles.fileInputHidden}
+                              onChange={handleGalleryImageUpload}
+                              disabled={uploadingGallery}
+                            />
+                          </label>
+                        </div>
+                        {uploadGalleryError && <p className={styles.uploadErrorMsg}>⚠️ {uploadGalleryError}</p>}
+                      </div>
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Detailed Description (Shown on Zoom/Lightbox)</label>
+                      <textarea
+                        className={`${styles.textarea} ${styles.excerptArea}`}
+                        value={imageDesc}
+                        onChange={(e) => setImageDesc(e.target.value)}
+                        placeholder="e.g. Expert packing crew wrapping high-value wooden and leather sofas using bubble wrap..."
+                      />
+                    </div>
+
+                    {galleryError && <p className={styles.errorMsg}>❌ {galleryError}</p>}
+                    {gallerySuccess && <p className={styles.successMsg}>✅ {gallerySuccess}</p>}
+
+                    <div className={styles.formActions}>
+                      <button type="submit" className={styles.submitBtn} disabled={savingImage}>
+                        {savingImage ? 'Saving...' : editingImageId ? '💾 Save Changes' : '➕ Add Image'}
+                      </button>
+                      {editingImageId && (
+                        <button type="button" className={styles.cancelBtn} onClick={resetGalleryForm}>
+                          Cancel Edit
+                        </button>
+                      )}
+                      {!editingImageId && (imageTitle || imageSrc || imageAlt) && (
+                        <button type="button" className={styles.cancelBtn} onClick={resetGalleryForm}>
+                          Clear Fields
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              {/* Right Pane: Card Preview */}
+              <div className={styles.previewPane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>👀 Live Layout Card Preview</h2>
+                  <div className={styles.previewContainer}>
+                    {imageSrc && (
+                      <div className={styles.previewImageWrapper} style={{ height: '220px', overflow: 'hidden', borderRadius: '8px', position: 'relative' }}>
+                        <img src={imageSrc} alt={imageAlt || 'Gallery Preview'} className={styles.previewImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)', padding: '1rem', color: '#fff' }}>
+                          <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--gold)', letterSpacing: '1px', fontWeight: 'bold' }}>National Packers & Movers</span>
+                          <h4 style={{ margin: '0.25rem 0 0 0', fontSize: '1rem', fontWeight: 'bold' }}>{imageTitle || 'Photo Caption/Title'}</h4>
+                        </div>
+                      </div>
+                    )}
+                    {!imageSrc && (
+                      <div style={{ height: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.01)', border: '2px dashed rgba(255,255,255,0.05)', borderRadius: '8px', color: 'var(--gray-400)' }}>
+                        No Image Selected or Uploaded
+                      </div>
+                    )}
+                    <div style={{ marginTop: '1rem' }}>
+                      <p style={{ fontSize: '0.9rem', color: 'var(--gray-300)', margin: '0 0 0.5rem 0' }}><strong>Alt Text:</strong> <span style={{ color: 'var(--gold)' }}>{imageAlt || 'Not set'}</span></p>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--gray-400)', lineHeight: '1.4', margin: 0 }}><strong>Description:</strong> {imageDesc || 'No description written yet.'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Gallery Images List Panel */}
+            <section className={styles.listSection}>
+              <div className={styles.listCard}>
+                <h2 className={styles.listTitle}>Gallery Operational Photos ({galleryImages.length})</h2>
+
+                {loadingGallery ? (
+                  <div className={styles.tablePlaceholder}>
+                    <div className={styles.loaderSmall}></div>
+                    <p>Fetching photos from Supabase...</p>
+                  </div>
+                ) : galleryImages.length === 0 ? (
+                  <div className={styles.tablePlaceholder}>
+                    <p>No photos found. Upload your first operational picture above!</p>
+                  </div>
+                ) : (
+                  <div className={styles.tableWrapper}>
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th>Photo</th>
+                          <th>Metadata Details</th>
+                          <th>Alt text / Description</th>
+                          <th>Order</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {galleryImages.map((img) => (
+                          <tr key={img.id}>
+                            <td className={styles.tdImage}>
+                              <img src={img.src} alt={img.alt} className={styles.tableThumbnail} />
+                            </td>
+                            <td>
+                              <div className={styles.tableTitle}>{img.title}</div>
+                              <code className={styles.tableSlug} style={{ fontSize: '0.75rem' }}>{img.src}</code>
+                            </td>
+                            <td>
+                              <div style={{ fontSize: '0.85rem', color: 'var(--gold)', marginBottom: '0.25rem' }}>Alt: {img.alt}</div>
+                              <p style={{ fontSize: '0.8rem', color: 'var(--gray-400)', margin: 0, display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{img.description || 'No description provided.'}</p>
+                            </td>
+                            <td>
+                              <span className={styles.tableCategory}>{img.display_order}</span>
+                            </td>
+                            <td className={styles.tdActions}>
+                              <div className={styles.actionRow}>
+                                <button
+                                  type="button"
+                                  className={styles.editBtn}
+                                  onClick={() => loadGalleryImageForEdit(img)}
+                                >
+                                  ✏️ Edit
+                                </button>
+                                <button
+                                  type="button"
+                                  className={styles.deleteBtn}
+                                  onClick={() => {
+                                    if (window.confirm(`Are you sure you want to permanently delete the image "${img.title}"?`)) {
+                                      handleDeleteGalleryImage(img.id);
+                                    }
+                                  }}
+                                >
+                                  🗑️ Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </section>
           </div>
         )}
 

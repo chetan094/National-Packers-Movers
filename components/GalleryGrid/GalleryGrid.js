@@ -311,11 +311,18 @@ const PHOTOS = [
   }
 ];
 
-export default function GalleryGrid() {
+export default function GalleryGrid({ photos = [] }) {
+  const photosToRender = photos.length > 0 ? photos.map(p => ({
+    src: p.src,
+    alt: p.alt,
+    title: p.title || p.caption || '',
+    desc: p.description || p.desc || ''
+  })) : PHOTOS;
+
   const [activePhoto, setActivePhoto] = useState(null);
   const [gridPage, setGridPage] = useState(0);
 
-  const totalPages = Math.ceil(PHOTOS.length / 8);
+  const totalPages = Math.ceil(photosToRender.length / 8);
 
   const handleNextPage = () => {
     setGridPage(prev => Math.min(prev + 1, totalPages - 1));
@@ -326,7 +333,7 @@ export default function GalleryGrid() {
   };
 
   const pages = Array.from({ length: totalPages }, (_, i) =>
-    PHOTOS.slice(i * 8, (i + 1) * 8)
+    photosToRender.slice(i * 8, (i + 1) * 8)
   );
 
   // Keyboard navigation for Lightbox
@@ -335,10 +342,10 @@ export default function GalleryGrid() {
       if (activePhoto === null) return;
       if (e.key === 'Escape') setActivePhoto(null);
       if (e.key === 'ArrowRight') {
-        setActivePhoto(prev => (prev + 1) % PHOTOS.length);
+        setActivePhoto(prev => (prev + 1) % photosToRender.length);
       }
       if (e.key === 'ArrowLeft') {
-        setActivePhoto(prev => (prev - 1 + PHOTOS.length) % PHOTOS.length);
+        setActivePhoto(prev => (prev - 1 + photosToRender.length) % photosToRender.length);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -469,7 +476,7 @@ export default function GalleryGrid() {
             className={`${styles.arrowBtn} ${styles.leftArrow}`} 
             onClick={(e) => {
               e.stopPropagation();
-              setActivePhoto(prev => (prev - 1 + PHOTOS.length) % PHOTOS.length);
+              setActivePhoto(prev => (prev - 1 + photosToRender.length) % photosToRender.length);
             }}
             aria-label="Previous photo"
           >
@@ -478,8 +485,8 @@ export default function GalleryGrid() {
 
           <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
             <img 
-              src={PHOTOS[activePhoto].src} 
-              alt={PHOTOS[activePhoto].alt} 
+              src={photosToRender[activePhoto].src} 
+              alt={photosToRender[activePhoto].alt} 
               className={styles.lightboxImg}
               onError={(e) => {
                 e.target.style.display = 'none';
@@ -487,11 +494,11 @@ export default function GalleryGrid() {
               }}
             />
             <div className={styles.lightboxFallbackText}>
-              📸 Placeholder: {PHOTOS[activePhoto].title}
+              📸 Placeholder: {photosToRender[activePhoto].title}
             </div>
             <div className={styles.lightboxMeta}>
-              <h3 className={styles.lightboxTitle}>{PHOTOS[activePhoto].title}</h3>
-              <p className={styles.lightboxDesc}>{PHOTOS[activePhoto].desc}</p>
+              <h3 className={styles.lightboxTitle}>{photosToRender[activePhoto].title}</h3>
+              <p className={styles.lightboxDesc}>{photosToRender[activePhoto].desc}</p>
             </div>
           </div>
 
@@ -500,7 +507,7 @@ export default function GalleryGrid() {
             className={`${styles.arrowBtn} ${styles.rightArrow}`} 
             onClick={(e) => {
               e.stopPropagation();
-              setActivePhoto(prev => (prev + 1) % PHOTOS.length);
+              setActivePhoto(prev => (prev + 1) % photosToRender.length);
             }}
             aria-label="Next photo"
           >
