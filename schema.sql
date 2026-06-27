@@ -78,3 +78,29 @@ CREATE TABLE IF NOT EXISTS analytics_events (
 CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON analytics_events(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON analytics_events(event_type);
 CREATE INDEX IF NOT EXISTS idx_analytics_session_id ON analytics_events(session_id);
+
+
+-- ========================================================================
+-- Shipments Tracking Table
+-- ========================================================================
+
+CREATE TABLE IF NOT EXISTS shipments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  consignment_number VARCHAR UNIQUE NOT NULL,
+  customer_name VARCHAR NOT NULL,
+  customer_phone VARCHAR,
+  origin VARCHAR NOT NULL,
+  destination VARCHAR NOT NULL,
+  booking_date DATE DEFAULT CURRENT_DATE,
+  current_status VARCHAR NOT NULL DEFAULT 'Booked', -- 'Booked', 'Packed', 'Dispatched', 'In Transit', 'Out for Delivery', 'Delivered'
+  current_location VARCHAR,
+  vehicle_number VARCHAR,
+  driver_name VARCHAR,
+  driver_phone VARCHAR,
+  status_history JSONB DEFAULT '[]'::jsonb, -- e.g., [{"status": "Booked", "date": "2026-06-28", "location": "Dhanbad HQ", "notes": "Order booked."}]
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexing for fast search and tracking lookup
+CREATE INDEX IF NOT EXISTS idx_shipments_cn ON shipments(consignment_number);
+

@@ -158,6 +158,37 @@ export default function AdminDashboard() {
   const [blogs, setBlogs] = useState([]);
   const [loadingBlogs, setLoadingBlogs] = useState(true);
 
+  // Shipments tracking states
+  const [shipments, setShipments] = useState([]);
+  const [loadingShipments, setLoadingShipments] = useState(false);
+  const [shipmentError, setShipmentError] = useState('');
+  const [shipmentSuccess, setShipmentSuccess] = useState('');
+  const [editingShipment, setEditingShipment] = useState(null);
+  const [shipmentActionLoading, setShipmentActionLoading] = useState(false);
+
+  // Shipment Form states
+  const [cnNumber, setCnNumber] = useState('');
+  const [custName, setCustName] = useState('');
+  const [custPhone, setCustPhone] = useState('');
+  const [shipOrigin, setShipOrigin] = useState('');
+  const [shipDest, setShipDest] = useState('');
+  const [shipBookingDate, setShipBookingDate] = useState('');
+  const [shipStatus, setShipStatus] = useState('Booked');
+  const [shipLoc, setShipLoc] = useState('');
+  const [shipVehicle, setShipVehicle] = useState('');
+  const [shipDriverName, setShipDriverName] = useState('');
+  const [shipDriverPhone, setShipDriverPhone] = useState('');
+  const [shipHistory, setShipHistory] = useState([]);
+
+  // Search filter
+  const [shipSearchQuery, setShipSearchQuery] = useState('');
+
+  // History update inputs
+  const [newLogStatus, setNewLogStatus] = useState('Booked');
+  const [newLogLoc, setNewLogLoc] = useState('');
+  const [newLogNotes, setNewLogNotes] = useState('');
+
+
   // Form states
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -698,6 +729,180 @@ export default function AdminDashboard() {
     setUploadGalleryError('');
   };
 
+  const fetchShipments = async () => {
+    setLoadingShipments(true);
+    setShipmentError('');
+    try {
+      const res = await fetch('/api/admin/shipments');
+      if (res.ok) {
+        const data = await res.json();
+        setShipments(data);
+      } else {
+        setShipmentError('Failed to fetch shipments.');
+      }
+    } catch (err) {
+      console.error('Error fetching shipments:', err);
+      setShipmentError('Network error loading shipments.');
+    } finally {
+      setLoadingShipments(false);
+    }
+  };
+
+  useEffect(() => {
+    if (authorized && activeTab === 'tracking') {
+      fetchShipments();
+    }
+  }, [activeTab, authorized]);
+
+  const resetShipmentForm = () => {
+    setEditingShipment(null);
+    setCnNumber('');
+    setCustName('');
+    setCustPhone('');
+    setShipOrigin('');
+    setShipDest('');
+    setShipBookingDate(new Date().toISOString().split('T')[0]);
+    setShipStatus('Booked');
+    setShipLoc('');
+    setShipVehicle('');
+    setShipDriverName('');
+    setShipDriverPhone('');
+    setShipHistory([]);
+    setNewLogStatus('Booked');
+    setNewLogLoc('');
+    setNewLogNotes('');
+    setShipmentError('');
+    setShipmentSuccess('');
+  };
+
+  const loadShipmentForEdit = (ship) => {
+    setEditingShipment(ship);
+    setCnNumber(ship.consignment_number || '');
+    setCustName(ship.customer_name || '');
+    setCustPhone(ship.customer_phone || '');
+    setShipOrigin(ship.origin || '');
+    setShipDest(ship.destination || '');
+    setShipBookingDate(ship.booking_date || new Date().toISOString().split('T')[0]);
+    setShipStatus(ship.current_status || 'Booked');
+    setShipLoc(ship.current_location || '');
+    setShipVehicle(ship.vehicle_number || '');
+    setShipDriverName(ship.driver_name || '');
+    setShipDriverPhone(ship.driver_phone || '');
+    setShipHistory(ship.status_history || []);
+    setNewLogStatus(ship.current_status || 'Booked');
+    setNewLogLoc(ship.current_location || '');
+    setNewLogNotes('');
+    setShipmentError('');
+    setShipmentSuccess('');
+  };
+
+  const handleShipmentFormSubmit = async (e) => {
+    e.preventDefault();
+    setShipmentActionLoading(true);
+    setShipmentError('');
+    setShipmentSuccess('');
+
+    if (!cnNumber.trim() || !custName.trim() || !shipOrigin.trim() || !shipDest.trim()) {
+      setShipmentError('Please fill out Consignment Number, Customer Name, Origin, and Destination.');
+      setShipmentActionLoading(false);
+      return;
+    }
+
+    const payload = {
+      consignment_number: cnNumber.trim(),
+      customer_name: custName.trim(),
+      customer_phone: custPhone ? custPhone.trim() : null,
+      origin: shipOrigin.trim(),
+      destination: shipDest.trim(),
+      booking_date: shipBookingDate || new Date().toISOString().split('T')[0],
+      current_status: shipStatus,
+      current_location: shipLoc ? shipLoc.trim() : null,
+      vehicle_number: shipVehicle ? shipVehicle.trim() : null,
+      driver_name: shipDriverName ? shipDriverName.trim() : null,
+      driver_phone: shipDriverPhone ? shipDriverPhone.trim() : null,
+      status_history: shipHistory
+    };
+
+    try {
+      let res;
+      if (editingShipment) {
+        res = await fetch('/api/admin/shipments', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: editingShipment.id, updates: payload })
+        });
+      } else {
+        res = await fetch('/api/admin/shipments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      const resData = await res.json();
+      if (res.ok) {
+        setShipmentSuccess(editingShipment ? 'Shipment updated successfully!' : 'Shipment registered successfully!');
+        resetShipmentForm();
+        fetchShipments();
+      } else {
+        setShipmentError(resData.error || 'Failed to save shipment.');
+      }
+    } catch (err) {
+      console.error('Error saving shipment:', err);
+      setShipmentError('Network error saving shipment details.');
+    } finally {
+      setShipmentActionLoading(false);
+    }
+  };
+
+  const handleDeleteShipment = async (id) => {
+    setShipmentActionLoading(true);
+    setShipmentError('');
+    try {
+      const res = await fetch(`/api/admin/shipments?id=${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setShipmentSuccess('Shipment record deleted successfully.');
+        fetchShipments();
+      } else {
+        setShipmentError('Failed to delete shipment.');
+      }
+    } catch (err) {
+      console.error('Error deleting shipment:', err);
+      setShipmentError('Network error deleting shipment.');
+    } finally {
+      setShipmentActionLoading(false);
+    }
+  };
+
+  const handleAddMilestoneUpdate = (e) => {
+    e.preventDefault();
+    if (!newLogLoc.trim()) {
+      alert('Please enter a location for the terminal log update.');
+      return;
+    }
+    const newMilestone = {
+      status: newLogStatus,
+      location: newLogLoc.trim(),
+      notes: newLogNotes.trim() || null,
+      date: new Date().toISOString().split('T')[0],
+      time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+    };
+    setShipHistory(prev => [newMilestone, ...prev]);
+    setShipStatus(newLogStatus);
+    setShipLoc(newLogLoc.trim());
+    setNewLogLoc('');
+    setNewLogNotes('');
+  };
+
+  const generateRandomCN = () => {
+    const year = new Date().getFullYear();
+    const rand = Math.floor(1000 + Math.random() * 9000);
+    setCnNumber(`NPM-${year}-${rand}`);
+  };
+
+
   const handleDeleteGalleryImage = async (id) => {
     setGalleryError('');
     setGallerySuccess('');
@@ -1166,8 +1371,9 @@ export default function AdminDashboard() {
             className={`${styles.navItem} ${activeTab === 'tracking' ? styles.navItemActive : ''}`}
             onClick={() => setActiveTab('tracking')}
           >
-            🚚 Shipment Tracker <span className={styles.badgeSoon}>Soon</span>
+            🚚 Shipment Tracker
           </button>
+
           <button
             type="button"
             className={`${styles.navItem} ${activeTab === 'leads' ? styles.navItemActive : ''}`}
@@ -2460,6 +2666,385 @@ export default function AdminDashboard() {
             </section>
           </div>
         )}
+
+
+        {activeTab === 'tracking' && (
+          <div>
+            <header className={styles.panelHeader}>
+              <div>
+                <h1 className={styles.panelTitle}>Cargo &amp; Shipment Tracker</h1>
+                <p className={styles.panelSubtitle}>Add new consignments, log custom locations, and update transit history</p>
+              </div>
+              <a href="/track-shipment" target="_blank" className={styles.viewLiveBtn}>
+                View Public Tracking Page ↗
+              </a>
+            </header>
+
+            <div className={styles.splitPane}>
+              {/* Left Pane: Editor */}
+              <div className={styles.editorPane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>
+                    {editingShipment ? '📝 Edit Cargo Parameters' : '➕ Register New Consignment'}
+                  </h2>
+
+                  <form onSubmit={handleShipmentFormSubmit} className={styles.form}>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <label className={styles.label}>Consignment No. (CN) *</label>
+                          {!editingShipment && (
+                            <button
+                              type="button"
+                              onClick={generateRandomCN}
+                              style={{ background: 'none', border: 'none', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}
+                            >
+                              ⚡ Auto-Generate
+                            </button>
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          required
+                          value={cnNumber}
+                          onChange={(e) => setCnNumber(e.target.value.toUpperCase().replace(/\s+/g, ''))}
+                          placeholder="e.g. NPM-2026-1001"
+                          disabled={!!editingShipment}
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Customer Name *</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          required
+                          value={custName}
+                          onChange={(e) => setCustName(e.target.value)}
+                          placeholder="e.g. Chetan Jhampaty"
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Customer Phone Number</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={custPhone}
+                          onChange={(e) => setCustPhone(e.target.value)}
+                          placeholder="10-digit mobile"
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Booking Date</label>
+                        <input
+                          type="date"
+                          className={styles.input}
+                          value={shipBookingDate}
+                          onChange={(e) => setShipBookingDate(e.target.value)}
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Moving From (Origin) *</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          required
+                          value={shipOrigin}
+                          onChange={(e) => setShipOrigin(e.target.value)}
+                          placeholder="e.g. Dhanbad HQ"
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Moving To (Destination) *</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          required
+                          value={shipDest}
+                          onChange={(e) => setShipDest(e.target.value)}
+                          placeholder="e.g. Kolkata Branch"
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Vehicle Number</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={shipVehicle}
+                          onChange={(e) => setShipVehicle(e.target.value)}
+                          placeholder="e.g. JH-10-AC-5401"
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Driver Name</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={shipDriverName}
+                          onChange={(e) => setShipDriverName(e.target.value)}
+                          placeholder="e.g. R. Singh"
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Driver Phone Contact</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={shipDriverPhone}
+                          onChange={(e) => setShipDriverPhone(e.target.value)}
+                          placeholder="10-digit driver number"
+                        />
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Current Active Status</label>
+                        <select
+                          className={styles.select}
+                          value={shipStatus}
+                          onChange={(e) => setShipStatus(e.target.value)}
+                        >
+                          <option value="Booked">Booked</option>
+                          <option value="Packed">Packed</option>
+                          <option value="Dispatched">Dispatched</option>
+                          <option value="In Transit">In Transit</option>
+                          <option value="Out for Delivery">Out for Delivery</option>
+                          <option value="Delivered">Delivered</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className={styles.inputGroup} style={{ marginTop: '1rem' }}>
+                      <label className={styles.label}>Current Active Location coordinates</label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={shipLoc}
+                        onChange={(e) => setShipLoc(e.target.value)}
+                        placeholder="e.g. En-route NH-2 near Durgapur Hub"
+                      />
+                    </div>
+
+                    {/* Progress History Terminal updates Logger */}
+                    <div style={{ marginTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem' }}>
+                      <label className={styles.label} style={{ display: 'block', marginBottom: '1rem' }}>🛰️ Add Terminal Dispatch Scan (Custom Milestone)</label>
+                      <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                          <div style={{ flex: 1, minWidth: '140px' }}>
+                            <label style={{ fontSize: '0.75rem', color: 'var(--gray-400)', display: 'block', marginBottom: '0.25rem' }}>Milestone Status</label>
+                            <select
+                              value={newLogStatus}
+                              onChange={(e) => setNewLogStatus(e.target.value)}
+                              className={styles.select}
+                            >
+                              <option value="Booked">Booked</option>
+                              <option value="Packed">Packed</option>
+                              <option value="Dispatched">Dispatched</option>
+                              <option value="In Transit">In Transit</option>
+                              <option value="Out for Delivery">Out for Delivery</option>
+                              <option value="Delivered">Delivered</option>
+                            </select>
+                          </div>
+                          <div style={{ flex: 2, minWidth: '220px' }}>
+                            <label style={{ fontSize: '0.75rem', color: 'var(--gray-400)', display: 'block', marginBottom: '0.25rem' }}>Location / Coordinates *</label>
+                            <input
+                              type="text"
+                              value={newLogLoc}
+                              onChange={(e) => setNewLogLoc(e.target.value)}
+                              placeholder="e.g. Dhanbad HQ or Durgapur checkpost"
+                              className={styles.input}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', color: 'var(--gray-400)', display: 'block', marginBottom: '0.25rem' }}>Terminal Notes / Driver Log</label>
+                          <input
+                            type="text"
+                            value={newLogNotes}
+                            onChange={(e) => setNewLogNotes(e.target.value)}
+                            placeholder="e.g. Loading completed. Transit driver assigned."
+                            className={styles.input}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleAddMilestoneUpdate}
+                          style={{ alignSelf: 'flex-end', background: 'var(--gold)', color: 'var(--black)', border: 'none', padding: '0.5rem 1.25rem', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.85rem', cursor: 'pointer' }}
+                        >
+                          ➕ Add Milestone
+                        </button>
+                      </div>
+                    </div>
+
+                    {shipmentError && <p className={styles.errorMsg} style={{ marginTop: '1.25rem' }}>❌ {shipmentError}</p>}
+                    {shipmentSuccess && <p className={styles.successMsg} style={{ marginTop: '1.25rem' }}>✅ {shipmentSuccess}</p>}
+
+                    <div className={styles.formActions} style={{ marginTop: '1.5rem' }}>
+                      <button type="submit" className={styles.submitBtn} disabled={shipmentActionLoading}>
+                        {shipmentActionLoading ? 'Saving...' : editingShipment ? '💾 Save Updates' : '➕ Create Shipment'}
+                      </button>
+                      <button type="button" className={styles.cancelBtn} onClick={resetShipmentForm}>
+                        Clear Fields
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              {/* Right Pane: Timeline Live Preview */}
+              <div className={styles.previewPane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>🛰️ Stepper Log &amp; Stepper Live Preview</h2>
+                  <div style={{ background: 'var(--black-100)', border: '1px solid rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <h4 style={{ margin: 0, color: 'var(--white)', fontSize: '1.1rem' }}>CN: {cnNumber || 'NPM-XXXX-XXXX'}</h4>
+                        <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: 'var(--gray-400)' }}>{shipOrigin || 'Origin'} ➔ {shipDest || 'Destination'}</p>
+                      </div>
+                      <span style={{ background: 'rgba(247, 183, 49, 0.1)', color: 'var(--gold)', border: '1px solid rgba(247, 183, 49, 0.2)', padding: '0.3rem 0.75rem', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                        {shipStatus}
+                      </span>
+                    </div>
+
+                    <div style={{ borderLeft: '2px solid rgba(255, 255, 255, 0.06)', paddingLeft: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem' }}>
+                      {shipHistory.length > 0 ? (
+                        shipHistory.map((item, idx) => (
+                          <div key={idx} style={{ position: 'relative' }}>
+                            <div style={{ position: 'absolute', left: '-21px', top: '3px', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--gold)', boxShadow: '0 0 6px var(--gold)' }}></div>
+                            <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--white)' }}>{item.status}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--gold)', fontWeight: '600' }}>📍 {item.location}</div>
+                            {item.notes && <div style={{ fontSize: '0.78rem', color: 'var(--gray-400)', fontStyle: 'italic' }}>"{item.notes}"</div>}
+                          </div>
+                        ))
+                      ) : (
+                        <p style={{ color: 'var(--gray-500)', fontSize: '0.85rem', margin: 0, fontStyle: 'italic' }}>No custom milestones added yet.</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Shipments List Section */}
+            <section className={styles.listSection}>
+              <div className={styles.listCard}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                  <h2 className={styles.listTitle} style={{ margin: 0 }}>Registered Cargo Shipments ({shipments.length})</h2>
+                  <input
+                    type="text"
+                    placeholder="🔍 Search by CN, customer name, route..."
+                    value={shipSearchQuery}
+                    onChange={(e) => setShipSearchQuery(e.target.value)}
+                    className={styles.input}
+                    style={{ maxWidth: '300px' }}
+                  />
+                </div>
+
+                {loadingShipments ? (
+                  <div className={styles.tablePlaceholder}>
+                    <div className={styles.loaderSmall}></div>
+                    <p>Connecting to database...</p>
+                  </div>
+                ) : shipments.length === 0 ? (
+                  <div className={styles.tablePlaceholder}>
+                    <p>No shipments registered. Add your first cargo tracking update above!</p>
+                  </div>
+                ) : (
+                  <div className={styles.tableWrapper}>
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th>CN Number</th>
+                          <th>Customer Info</th>
+                          <th>Transit Route</th>
+                          <th>Current Status</th>
+                          <th>Location coordinates</th>
+                          <th>Milestones</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {shipments
+                          .filter(ship => {
+                            const query = shipSearchQuery.toLowerCase();
+                            return (
+                              ship.consignment_number.toLowerCase().includes(query) ||
+                              ship.customer_name.toLowerCase().includes(query) ||
+                              ship.origin.toLowerCase().includes(query) ||
+                              ship.destination.toLowerCase().includes(query) ||
+                              ship.current_status.toLowerCase().includes(query) ||
+                              (ship.current_location && ship.current_location.toLowerCase().includes(query))
+                            );
+                          })
+                          .map((ship) => (
+                            <tr key={ship.id}>
+                              <td>
+                                <strong style={{ color: 'var(--gold)' }}>{ship.consignment_number}</strong>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-400)' }}>Date: {ship.booking_date || 'N/A'}</div>
+                              </td>
+                              <td>
+                                <div className={styles.tableTitle}>{ship.customer_name}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-400)' }}>📞 {ship.customer_phone || 'N/A'}</div>
+                              </td>
+                              <td>
+                                <div style={{ fontSize: '0.85rem' }}>{ship.origin} ➔ {ship.destination}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-400)' }}>Fleet: {ship.vehicle_number || 'N/A'}</div>
+                              </td>
+                              <td>
+                                <span className={`${styles.tableCategory} ${styles['status' + ship.current_status.replace(/\s+/g, '')] || ''}`}>
+                                  {ship.current_status}
+                                </span>
+                              </td>
+                              <td>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--white)' }}>{ship.current_location || 'Awaiting Departure'}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-400)' }}>Driver: {ship.driver_name || 'N/A'}</div>
+                              </td>
+                              <td>
+                                <span style={{ fontSize: '0.8rem', background: 'rgba(255,255,255,0.02)', padding: '0.2rem 0.5rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                  {ship.status_history ? ship.status_history.length : 0} logs
+                                </span>
+                              </td>
+                              <td className={styles.tdActions}>
+                                <div className={styles.actionRow}>
+                                  <button
+                                    type="button"
+                                    className={styles.editBtn}
+                                    onClick={() => loadShipmentForEdit(ship)}
+                                  >
+                                    ✏️ Edit
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={styles.deleteBtn}
+                                    onClick={() => {
+                                      if (window.confirm(`Are you sure you want to permanently delete the shipment record "${ship.consignment_number}"?`)) {
+                                        handleDeleteShipment(ship.id);
+                                      }
+                                    }}
+                                    disabled={shipmentActionLoading}
+                                  >
+                                    🗑️ Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
+        )}
+
 
         {/* Custom Confirmation Modal */}
         {deleteConfirmOpen && blogToDelete && (
