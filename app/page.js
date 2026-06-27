@@ -6,6 +6,8 @@ import TrustStats from '@/components/TrustStats/TrustStats';
 import HeroSlideshow from '@/components/HeroSlideshow/HeroSlideshow';
 import TestimonialsSlider from '@/components/TestimonialsSlider/TestimonialsSlider';
 import { getCustomMetadata, getGalleryImages } from '@/lib/supabase';
+import PsuCalloutCard from '@/components/PsuCalloutCard/PsuCalloutCard';
+
 
 export async function generateMetadata() {
   const path = '/';
@@ -147,6 +149,10 @@ export default async function HomePage() {
 
       {/* ── B2B / PSU CLIENT MARQUEE ──────────────────────── */}
       <ClientMarquee />
+
+      {/* ── PSU CLAIM REIMBURSEMENT KIT CALLOUT ────────────── */}
+      <PsuCalloutCard />
+
 
       {/* ── SERVICES ──────────────────────────────────────── */}
       <section className={`section bg-section-dark ${styles.servicesSection}`} id="services">

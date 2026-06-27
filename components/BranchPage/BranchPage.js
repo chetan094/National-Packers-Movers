@@ -9,6 +9,8 @@ import BranchTestimonials from './BranchTestimonials';
 import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
 import LocalOperationsShowcase from './LocalOperationsShowcase';
 import { getGalleryImages } from '@/lib/supabase';
+import PsuCalloutCard from '@/components/PsuCalloutCard/PsuCalloutCard';
+
 
 
 const RELOCATION_SERVICES = [
@@ -517,7 +519,11 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
 
               {/* Local Operations & Fleet in Action interactive showcase */}
               <LocalOperationsShowcase cityName={data.name} styles={styles} />
+
+              {/* Localized PSU Shifting Claim Approval Kit B2B Callout */}
+              <PsuCalloutCard cityName={data.name} isBranchPage={true} />
             </div>
+
 
             {/* Right Contact Card / Navigation Column */}
             <div className={styles.sidebar}>
