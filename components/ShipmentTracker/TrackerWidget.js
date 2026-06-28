@@ -70,14 +70,13 @@ export default function TrackerWidget() {
   };
 
   const checkMilestonePassed = (currentStatus, milestoneKey) => {
-    const statusOrder = ['Booked', 'Packed', 'Dispatched', 'In Transit', 'Out for Delivery', 'Delivered'];
-    const currentIndex = statusOrder.indexOf(currentStatus);
+    const statusOrder = ['Booked', 'Packed', 'Dispatched', 'In Transit', 'Delivered'];
+    
+    // Normalize 'Out for Delivery' to 'In Transit' for index ordering
+    const normalizedStatus = currentStatus === 'Out for Delivery' ? 'In Transit' : currentStatus;
+    const currentIndex = statusOrder.indexOf(normalizedStatus);
     
     let milestoneIndex = statusOrder.indexOf(milestoneKey);
-    if (milestoneKey === 'In Transit' && currentStatus === 'Out for Delivery') {
-      return true; // Out for Delivery covers In Transit milestone
-    }
-    
     return currentIndex >= milestoneIndex;
   };
 

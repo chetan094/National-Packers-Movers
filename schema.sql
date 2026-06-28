@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS shipments (
   origin VARCHAR NOT NULL,
   destination VARCHAR NOT NULL,
   booking_date DATE DEFAULT CURRENT_DATE,
-  current_status VARCHAR NOT NULL DEFAULT 'Booked', -- 'Booked', 'Packed', 'Dispatched', 'In Transit', 'Out for Delivery', 'Delivered'
+  current_status VARCHAR NOT NULL DEFAULT 'Booked', -- 'Booked', 'Packed', 'Dispatched', 'In Transit', 'Delivered'
   current_location VARCHAR,
   vehicle_number VARCHAR,
   driver_name VARCHAR,

@@ -418,11 +418,7 @@ export default function QuoteWizard() {
             <li>✅ Trusted since 1987 — 38+ years</li>
           </ul>
         </div>
-        <div className={styles.leadInfo}>
-          <div className={styles.leadInfoIcon}>📲</div>
-          <h4>How you get leads</h4>
-          <p>Every quote request is sent directly to your <strong>WhatsApp (+91 9835168368)</strong> with the customer's full details — instantly, no delay.</p>
-        </div>
+
         <div className={styles.infoContact}>
           <p>Customer prefers to call?</p>
           <a href="tel:9835168368" className="btn btn-primary" id="quote-call-btn">📞 9835168368</a>

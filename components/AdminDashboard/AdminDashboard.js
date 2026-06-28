@@ -182,6 +182,7 @@ export default function AdminDashboard() {
 
   // Search filter
   const [shipSearchQuery, setShipSearchQuery] = useState('');
+  const [shipStatusFilter, setShipStatusFilter] = useState('All');
 
   // History update inputs
   const [newLogStatus, setNewLogStatus] = useState('Booked');
@@ -1336,6 +1337,21 @@ export default function AdminDashboard() {
 
     return html;
   };
+
+  const filteredShipments = shipments.filter(ship => {
+    if (shipStatusFilter !== 'All' && ship.current_status !== shipStatusFilter) {
+      return false;
+    }
+    const query = shipSearchQuery.toLowerCase();
+    return (
+      ship.consignment_number.toLowerCase().includes(query) ||
+      ship.customer_name.toLowerCase().includes(query) ||
+      ship.origin.toLowerCase().includes(query) ||
+      ship.destination.toLowerCase().includes(query) ||
+      ship.current_status.toLowerCase().includes(query) ||
+      (ship.current_location && ship.current_location.toLowerCase().includes(query))
+    );
+  });
 
   if (!authorized) {
     return (
@@ -2800,7 +2816,6 @@ export default function AdminDashboard() {
                           <option value="Packed">Packed</option>
                           <option value="Dispatched">Dispatched</option>
                           <option value="In Transit">In Transit</option>
-                          <option value="Out for Delivery">Out for Delivery</option>
                           <option value="Delivered">Delivered</option>
                         </select>
                       </div>
@@ -2833,7 +2848,6 @@ export default function AdminDashboard() {
                               <option value="Packed">Packed</option>
                               <option value="Dispatched">Dispatched</option>
                               <option value="In Transit">In Transit</option>
-                              <option value="Out for Delivery">Out for Delivery</option>
                               <option value="Delivered">Delivered</option>
                             </select>
                           </div>
@@ -2920,16 +2934,29 @@ export default function AdminDashboard() {
             {/* Shipments List Section */}
             <section className={styles.listSection}>
               <div className={styles.listCard}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-                  <h2 className={styles.listTitle} style={{ margin: 0 }}>Registered Cargo Shipments ({shipments.length})</h2>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                  <h2 className={styles.listTitle} style={{ margin: 0 }}>Registered Cargo Shipments ({filteredShipments.length})</h2>
                   <input
                     type="text"
                     placeholder="🔍 Search by CN, customer name, route..."
                     value={shipSearchQuery}
                     onChange={(e) => setShipSearchQuery(e.target.value)}
                     className={styles.input}
-                    style={{ maxWidth: '300px' }}
+                    style={{ maxWidth: '280px', margin: 0 }}
                   />
+                  <select
+                    value={shipStatusFilter}
+                    onChange={(e) => setShipStatusFilter(e.target.value)}
+                    className={styles.select}
+                    style={{ width: '150px', padding: '0.8rem 1rem' }}
+                  >
+                    <option value="All">All Statuses</option>
+                    <option value="Booked">Booked</option>
+                    <option value="Packed">Packed</option>
+                    <option value="Dispatched">Dispatched</option>
+                    <option value="In Transit">In Transit</option>
+                    <option value="Delivered">Delivered</option>
+                  </select>
                 </div>
 
                 {loadingShipments ? (
@@ -2940,6 +2967,10 @@ export default function AdminDashboard() {
                 ) : shipments.length === 0 ? (
                   <div className={styles.tablePlaceholder}>
                     <p>No shipments registered. Add your first cargo tracking update above!</p>
+                  </div>
+                ) : filteredShipments.length === 0 ? (
+                  <div className={styles.tablePlaceholder}>
+                    <p>No shipments found matching the search/filter criteria.</p>
                   </div>
                 ) : (
                   <div className={styles.tableWrapper}>
@@ -2956,19 +2987,7 @@ export default function AdminDashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {shipments
-                          .filter(ship => {
-                            const query = shipSearchQuery.toLowerCase();
-                            return (
-                              ship.consignment_number.toLowerCase().includes(query) ||
-                              ship.customer_name.toLowerCase().includes(query) ||
-                              ship.origin.toLowerCase().includes(query) ||
-                              ship.destination.toLowerCase().includes(query) ||
-                              ship.current_status.toLowerCase().includes(query) ||
-                              (ship.current_location && ship.current_location.toLowerCase().includes(query))
-                            );
-                          })
-                          .map((ship) => (
+                        {filteredShipments.map((ship) => (
                             <tr key={ship.id}>
                               <td>
                                 <strong style={{ color: 'var(--gold)' }}>{ship.consignment_number}</strong>

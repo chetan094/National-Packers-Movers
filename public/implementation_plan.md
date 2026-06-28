@@ -195,7 +195,7 @@ Each state gets its own page: `/branches/jharkhand`, `/branches/west-bengal`, et
 
 ### 5. 📦 Track Shipment (`/track-shipment`)
 - Input field: Enter AWB/Booking Number
-- Status displayed: Booked → Packed → In Transit → Out for Delivery → Delivered
+- Status displayed: Booked → Packed → In Transit → Delivered
 - Admin updates status from dashboard
 - Phase 2 option: Integrate real GPS/SMS tracking
 
