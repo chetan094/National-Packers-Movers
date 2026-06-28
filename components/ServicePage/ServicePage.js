@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import styles from './ServicePage.module.css';
 import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
+import { branchesData } from '@/data/branchesData';
 
 /* ── Universal 6-Step Process ─────────────────────────────── */
 const PROCESS_STEPS = [
@@ -37,6 +38,35 @@ const PROCESS_STEPS = [
 ];
 
 export default function ServicePage({ service }) {
+  // Dynamically compile all operational States and Cities for complete SEO coverage
+  const areaServedList = (() => {
+    const list = [];
+    
+    // 1. Map States
+    if (branchesData.states) {
+      Object.values(branchesData.states).forEach(state => {
+        list.push({
+          '@type': 'State',
+          'name': state.name
+        });
+      });
+    }
+    
+    // 2. Map Cities
+    if (branchesData.cities) {
+      Object.values(branchesData.cities).forEach(city => {
+        if (city.name !== 'coming-soon') {
+          list.push({
+            '@type': 'City',
+            'name': city.name.replace(/ \(hq\)/i, '').replace(/ \(virtual office\)/i, '').replace(/ \(coming soon\)/i, '')
+          });
+        }
+      });
+    }
+    
+    return list;
+  })();
+
   // 1. FAQ JSON-LD Schema
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -66,14 +96,7 @@ export default function ServicePage({ service }) {
       'logo': 'https://www.thenationalpackersmovers.com/logo.png',
       'url': 'https://www.thenationalpackersmovers.com'
     },
-    'areaServed': [
-      { '@type': 'State', 'name': 'Jharkhand' },
-      { '@type': 'State', 'name': 'West Bengal' },
-      { '@type': 'State', 'name': 'Bihar' },
-      { '@type': 'State', 'name': 'Madhya Pradesh' },
-      { '@type': 'State', 'name': 'Odisha' },
-      { '@type': 'State', 'name': 'Uttar Pradesh' }
-    ]
+    'areaServed': areaServedList
   };
 
   return (
