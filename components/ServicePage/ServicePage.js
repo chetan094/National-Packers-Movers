@@ -37,8 +37,56 @@ const PROCESS_STEPS = [
 ];
 
 export default function ServicePage({ service }) {
+  // 1. FAQ JSON-LD Schema
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': service.faqs ? service.faqs.map(faq => ({
+      '@type': 'Question',
+      'name': faq.q,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': faq.a
+      }
+    })) : []
+  };
+
+  // 2. Service Schema
+  const serviceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    'name': service.name,
+    'description': service.heroSubtitle,
+    'provider': {
+      '@type': 'MovingCompany',
+      'name': 'National Packers & Movers',
+      'telephone': '9835168368',
+      'priceRange': '$$',
+      'image': 'https://www.thenationalpackersmovers.com/photos/packed-goods.jpg',
+      'logo': 'https://www.thenationalpackersmovers.com/logo.png',
+      'url': 'https://www.thenationalpackersmovers.com'
+    },
+    'areaServed': [
+      { '@type': 'State', 'name': 'Jharkhand' },
+      { '@type': 'State', 'name': 'West Bengal' },
+      { '@type': 'State', 'name': 'Bihar' },
+      { '@type': 'State', 'name': 'Madhya Pradesh' },
+      { '@type': 'State', 'name': 'Odisha' },
+      { '@type': 'State', 'name': 'Uttar Pradesh' }
+    ]
+  };
+
   return (
     <div className={styles.page}>
+      {/* ── SEO JSON-LD Schemas ───────────────────────────── */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
 
       {/* ── HERO ──────────────────────────────────────────── */}
       <section className={styles.hero}>
