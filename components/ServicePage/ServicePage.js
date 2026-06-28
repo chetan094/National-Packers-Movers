@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import styles from './ServicePage.module.css';
 import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
-import { branchesData } from '@/data/branchesData';
+import { branchesData, STATE_CITIES } from '@/data/branchesData';
 
 /* ── Universal 6-Step Process ─────────────────────────────── */
 const PROCESS_STEPS = [
@@ -52,15 +52,33 @@ export default function ServicePage({ service }) {
       });
     }
     
-    // 2. Map Cities
-    if (branchesData.cities) {
-      Object.values(branchesData.cities).forEach(city => {
-        if (city.name !== 'coming-soon') {
-          list.push({
-            '@type': 'City',
-            'name': city.name.replace(/ \(hq\)/i, '').replace(/ \(virtual office\)/i, '').replace(/ \(coming soon\)/i, '')
-          });
-        }
+    // 2. Map All Cities (including dynamic ones from STATE_CITIES lists)
+    if (STATE_CITIES) {
+      const formatCityName = (slug) => {
+        return slug
+          .split('-')
+          .map(word => {
+            if (word === 'hq') return '';
+            if (word === 'bsl') return 'BSL';
+            if (word === 'psu') return 'PSU';
+            return word.charAt(0).toUpperCase() + word.slice(1);
+          })
+          .join(' ')
+          .trim();
+      };
+
+      Object.values(STATE_CITIES).forEach(cityList => {
+        cityList.forEach(citySlug => {
+          if (citySlug !== 'coming-soon') {
+            const nameClean = formatCityName(citySlug);
+            if (nameClean) {
+              list.push({
+                '@type': 'City',
+                'name': nameClean
+              });
+            }
+          }
+        });
       });
     }
     
