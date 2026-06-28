@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getBlogBySlug, getCustomMetadata } from '@/lib/supabase';
+import { getBlogBySlug, getCustomMetadata, getBlogs } from '@/lib/supabase';
 import ReadingProgressBar from './ReadingProgressBar';
 import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
+import BlogSidebarQuote from '@/components/BlogSidebarQuote/BlogSidebarQuote';
 import styles from './page.module.css';
 
 function getFallbackFaqs(category) {
@@ -219,6 +220,12 @@ export default async function BlogPostPage({ params }) {
     notFound();
   }
 
+  // Fetch and filter other recommended reads dynamically (excluding current article, up to 10 maximum)
+  const allBlogs = await getBlogs();
+  const relatedBlogs = allBlogs
+    .filter(b => b.slug !== slug)
+    .slice(0, 10);
+
   const howToSchema = blog.category === 'How To?' ? generateHowToSchema(blog) : null;
 
   const faqsList = blog.faqs && blog.faqs.length > 0 ? blog.faqs : getFallbackFaqs(blog.category);
@@ -339,52 +346,81 @@ export default async function BlogPostPage({ params }) {
       <ReadingProgressBar />
 
       <div className={`${styles.articleContainer} container`}>
-        {/* Navigation Breadcrumb */}
-        <div className={styles.breadcrumb}>
-          <Link href="/blog" className={styles.backBtn}>
-            <span>←</span> Back to Articles
-          </Link>
+        {/* 2-Column Grid Layout */}
+        <div className={styles.mainGrid}>
+          {/* Left Column: Header + Content */}
+          <div className={styles.leftColumn}>
+            {/* Navigation Breadcrumb */}
+            <div className={styles.breadcrumb}>
+              <Link href="/blog" className={styles.backBtn}>
+                <span>←</span> Back to Articles
+              </Link>
+            </div>
+
+            {/* HERO CANVAS */}
+            <header className={styles.articleHeader}>
+              <div className={styles.metaRow}>
+                <span className={styles.categoryBadge}>{blog.category}</span>
+                <span className={styles.metaDivider}>•</span>
+                <span className={styles.metaText}>⏱️ {readTime} min read</span>
+                <span className={styles.metaDivider}>•</span>
+                <span className={styles.metaText}>
+                  📅 {new Date(blog.created_at).toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                  })}
+                </span>
+              </div>
+
+              <h1 className={styles.articleTitle}>{blog.title}</h1>
+              <p className={styles.articleExcerpt}>{blog.excerpt}</p>
+
+              <div className={styles.coverImageWrapper}>
+                <img src={blog.image_url} alt={blog.title} className={styles.coverImage} />
+              </div>
+            </header>
+            {/* ARTICLE BODY */}
+            <section className={styles.articleBody}>
+              <div
+                className={styles.articleContent}
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(blog.content) }}
+              />
+            </section>
+
+            {/* CRAWLER-FRIENDLY ACCORDION FAQs */}
+            <section className={styles.faqSection} id="faq-section">
+              <h2 className={styles.faqSectionTitle}>Frequently Asked Questions (FAQs)</h2>
+              <div className={styles.faqAccordionContainer}>
+                <FaqAccordion faqs={faqsList.map(f => ({ q: f.question, a: f.answer }))} />
+              </div>
+            </section>
+          </div>
+
+          {/* Right Column: Sticky Sidebar Form & Related Blogs */}
+          <aside className={styles.rightColumn}>
+            <div className={styles.stickySidebar}>
+              <BlogSidebarQuote blogTitle={blog.title} />
+              
+              {relatedBlogs.length > 0 && (
+                <div className={styles.relatedBlogsSidebar}>
+                  <h4 className={styles.relatedBlogsTitle}>📰 Recommended Reads</h4>
+                  <div className={styles.relatedList}>
+                    {relatedBlogs.map(item => (
+                      <Link href={`/blog/${item.slug}`} key={item.id} className={styles.relatedBlogCard}>
+                        <img src={item.image_url} alt={item.title} className={styles.relatedBlogImage} />
+                        <div className={styles.relatedBlogMeta}>
+                          <span className={styles.relatedBlogCat}>{item.category}</span>
+                          <h5 className={styles.relatedBlogHeader}>{item.title}</h5>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </aside>
         </div>
-
-        {/* HERO CANVAS */}
-        <header className={styles.articleHeader}>
-          <div className={styles.metaRow}>
-            <span className={styles.categoryBadge}>{blog.category}</span>
-            <span className={styles.metaDivider}>•</span>
-            <span className={styles.metaText}>⏱️ {readTime} min read</span>
-            <span className={styles.metaDivider}>•</span>
-            <span className={styles.metaText}>
-              📅 {new Date(blog.created_at).toLocaleDateString('en-IN', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric'
-              })}
-            </span>
-          </div>
-
-          <h1 className={styles.articleTitle}>{blog.title}</h1>
-          <p className={styles.articleExcerpt}>{blog.excerpt}</p>
-
-          <div className={styles.coverImageWrapper}>
-            <img src={blog.image_url} alt={blog.title} className={styles.coverImage} />
-          </div>
-        </header>
-
-        {/* ARTICLE BODY */}
-        <section className={styles.articleBody}>
-          <div
-            className={styles.articleContent}
-            dangerouslySetInnerHTML={{ __html: renderMarkdown(blog.content) }}
-          />
-        </section>
-
-        {/* CRAWLER-FRIENDLY ACCORDION FAQs */}
-        <section className={styles.faqSection} id="faq-section">
-          <h2 className={styles.faqSectionTitle}>Frequently Asked Questions (FAQs)</h2>
-          <div className={styles.faqAccordionContainer}>
-            <FaqAccordion faqs={faqsList.map(f => ({ q: f.question, a: f.answer }))} />
-          </div>
-        </section>
 
         {/* DYNAMIC B2B/B2C LEAD CTA */}
         <footer className={styles.articleFooter}>
