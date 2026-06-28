@@ -37,8 +37,11 @@
 .topLink:hover { color: var(--gold); }
 
 .topDivider {
-  color: rgba(247,183,49,0.3);
-  font-size: 0.8rem;
+  display: inline-block;
+  width: 1px;
+  height: 10px;
+  background-color: rgba(247, 183, 49, 0.3);
+  margin: 0 0.25rem;
 }
 
 .topText {

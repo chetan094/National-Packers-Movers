@@ -129,7 +129,11 @@
 .heroPhone:hover { color: var(--gold); }
 
 .heroDivider {
-  color: rgba(247,183,49,0.3);
+  display: inline-block;
+  width: 1px;
+  height: 14px;
+  background-color: rgba(247, 183, 49, 0.3);
+  margin: 0 0.5rem;
 }
 
 /* Hero Image Side */
