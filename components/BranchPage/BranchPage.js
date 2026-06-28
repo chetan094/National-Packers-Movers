@@ -335,6 +335,25 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
       'addressRegion': stateName,
       'addressCountry': 'IN'
     },
+    'geo': (isCity && data.latitude && data.longitude) ? {
+      '@type': 'GeoCoordinates',
+      'latitude': data.latitude,
+      'longitude': data.longitude
+    } : undefined,
+    'areaServed': (isCity && localitiesList.length > 0) ? localitiesList : undefined,
+    'parentOrganization': {
+      '@type': 'MovingCompany',
+      'name': 'National Packers & Movers',
+      'address': {
+        '@type': 'PostalAddress',
+        'streetAddress': 'Corporate Headquarters',
+        ...(stateSlug === 'jharkhand' ? {
+          'addressLocality': 'Dhanbad',
+          'addressRegion': 'Jharkhand'
+        } : {}),
+        'addressCountry': 'IN'
+      }
+    },
     'aggregateRating': {
       '@type': 'AggregateRating',
       'ratingValue': '4.9',
