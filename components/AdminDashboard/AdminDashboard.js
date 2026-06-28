@@ -1734,21 +1734,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {activeTab === 'tracking' && (
-          <div className={styles.futureModuleWrapper}>
-            <div className={styles.futureCard}>
-              <div className={styles.futureIcon}>🚚</div>
-              <h1>Shipment Tracker Console</h1>
-              <p className={styles.futureText}>
-                The shipment tracking administrator console will allow you to update consignment numbers, transit checkpoints, and status updates for corporate and household shipments in real-time.
-              </p>
-              <div className={styles.futureAlert}>
-                ℹ&nbsp; Phase 2 Integration: This panel will link automatically with your customer-facing tracking queries.
-              </div>
-            </div>
-          </div>
-        )}
-
         {activeTab === 'leads' && (
           <div className={styles.leadsModuleWrapper}>
             <div className={styles.leadsHeader}>
