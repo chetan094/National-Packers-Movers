@@ -38,7 +38,7 @@ const service = {
   heroTitle: 'Professional <span>Household Relocation</span><br/>You Can Trust Completely',
   heroSubtitle: 'From the first box packed to the last item placed — we handle your entire home shift with the care, precision, and honesty that 38 years of experience delivers.',
   stats: [
-    { number: 10000, suffix: '+', label: 'Homes Shifted' },
+    { number: 90000, suffix: '+', label: 'Homes Shifted' },
     { number: 38, suffix: '+', label: 'Years of Experience' },
     { number: 100, suffix: '%', label: 'Transit Insurance' },
     { number: 6, suffix: '', label: 'States Covered' },

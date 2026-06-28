@@ -163,7 +163,7 @@ export default function ServicesPage() {
           {[
             { icon: '🏆', text: 'Trusted Since 1987 — 38+ Years' },
             { icon: '🛡️', text: '100% Insured Moves' },
-            { icon: '🗺️', text: '6 States, 15+ Cities' },
+            { icon: '🗺️', text: '6 States, 1200+ Cities' },
             { icon: '📞', text: 'Available 7 Days a Week' },
           ].map((t, i) => (
             <div key={i} className={styles.trustItem} data-reveal="up" data-delay={i * 100}>

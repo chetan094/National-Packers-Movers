@@ -38,7 +38,7 @@ const service = {
   heroTitle: 'Professional <span>Loading & Unloading</span><br/>The Right Labour, The Right Way.',
   heroSubtitle: 'Trained, reliable manpower for all your loading and unloading needs. Whether household goods, office equipment, or industrial cargo — we handle it safely, efficiently, and with full accountability.',
   stats: [
-    { number: 50000, suffix: '+', label: 'Loads Handled' },
+    { number: 12000, suffix: '+', label: 'Loads Handled' },
     { number: 38, suffix: '+', label: 'Years Experience' },
     { number: 100, suffix: '%', label: 'Trained Staff' },
     { number: 6, suffix: '', label: 'States Covered' },

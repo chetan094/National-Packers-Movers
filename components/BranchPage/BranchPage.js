@@ -483,7 +483,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
       <section className={styles.statsBar}>
         <div className={`${styles.statsGrid} container`}>
           {(data.stats || stateData?.stats || [
-            { number: 30000, suffix: '+', label: 'Moves Completed' },
+            { number: 120000, suffix: '+', label: 'Moves Completed' },
             { number: 38, suffix: '+', label: 'Years Legacy' },
             { number: 6, suffix: '', label: 'States Served' },
             { number: 100, suffix: '%', label: 'Insured Goods' }

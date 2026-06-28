@@ -1,5 +1,7 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './ServicePage.module.css';
+import SlotCounter from '@/components/animations/SlotCounter';
 import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
 import { branchesData, STATE_CITIES } from '@/data/branchesData';
 
@@ -154,7 +156,7 @@ export default function ServicePage({ service }) {
           {service.stats.map((stat, i) => (
             <div key={i} className={styles.statItem} data-reveal="up" data-delay={i * 100}>
               <div className={styles.statNumber}>
-                {stat.number}{stat.suffix}
+                <SlotCounter end={stat.number} suffix={stat.suffix} duration={2000} />
               </div>
               <div className={styles.statLabel}>{stat.label}</div>
             </div>
@@ -245,7 +247,7 @@ export default function ServicePage({ service }) {
                 { num: '0%',   label: 'Damage Rate' },
                 { num: '100%', label: 'Insured Moves' },
                 { num: '38+',  label: 'Years of Safe Deliveries' },
-                { num: '50K+', label: 'Items Moved Safely' },
+                { num: '100000+', label: 'Items Moved Safely' },
               ].map((s, i) => (
                 <div key={i} className={styles.safetyStatCard}>
                   <div className={styles.safetyStatNum}>{s.num}</div>

@@ -9,9 +9,9 @@ export const branchesData = {
       introText: 'With over 38 years of logistics excellence, National Packers & Movers is the premier brand for shifting in Jharkhand. Founded by Debabrata Jhampaty, we started our journey here and have expanded to cover the entire state. From household shifting in Ranchi to heavy industrial transport in Dhanbad and Bokaro, we handle every relocation with our principle of absolute honesty.',
       cities: ['dhanbad', 'ranchi', 'bokaro', 'deoghar'],
       stats: [
-        { number: 18000, suffix: '+', label: 'Moves in Jharkhand' },
+        { number: 45000, suffix: '+', label: 'Moves in Jharkhand' },
         { number: 38, suffix: '', label: 'Years Trusted Legacy' },
-        { number: 4, suffix: '', label: 'Active Branches' },
+        { number: 6, suffix: '', label: 'Active Branches' },
         { number: 100, suffix: '%', label: 'Transit Safety' }
       ],
       testimonials: [
@@ -28,7 +28,7 @@ export const branchesData = {
       introText: 'West Bengal is a crucial hub in our Eastern India logistics network. National Packers & Movers offers high-end residential, corporate, and industrial relocation services. Whether it is navigating the busy lanes of Kolkata, moving families in the steel city of Asansol, or managing industrial logistics in Durgapur, our dedicated teams ensure a seamless transition.',
       cities: ['kolkata', 'durgapur', 'asansol'],
       stats: [
-        { number: 8500, suffix: '+', label: 'Bengal Shifts' },
+        { number: 35000, suffix: '+', label: 'Bengal Shifts' },
         { number: 3, suffix: '', label: 'Full Hubs' },
         { number: 100, suffix: '%', label: 'Claim Resolution' },
         { number: 24, suffix: 'Hr', label: 'Support Turnaround' }
@@ -47,7 +47,7 @@ export const branchesData = {
       introText: 'National Packers & Movers brings world-class packing and moving services to Bihar. We service the historic capital of Patna and the silk city of Bhagalpur, bridging relocations across Bihar to the rest of India. We utilize our own dedicated fleet of vehicles to eliminate third-party delays and damages.',
       cities: ['patna', 'bhagalpur'],
       stats: [
-        { number: 4200, suffix: '+', label: 'Families Moved' },
+        { number: 30000, suffix: '+', label: 'Families Moved' },
         { number: 2, suffix: '', label: 'Key Cities' },
         { number: 100, suffix: '%', label: 'Insured Shipments' },
         { number: 8,   suffix: 'AM', label: 'to 8PM Customer Care' }
@@ -66,7 +66,7 @@ export const branchesData = {
       introText: 'We support Madhya Pradesh\'s industrial relocation needs, with a specialized branch in Singrauli. We have handled hundreds of relocations for employees of NCL, NTPC, and other major corporations, offering professional paperwork, IBA-compliant billing, and heavy item handling.',
       cities: ['singrauli'],
       stats: [
-        { number: 1500, suffix: '+', label: 'PSU Relocations' },
+        { number: 12000, suffix: '+', label: 'PSU Relocations' },
         { number: 1,    suffix: '', label: 'Industrial Hub' },
         { number: 100,  suffix: '%', label: 'IBA Billing Support' },
         { number: 0,    suffix: '%', label: 'Damage Rate' }
@@ -84,7 +84,7 @@ export const branchesData = {
       introText: 'National Packers & Movers services Odisha through a highly coordinated Virtual Office network. While all bookings and administration are run through our regional administrative coordination network, we dispatch specialized teams and vehicles from our neighboring hubs to execute safe, prompt relocations in Bhubaneswar, Cuttack, Rourkela, and beyond.',
       cities: ['virtual-office'],
       stats: [
-        { number: 950,  suffix: '+', label: 'Odisha Bookings' },
+        { number: 3500,  suffix: '+', label: 'Odisha Bookings' },
         { number: 1,    suffix: '', label: 'Central HQ Control' },
         { number: 100,  suffix: '%', label: 'Insured Goods' },
         { number: 7,    suffix: 'Days', label: 'Active Service' }
@@ -102,7 +102,7 @@ export const branchesData = {
       introText: 'As part of our commitment to scale National Packers & Movers into a nationwide logistics powerhouse, we are establishing physical branch offices in Uttar Pradesh soon. Currently, we manage daily inter-state relocation trucks running from Jharkhand/Bengal to major UP cities including Lucknow, Kanpur, Varanasi, and Noida.',
       cities: ['coming-soon'],
       stats: [
-        { number: 1200, suffix: '+', label: 'Cross-State Moves' },
+        { number: 90000, suffix: '+', label: 'Cross-State Moves' },
         { number: 5,    suffix: '+', label: 'Daily Trucks to UP' },
         { number: 38,   suffix: '+', label: 'Years Legacy' },
         { number: 100,  suffix: '%', label: 'Assured Delivery' }

@@ -4,9 +4,9 @@ import styles from '@/app/page.module.css';
 
 const trustStats = [
   { number: 38, suffix: '+', label: 'Years of Trust' },
-  { number: 30000, suffix: '+', label: 'Successful Moves' },
+  { number: 125000, suffix: '+', label: 'Successful Moves' },
   { number: 6, suffix: '', label: 'States Covered' },
-  { number: 15, suffix: '+', label: 'Cities Served' },
+  { number: 1200, suffix: '+', label: 'Cities Served' },
 ];
 
 export default function TrustStats() {

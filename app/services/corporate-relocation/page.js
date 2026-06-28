@@ -38,8 +38,8 @@ const service = {
   heroTitle: 'Corporate Relocation <span>Built for Business</span><br/>Trusted by India\'s Top PSUs',
   heroSubtitle: 'Seamless office and employee relocations with zero downtime. Trusted by leading public sector units, energy companies, mining corporations, and industrial organisations across India.',
   stats: [
-    { number: 500, suffix: '+', label: 'Corporate Moves' },
-    { number: 50, suffix: '+', label: 'PSU Clients Served' },
+    { number: 50000, suffix: '+', label: 'Corporate Moves' },
+    { number: 20000, suffix: '+', label: 'PSU Clients Served' },
     { number: 38, suffix: '+', label: 'Years of Experience' },
     { number: 100, suffix: '%', label: 'On-Time Delivery' },
   ],

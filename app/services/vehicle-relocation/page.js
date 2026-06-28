@@ -38,7 +38,7 @@ const service = {
   heroTitle: 'Safe <span>Vehicle Relocation</span><br/>Delivered Without a Scratch.',
   heroSubtitle: 'Your car, bike, or any vehicle — transported safely across India. GPS-tracked carriers, full insurance, zero-damage commitment. Trusted by thousands since 1987.',
   stats: [
-    { number: 2000, suffix: '+', label: 'Vehicles Transported' },
+    { number: 5000, suffix: '+', label: 'Vehicles Transported' },
     { number: 38, suffix: '+', label: 'Years Experience' },
     { number: 100, suffix: '%', label: 'Insured Transport' },
     { number: 0, suffix: '%', label: 'Damage Rate' },

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import styles from './page.module.css';
 import { getCustomMetadata } from '@/lib/supabase';
+import SlotCounter from '@/components/animations/SlotCounter';
 
 export async function generateMetadata() {
   const path = '/about';
@@ -104,12 +105,12 @@ const values = [
 ];
 
 const stats = [
-  { number: '38+', label: 'Years in Service' },
-  { number: '30,000+', label: 'Successful Relocations' },
-  { number: '6', label: 'States Covered' },
-  { number: '15+', label: 'Branch Offices' },
-  { number: '500+', label: 'Corporate Moves' },
-  { number: '100%', label: 'Commitment to Quality' },
+  { number: 38, suffix: '+', label: 'Years in Service' },
+  { number: 125000, suffix: '+', label: 'Successful Relocations' },
+  { number: 6, suffix: '', label: 'States Covered' },
+  { number: 15, suffix: '+', label: 'Branch Offices' },
+  { number: 500, suffix: '+', label: 'Corporate Moves' },
+  { number: 100, suffix: '%', label: 'Commitment to Quality' },
 ];
 
 export default function AboutPage() {
@@ -324,7 +325,9 @@ export default function AboutPage() {
           <div className={styles.statsGrid}>
             {stats.map((s, i) => (
               <div key={i} className={styles.statCard} data-reveal="fade" data-delay={i * 70}>
-                <div className="stat-number">{s.number}</div>
+                <div className="stat-number">
+                  <SlotCounter end={s.number} suffix={s.suffix} duration={2000} />
+                </div>
                 <div className="stat-label">{s.label}</div>
               </div>
             ))}
@@ -340,7 +343,7 @@ export default function AboutPage() {
             Ready to Experience the<br />National Packers Difference?
           </h2>
           <p className={styles.ctaSubtitle}>
-            Join 30,000+ families and businesses who trusted us with their move.
+            Join 125,000+ families and businesses who trusted us with their move.
           </p>
           <div className={styles.ctaBtns}>
             <Link href="/get-quote" className="btn btn-white btn-lg">
