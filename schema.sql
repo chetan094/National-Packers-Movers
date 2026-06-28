@@ -104,3 +104,54 @@ CREATE TABLE IF NOT EXISTS shipments (
 -- Indexing for fast search and tracking lookup
 CREATE INDEX IF NOT EXISTS idx_shipments_cn ON shipments(consignment_number);
 
+
+-- ========================================================================
+-- Gallery Images Table
+-- ========================================================================
+
+CREATE TABLE IF NOT EXISTS gallery_images (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  src TEXT NOT NULL,
+  alt TEXT NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexing for optimized sorted queries
+CREATE INDEX IF NOT EXISTS idx_gallery_order ON gallery_images(display_order ASC, created_at DESC);
+
+
+-- ========================================================================
+-- Site Custom Metadata (SEO Settings) Table
+-- ========================================================================
+
+CREATE TABLE IF NOT EXISTS site_metadata (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  path VARCHAR UNIQUE NOT NULL,
+  meta_title VARCHAR NOT NULL,
+  meta_description VARCHAR NOT NULL,
+  meta_keywords VARCHAR,
+  is_noindex BOOLEAN DEFAULT false,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexing for fast path lookups
+CREATE INDEX IF NOT EXISTS idx_site_metadata_path ON site_metadata(path);
+
+
+-- Note on Row Level Security (RLS) policies:
+-- ALTER TABLE gallery_images ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE site_metadata ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE POLICY "Allow public read access to gallery_images" ON gallery_images
+--   FOR SELECT TO anon, authenticated USING (true);
+-- CREATE POLICY "Allow public read access to site_metadata" ON site_metadata
+--   FOR SELECT TO anon, authenticated USING (true);
+-- 
+-- CREATE POLICY "Allow admin CRUD access to gallery_images" ON gallery_images
+--   FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+-- CREATE POLICY "Allow admin CRUD access to site_metadata" ON site_metadata
+--   FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+
