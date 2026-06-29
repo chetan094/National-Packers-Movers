@@ -3490,6 +3490,7 @@ export default function AdminDashboard() {
                                 <tr>
                                   <th>Staff Name</th>
                                   <th>Phone Number</th>
+                                  <th>Password</th>
                                   <th>Account Role</th>
                                   <th>Assigned Panels</th>
                                   <th>Actions</th>
@@ -3503,6 +3504,11 @@ export default function AdminDashboard() {
                                     </td>
                                     <td>
                                       <span style={{ color: 'var(--gray-300)', fontSize: '0.9rem' }}>{u.username}</span>
+                                    </td>
+                                    <td>
+                                      <code style={{ color: 'var(--gold-light)', background: 'rgba(255,255,255,0.03)', padding: '0.15rem 0.35rem', borderRadius: '3px', fontSize: '0.82rem', fontFamily: 'monospace' }}>
+                                        {u.raw_password || 'Hashed (Legacy)'}
+                                      </code>
                                     </td>
                                     <td>
                                       <span style={{ fontSize: '0.72rem', background: u.role === 'admin' ? 'rgba(247,183,49,0.1)' : 'rgba(255,255,255,0.05)', color: u.role === 'admin' ? 'var(--gold)' : 'var(--gray-300)', padding: '0.2rem 0.5rem', borderRadius: '4px', textTransform: 'uppercase', fontWeight: 'bold' }}>

@@ -25,6 +25,7 @@ export async function GET() {
       role: u.role,
       permissions: u.permissions,
       full_name: u.full_name,
+      raw_password: u.raw_password,
       created_at: u.created_at
     }));
     
