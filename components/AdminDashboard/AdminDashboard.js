@@ -266,6 +266,7 @@ export default function AdminDashboard() {
   
   const [newUserPhone, setNewUserPhone] = useState('');
   const [newUserPassword, setNewUserPassword] = useState('');
+  const [newUserFullName, setNewUserFullName] = useState('');
   const [newUserPermissions, setNewUserPermissions] = useState({
     blogs: false,
     tracking: false,
@@ -279,6 +280,7 @@ export default function AdminDashboard() {
   const [editingUser, setEditingUser] = useState(null);
   const [editUserPhone, setEditUserPhone] = useState('');
   const [editUserPassword, setEditUserPassword] = useState('');
+  const [editUserFullName, setEditUserFullName] = useState('');
   const [editUserPermissions, setEditUserPermissions] = useState({});
 
   const fetchUsers = async () => {
@@ -366,14 +368,16 @@ export default function AdminDashboard() {
           username: newUserPhone.trim(),
           password: newUserPassword,
           role: 'staff',
-          permissions: newUserPermissions
+          permissions: newUserPermissions,
+          fullName: newUserFullName.trim()
         })
       });
 
       if (res.ok) {
-        setSettingsSuccess(`User ${newUserPhone} created successfully!`);
+        setSettingsSuccess(`User ${newUserFullName || newUserPhone} created successfully!`);
         setNewUserPhone('');
         setNewUserPassword('');
+        setNewUserFullName('');
         setNewUserPermissions({
           blogs: false,
           tracking: false,
@@ -428,7 +432,8 @@ export default function AdminDashboard() {
 
     const updates = {
       username: editUserPhone.trim(),
-      permissions: editUserPermissions
+      permissions: editUserPermissions,
+      full_name: editUserFullName.trim()
     };
 
     if (editUserPassword) {
@@ -1665,12 +1670,16 @@ export default function AdminDashboard() {
         <div className={styles.sidebarFooter}>
           <div className={styles.adminUser}>
             <div className={styles.avatar}>
-              {(currentUser?.username || 'A').charAt(0).toUpperCase()}
+              {(currentUser?.full_name || currentUser?.username || 'A').charAt(0).toUpperCase()}
             </div>
             <div>
-              <p className={styles.userName}>{currentUser?.username || 'Administrator'}</p>
+              <p className={styles.userName}>
+                {currentUser?.full_name || currentUser?.username || 'Administrator'}
+              </p>
               <p className={styles.userStatus}>
-                {currentUser?.role === 'admin' ? 'Master Admin' : 'Staff Operator'}
+                {currentUser?.full_name 
+                  ? currentUser.username 
+                  : (currentUser?.role === 'admin' ? 'Master Admin' : 'Staff Operator')}
               </p>
             </div>
           </div>
@@ -3393,7 +3402,18 @@ export default function AdminDashboard() {
                       <div className={styles.paneCard}>
                         <h2 className={styles.paneTitle}>➕ Register New Sub-User</h2>
                         <form onSubmit={handleAddUserSubmit} className={styles.form}>
-                          <div className={styles.formGrid} style={{ gridTemplateColumns: '1fr 1fr' }}>
+                          <div className={styles.formGrid} style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
+                            <div className={styles.inputGroup}>
+                              <label className={styles.label}>Full Name *</label>
+                              <input
+                                type="text"
+                                className={styles.input}
+                                value={newUserFullName}
+                                onChange={(e) => setNewUserFullName(e.target.value)}
+                                placeholder="Name (e.g. Rahul Kumar)..."
+                                required
+                              />
+                            </div>
                             <div className={styles.inputGroup}>
                               <label className={styles.label}>User Phone Number *</label>
                               <input
@@ -3468,7 +3488,8 @@ export default function AdminDashboard() {
                             <table className={styles.table}>
                               <thead>
                                 <tr>
-                                  <th>Username / Phone</th>
+                                  <th>Staff Name</th>
+                                  <th>Phone Number</th>
                                   <th>Account Role</th>
                                   <th>Assigned Panels</th>
                                   <th>Actions</th>
@@ -3478,7 +3499,10 @@ export default function AdminDashboard() {
                                 {users.map(u => (
                                   <tr key={u.id}>
                                     <td>
-                                      <strong style={{ color: 'var(--white)' }}>{u.username}</strong>
+                                      <strong style={{ color: 'var(--white)' }}>{u.full_name || '—'}</strong>
+                                    </td>
+                                    <td>
+                                      <span style={{ color: 'var(--gray-300)', fontSize: '0.9rem' }}>{u.username}</span>
                                     </td>
                                     <td>
                                       <span style={{ fontSize: '0.72rem', background: u.role === 'admin' ? 'rgba(247,183,49,0.1)' : 'rgba(255,255,255,0.05)', color: u.role === 'admin' ? 'var(--gold)' : 'var(--gray-300)', padding: '0.2rem 0.5rem', borderRadius: '4px', textTransform: 'uppercase', fontWeight: 'bold' }}>
@@ -3509,6 +3533,7 @@ export default function AdminDashboard() {
                                           onClick={() => {
                                             setEditingUser(u);
                                             setEditUserPhone(u.username);
+                                            setEditUserFullName(u.full_name || '');
                                             setEditUserPassword('');
                                             setEditUserPermissions(u.permissions || {});
                                           }}
@@ -3551,6 +3576,17 @@ export default function AdminDashboard() {
               </div>
               <form onSubmit={handleEditUserSubmit} className={styles.form} style={{ marginTop: '1rem' }}>
                 <div className={styles.inputGroup}>
+                  <label className={styles.label}>Full Name *</label>
+                  <input
+                    type="text"
+                    required
+                    className={styles.input}
+                    value={editUserFullName}
+                    onChange={(e) => setEditUserFullName(e.target.value)}
+                    placeholder="Enter full name..."
+                  />
+                </div>
+                <div className={styles.inputGroup} style={{ marginTop: '1rem' }}>
                   <label className={styles.label}>User Phone Number *</label>
                   <input
                     type="text"

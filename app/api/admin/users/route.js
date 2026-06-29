@@ -24,6 +24,7 @@ export async function GET() {
       username: u.username,
       role: u.role,
       permissions: u.permissions,
+      full_name: u.full_name,
       created_at: u.created_at
     }));
     
@@ -42,13 +43,13 @@ export async function POST(request) {
     }
     
     const body = await request.json();
-    const { username, password, role, permissions } = body;
+    const { username, password, role, permissions, fullName } = body;
     
     if (!username || !password) {
       return NextResponse.json({ error: 'Missing phone number or password parameters' }, { status: 400 });
     }
     
-    const success = await createAdminUser(username, password, role, permissions);
+    const success = await createAdminUser(username, password, role, permissions, fullName || '');
     if (success) {
       return NextResponse.json({ success: true });
     }

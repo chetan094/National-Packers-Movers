@@ -18,7 +18,8 @@ export async function POST(request) {
           id: dbUser.id,
           username: dbUser.username,
           role: dbUser.role,
-          permissions: dbUser.permissions
+          permissions: dbUser.permissions,
+          full_name: dbUser.full_name // Include full name in session cookie
         };
         const token = signSession(session);
         const cookieStore = await cookies();
@@ -41,7 +42,8 @@ export async function POST(request) {
         const session = {
           username: 'admin',
           role: 'admin',
-          permissions: { blogs: true, tracking: true, leads: true, analytics: true, seo: true, gallery: true }
+          permissions: { blogs: true, tracking: true, leads: true, analytics: true, seo: true, gallery: true },
+          full_name: 'Master Admin'
         };
         const token = signSession(session);
         const cookieStore = await cookies();
