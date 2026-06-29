@@ -1,15 +1,14 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { updateBlog, deleteBlog } from '@/lib/supabase';
+import { checkPermission } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function PATCH(request, { params }) {
   try {
     // Auth Check
-    const cookieStore = await cookies();
-    const session = cookieStore.get('npm_admin_session')?.value;
-    if (session !== 'authenticated') {
+    const allowed = await checkPermission('blogs');
+    if (!allowed) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -27,9 +26,8 @@ export async function PATCH(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     // Auth Check
-    const cookieStore = await cookies();
-    const session = cookieStore.get('npm_admin_session')?.value;
-    if (session !== 'authenticated') {
+    const allowed = await checkPermission('blogs');
+    if (!allowed) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -42,3 +40,4 @@ export async function DELETE(request, { params }) {
     return NextResponse.json({ error: error.message || 'Failed to delete blog' }, { status: 500 });
   }
 }
+

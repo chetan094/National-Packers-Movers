@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import styles from '@/app/admin/page.module.css';
 
 export default function AdminLogin() {
+  const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -11,6 +12,10 @@ export default function AdminLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!username.trim()) {
+      setError('Please enter the username or phone number.');
+      return;
+    }
     if (!password) {
       setError('Please enter the password.');
       return;
@@ -23,7 +28,7 @@ export default function AdminLogin() {
       const res = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ username: username.trim(), password }),
       });
 
       const data = await res.json();
@@ -31,7 +36,7 @@ export default function AdminLogin() {
       if (res.ok && data.success) {
         router.push('/admin/dashboard');
       } else {
-        setError(data.error || 'Invalid password. Access denied.');
+        setError(data.error || 'Invalid credentials. Access denied.');
       }
     } catch (err) {
       console.error('Login request failed:', err);
@@ -52,6 +57,20 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.inputGroup}>
+            <label htmlFor="username" className={styles.label}>Username or Phone Number</label>
+            <input
+              type="text"
+              id="username"
+              className={styles.input}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="e.g. admin or 9835168368"
+              disabled={loading}
+              required
+            />
+          </div>
+
+          <div className={styles.inputGroup}>
             <label htmlFor="password" className={styles.label}>Admin Password</label>
             <input
               type="password"
@@ -61,6 +80,7 @@ export default function AdminLogin() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
               disabled={loading}
+              required
             />
           </div>
 
@@ -82,3 +102,4 @@ export default function AdminLogin() {
     </div>
   );
 }
+

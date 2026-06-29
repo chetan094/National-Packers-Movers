@@ -1,13 +1,11 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { getAnalyticsSummary } from '@/lib/supabase';
+import { checkPermission } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 async function checkAuth() {
-  const cookieStore = await cookies();
-  const session = cookieStore.get('npm_admin_session')?.value;
-  return session === 'authenticated';
+  return !!(await checkPermission('analytics'));
 }
 
 export async function GET() {

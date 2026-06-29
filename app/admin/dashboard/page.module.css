@@ -2288,3 +2288,13 @@
   gap: 1.2rem;
 }
 
+/* ── Settings Panel Custom UI Utilities ── */
+.settingsTabWrap {
+  margin-top: 1rem;
+}
+.settingsTableActionRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+

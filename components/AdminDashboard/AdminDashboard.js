@@ -255,6 +255,210 @@ export default function AdminDashboard() {
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [uploadGalleryError, setUploadGalleryError] = useState('');
 
+  // Settings & multi-user states
+  const [currentUser, setCurrentUser] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [settingsError, setSettingsError] = useState('');
+  const [settingsSuccess, setSettingsSuccess] = useState('');
+  const [myNewPassword, setMyNewPassword] = useState('');
+  const [myConfirmPassword, setMyConfirmPassword] = useState('');
+  
+  const [newUserPhone, setNewUserPhone] = useState('');
+  const [newUserPassword, setNewUserPassword] = useState('');
+  const [newUserPermissions, setNewUserPermissions] = useState({
+    blogs: false,
+    tracking: false,
+    leads: false,
+    analytics: false,
+    seo: false,
+    gallery: false
+  });
+
+  const [dbTableMissing, setDbTableMissing] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [editUserPhone, setEditUserPhone] = useState('');
+  const [editUserPassword, setEditUserPassword] = useState('');
+  const [editUserPermissions, setEditUserPermissions] = useState({});
+
+  const fetchUsers = async () => {
+    setLoadingUsers(true);
+    setSettingsError('');
+    setDbTableMissing(false);
+    try {
+      const res = await fetch('/api/admin/users');
+      if (res.ok) {
+        const data = await res.json();
+        setUsers(data);
+      } else if (res.status === 404) {
+        setDbTableMissing(true);
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        setSettingsError(errData.error || 'Failed to fetch users list.');
+      }
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      setSettingsError('Network error loading administrative users.');
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  useEffect(() => {
+    if (authorized && activeTab === 'settings' && currentUser?.role === 'admin') {
+      fetchUsers();
+    }
+  }, [activeTab, authorized, currentUser]);
+
+  const handleResetMyPassword = async (e) => {
+    e.preventDefault();
+    setSettingsError('');
+    setSettingsSuccess('');
+    
+    if (!myNewPassword) {
+      setSettingsError('Please enter a new password.');
+      return;
+    }
+    if (myNewPassword !== myConfirmPassword) {
+      setSettingsError('New passwords do not match.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: currentUser.id,
+          updates: { password: myNewPassword }
+        })
+      });
+      
+      if (res.ok) {
+        setSettingsSuccess('Your password was updated successfully!');
+        setMyNewPassword('');
+        setMyConfirmPassword('');
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setSettingsError(err.error || 'Failed to update password.');
+      }
+    } catch (err) {
+      console.error(err);
+      setSettingsError('Network error updating password.');
+    }
+  };
+
+  const handleAddUserSubmit = async (e) => {
+    e.preventDefault();
+    setSettingsError('');
+    setSettingsSuccess('');
+
+    if (!newUserPhone.trim() || !newUserPassword) {
+      setSettingsError('Please fill out Phone Number and Password.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: newUserPhone.trim(),
+          password: newUserPassword,
+          role: 'staff',
+          permissions: newUserPermissions
+        })
+      });
+
+      if (res.ok) {
+        setSettingsSuccess(`User ${newUserPhone} created successfully!`);
+        setNewUserPhone('');
+        setNewUserPassword('');
+        setNewUserPermissions({
+          blogs: false,
+          tracking: false,
+          leads: false,
+          analytics: false,
+          seo: false,
+          gallery: false
+        });
+        fetchUsers();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setSettingsError(err.error || 'Failed to create user account.');
+      }
+    } catch (err) {
+      console.error(err);
+      setSettingsError('Network error creating user.');
+    }
+  };
+
+  const handleDeleteUser = async (id, name) => {
+    if (!window.confirm(`Are you sure you want to permanently delete user account ${name}?`)) {
+      return;
+    }
+    setSettingsError('');
+    setSettingsSuccess('');
+    try {
+      const res = await fetch(`/api/admin/users?id=${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setSettingsSuccess('User account removed successfully.');
+        fetchUsers();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setSettingsError(err.error || 'Failed to delete user.');
+      }
+    } catch (err) {
+      console.error(err);
+      setSettingsError('Network error deleting user.');
+    }
+  };
+
+  const handleEditUserSubmit = async (e) => {
+    e.preventDefault();
+    setSettingsError('');
+    setSettingsSuccess('');
+
+    if (!editUserPhone.trim()) {
+      setSettingsError('Phone number cannot be empty.');
+      return;
+    }
+
+    const updates = {
+      username: editUserPhone.trim(),
+      permissions: editUserPermissions
+    };
+
+    if (editUserPassword) {
+      updates.password = editUserPassword;
+    }
+
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingUser.id,
+          updates
+        })
+      });
+
+      if (res.ok) {
+        setSettingsSuccess('User details updated successfully!');
+        setEditingUser(null);
+        fetchUsers();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setSettingsError(err.error || 'Failed to update user.');
+      }
+    } catch (err) {
+      console.error(err);
+      setSettingsError('Network error updating user.');
+    }
+  };
+
   // Helper to format city names dynamically in options
   const formatCityName = (slug) => {
     return slug
@@ -443,7 +647,9 @@ export default function AdminDashboard() {
       try {
         const res = await fetch('/api/admin/verify');
         if (res.ok) {
+          const data = await res.json();
           setAuthorized(true);
+          setCurrentUser(data.user);
           fetchBlogs();
         } else {
           router.push('/admin');
@@ -455,6 +661,24 @@ export default function AdminDashboard() {
     };
     verifySession();
   }, []);
+
+  // Safe redirect hook for sub-users with custom permissions
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.role === 'admin') return;
+      const allowed = [];
+      if (currentUser.permissions?.blogs) allowed.push('blogs');
+      if (currentUser.permissions?.tracking) allowed.push('tracking');
+      if (currentUser.permissions?.leads) allowed.push('leads');
+      if (currentUser.permissions?.analytics) allowed.push('analytics');
+      if (currentUser.permissions?.seo) allowed.push('seo');
+      if (currentUser.permissions?.gallery) allowed.push('gallery');
+      
+      if (allowed.length > 0 && !allowed.includes(activeTab)) {
+        setActiveTab(allowed[0]);
+      }
+    }
+  }, [currentUser, activeTab]);
 
   const fetchBlogs = async () => {
     setLoadingBlogs(true);
@@ -1375,57 +1599,79 @@ export default function AdminDashboard() {
         </div>
 
         <nav className={styles.sidebarNav}>
+          {(currentUser?.role === 'admin' || currentUser?.permissions?.blogs) && (
+            <button
+              type="button"
+              className={`${styles.navItem} ${activeTab === 'blogs' ? styles.navItemActive : ''}`}
+              onClick={() => setActiveTab('blogs')}
+            >
+              📰 Blogs Manager
+            </button>
+          )}
+          {(currentUser?.role === 'admin' || currentUser?.permissions?.tracking) && (
+            <button
+              type="button"
+              className={`${styles.navItem} ${activeTab === 'tracking' ? styles.navItemActive : ''}`}
+              onClick={() => setActiveTab('tracking')}
+            >
+              🚚 Shipment Tracker
+            </button>
+          )}
+          {(currentUser?.role === 'admin' || currentUser?.permissions?.leads) && (
+            <button
+              type="button"
+              className={`${styles.navItem} ${activeTab === 'leads' ? styles.navItemActive : ''}`}
+              onClick={() => setActiveTab('leads')}
+            >
+              📥 Leads Panel
+            </button>
+          )}
+          {(currentUser?.role === 'admin' || currentUser?.permissions?.analytics) && (
+            <button
+              type="button"
+              className={`${styles.navItem} ${activeTab === 'analytics' ? styles.navItemActive : ''}`}
+              onClick={() => setActiveTab('analytics')}
+            >
+              📊 Analytics
+            </button>
+          )}
+          {(currentUser?.role === 'admin' || currentUser?.permissions?.seo) && (
+            <button
+              type="button"
+              className={`${styles.navItem} ${activeTab === 'seo' ? styles.navItemActive : ''}`}
+              onClick={() => setActiveTab('seo')}
+            >
+              🔍 SEO Settings
+            </button>
+          )}
+          {(currentUser?.role === 'admin' || currentUser?.permissions?.gallery) && (
+            <button
+              type="button"
+              className={`${styles.navItem} ${activeTab === 'gallery' ? styles.navItemActive : ''}`}
+              onClick={() => setActiveTab('gallery')}
+            >
+              🖼️ Media Gallery
+            </button>
+          )}
           <button
             type="button"
-            className={`${styles.navItem} ${activeTab === 'blogs' ? styles.navItemActive : ''}`}
-            onClick={() => setActiveTab('blogs')}
+            className={`${styles.navItem} ${activeTab === 'settings' ? styles.navItemActive : ''}`}
+            onClick={() => setActiveTab('settings')}
           >
-            📰 Blogs Manager
-          </button>
-          <button
-            type="button"
-            className={`${styles.navItem} ${activeTab === 'tracking' ? styles.navItemActive : ''}`}
-            onClick={() => setActiveTab('tracking')}
-          >
-            🚚 Shipment Tracker
-          </button>
-
-          <button
-            type="button"
-            className={`${styles.navItem} ${activeTab === 'leads' ? styles.navItemActive : ''}`}
-            onClick={() => setActiveTab('leads')}
-          >
-            📥 Leads Panel
-          </button>
-          <button
-            type="button"
-            className={`${styles.navItem} ${activeTab === 'analytics' ? styles.navItemActive : ''}`}
-            onClick={() => setActiveTab('analytics')}
-          >
-            📊 Analytics
-          </button>
-          <button
-            type="button"
-            className={`${styles.navItem} ${activeTab === 'seo' ? styles.navItemActive : ''}`}
-            onClick={() => setActiveTab('seo')}
-          >
-            🔍 SEO Settings
-          </button>
-          <button
-            type="button"
-            className={`${styles.navItem} ${activeTab === 'gallery' ? styles.navItemActive : ''}`}
-            onClick={() => setActiveTab('gallery')}
-          >
-            🖼️ Media Gallery
+            ⚙️ User Settings
           </button>
         </nav>
 
         <div className={styles.sidebarFooter}>
           <div className={styles.adminUser}>
-            <div className={styles.avatar}>A</div>
+            <div className={styles.avatar}>
+              {(currentUser?.username || 'A').charAt(0).toUpperCase()}
+            </div>
             <div>
-              <p className={styles.userName}>Administrator</p>
-              <p className={styles.userStatus}>Secure Session</p>
+              <p className={styles.userName}>{currentUser?.username || 'Administrator'}</p>
+              <p className={styles.userStatus}>
+                {currentUser?.role === 'admin' ? 'Master Admin' : 'Staff Operator'}
+              </p>
             </div>
           </div>
           <button type="button" className={styles.logoutBtn} onClick={handleLogout}>
@@ -3046,6 +3292,324 @@ export default function AdminDashboard() {
                 )}
               </div>
             </section>
+          </div>
+        )}
+
+        {activeTab === 'settings' && (
+          <div>
+            <header className={styles.panelHeader}>
+              <div>
+                <h1 className={styles.panelTitle}>User Settings</h1>
+                <p className={styles.panelSubtitle}>Configure administrator passwords and coordinate team permissions</p>
+              </div>
+            </header>
+
+            <div className={styles.splitPane} style={{ gridTemplateColumns: currentUser?.role === 'admin' ? '1fr 1.5fr' : '1fr' }}>
+              
+              {/* Left Pane: Account Settings */}
+              <div className={styles.editorPane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>🔒 Change My Password</h2>
+                  {currentUser?.id ? (
+                    <form onSubmit={handleResetMyPassword} className={styles.form}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>New Password *</label>
+                        <input
+                          type="password"
+                          className={styles.input}
+                          value={myNewPassword}
+                          onChange={(e) => setMyNewPassword(e.target.value)}
+                          placeholder="New password..."
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Confirm New Password *</label>
+                        <input
+                          type="password"
+                          className={styles.input}
+                          value={myConfirmPassword}
+                          onChange={(e) => setMyConfirmPassword(e.target.value)}
+                          placeholder="Confirm password..."
+                          required
+                        />
+                      </div>
+                      
+                      {settingsError && <div className={styles.formError} style={{ margin: '1rem 0 0 0' }}>⚠️ {settingsError}</div>}
+                      {settingsSuccess && <div className={styles.formSuccess} style={{ margin: '1rem 0 0 0' }}>✅ {settingsSuccess}</div>}
+                      
+                      <button type="submit" className={styles.submitBtn} style={{ marginTop: '1.5rem', width: '100%' }}>
+                        Update Password
+                      </button>
+                    </form>
+                  ) : (
+                    <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                      <p style={{ color: 'var(--gray-300)', fontSize: '0.92rem', lineHeight: '1.6', margin: 0 }}>
+                        💡 You are currently logged in using the local <strong>environment variable configuration</strong>.
+                      </p>
+                      <p style={{ color: 'var(--gray-400)', fontSize: '0.85rem', lineHeight: '1.6', marginTop: '0.8rem' }}>
+                        To modify your master password, please update the <code>ADMIN_PASSWORD</code> value inside your <code>.env.local</code> file or your production Vercel/cPanel environments provider.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Pane: Multi-User Management (Admin-only) */}
+              {currentUser?.role === 'admin' && (
+                <div className={styles.previewPane}>
+                  {dbTableMissing ? (
+                    <div className={styles.paneCard}>
+                      <h2 className={styles.paneTitle} style={{ color: 'var(--gold)' }}>⚠️ Database Setup Required</h2>
+                      <div style={{ background: 'rgba(247, 183, 49, 0.04)', border: '1px solid rgba(247, 183, 49, 0.15)', padding: '1.5rem', borderRadius: '8px' }}>
+                        <p style={{ color: 'var(--white)', fontWeight: 'bold', fontSize: '0.95rem', margin: '0 0 0.5rem 0' }}>
+                          Multi-user management requires the <code>admin_users</code> table to exist in your database.
+                        </p>
+                        <p style={{ color: 'var(--gray-300)', fontSize: '0.88rem', lineHeight: '1.6', margin: '0 0 1.5rem 0' }}>
+                          Please execute the SQL command below in your **Supabase SQL Editor** to establish the users registry:
+                        </p>
+                        
+                        <pre style={{ background: 'var(--black)', color: 'var(--gold-light)', padding: '1.2rem', borderRadius: '6px', fontSize: '0.82rem', fontFamily: 'monospace', overflowX: 'auto', border: '1px solid rgba(255,255,255,0.06)', lineHeight: '1.5', margin: '0 0 1.5rem 0' }}>
+{`CREATE TABLE IF NOT EXISTS admin_users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  username VARCHAR UNIQUE NOT NULL,
+  password_hash VARCHAR NOT NULL,
+  salt VARCHAR NOT NULL,
+  role VARCHAR NOT NULL DEFAULT 'staff',
+  permissions JSONB NOT NULL DEFAULT '{"blogs": false, "tracking": false, "leads": false, "analytics": false, "seo": false, "gallery": false}'::jsonb,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);`}
+                        </pre>
+                        
+                        <p style={{ color: 'var(--gray-400)', fontSize: '0.82rem', margin: 0 }}>
+                          💡 Once the script is executed successfully, refresh this page to instantly access multi-user creation, password editing, and custom role assignments.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                      
+                      {/* Add User Panel */}
+                      <div className={styles.paneCard}>
+                        <h2 className={styles.paneTitle}>➕ Register New Sub-User</h2>
+                        <form onSubmit={handleAddUserSubmit} className={styles.form}>
+                          <div className={styles.formGrid} style={{ gridTemplateColumns: '1fr 1fr' }}>
+                            <div className={styles.inputGroup}>
+                              <label className={styles.label}>User Phone Number *</label>
+                              <input
+                                type="text"
+                                className={styles.input}
+                                value={newUserPhone}
+                                onChange={(e) => setNewUserPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                                placeholder="Phone number (e.g. 9835168368)..."
+                                required
+                              />
+                            </div>
+                            <div className={styles.inputGroup}>
+                              <label className={styles.label}>User Password *</label>
+                              <input
+                                type="password"
+                                className={styles.input}
+                                value={newUserPassword}
+                                onChange={(e) => setNewUserPassword(e.target.value)}
+                                placeholder="Set login password..."
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          <div style={{ margin: '1.25rem 0' }}>
+                            <label className={styles.label} style={{ marginBottom: '0.75rem', display: 'block' }}>
+                              Assign Menu Access Permissions:
+                            </label>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                              {[
+                                { key: 'leads', label: 'Leads Panel 📥' },
+                                { key: 'tracking', label: 'Shipment Tracker 🚚' },
+                                { key: 'blogs', label: 'Blogs Manager 📰' },
+                                { key: 'analytics', label: 'Analytics Dashboard 📊' },
+                                { key: 'seo', label: 'SEO Settings 🔍' },
+                                { key: 'gallery', label: 'Media Gallery 🖼️' }
+                              ].map(perm => (
+                                <label key={perm.key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--gray-300)', fontSize: '0.85rem' }}>
+                                  <input
+                                    type="checkbox"
+                                    checked={newUserPermissions[perm.key]}
+                                    onChange={(e) => {
+                                      const checked = e.target.checked;
+                                      setNewUserPermissions(prev => ({ ...prev, [perm.key]: checked }));
+                                    }}
+                                    style={{ accentColor: 'var(--gold)' }}
+                                  />
+                                  {perm.label}
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+
+                          <button type="submit" className={styles.submitBtn}>
+                            Create Sub-User Account
+                          </button>
+                        </form>
+                      </div>
+
+                      {/* Users Table */}
+                      <div className={styles.paneCard}>
+                        <h2 className={styles.paneTitle}>👥 Registered Administrative Users</h2>
+                        {loadingUsers ? (
+                          <div className={styles.tablePlaceholder} style={{ padding: '2rem' }}>
+                            <div className={styles.loaderSmall}></div>
+                            <p>Loading user list from database...</p>
+                          </div>
+                        ) : users.length === 0 ? (
+                          <p style={{ color: 'var(--gray-500)', fontStyle: 'italic', margin: 0 }}>No secondary users configured.</p>
+                        ) : (
+                          <div className={styles.tableWrapper} style={{ margin: 0 }}>
+                            <table className={styles.table}>
+                              <thead>
+                                <tr>
+                                  <th>Username / Phone</th>
+                                  <th>Account Role</th>
+                                  <th>Assigned Panels</th>
+                                  <th>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {users.map(u => (
+                                  <tr key={u.id}>
+                                    <td>
+                                      <strong style={{ color: 'var(--white)' }}>{u.username}</strong>
+                                    </td>
+                                    <td>
+                                      <span style={{ fontSize: '0.72rem', background: u.role === 'admin' ? 'rgba(247,183,49,0.1)' : 'rgba(255,255,255,0.05)', color: u.role === 'admin' ? 'var(--gold)' : 'var(--gray-300)', padding: '0.2rem 0.5rem', borderRadius: '4px', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                                        {u.role}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      {u.role === 'admin' ? (
+                                        <span style={{ color: 'var(--gold)', fontSize: '0.8rem' }}>★ All Access Granted</span>
+                                      ) : (
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                                          {Object.keys(u.permissions || {}).filter(k => u.permissions[k]).map(k => (
+                                            <span key={k} style={{ fontSize: '0.7rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', padding: '0.1rem 0.35rem', borderRadius: '3px', color: 'var(--gray-400)' }}>
+                                              {k}
+                                            </span>
+                                          ))}
+                                          {Object.values(u.permissions || {}).every(v => !v) && (
+                                            <span style={{ fontSize: '0.72rem', color: '#c1121f', fontStyle: 'italic' }}>No panels allowed</span>
+                                          )}
+                                        </div>
+                                      )}
+                                    </td>
+                                    <td className={styles.tdActions}>
+                                      <div className={styles.actionRow}>
+                                        <button
+                                          type="button"
+                                          className={styles.editBtn}
+                                          onClick={() => {
+                                            setEditingUser(u);
+                                            setEditUserPhone(u.username);
+                                            setEditUserPassword('');
+                                            setEditUserPermissions(u.permissions || {});
+                                          }}
+                                        >
+                                          ✏️ Edit
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className={styles.deleteBtn}
+                                          onClick={() => handleDeleteUser(u.id, u.username)}
+                                          disabled={currentUser.username === u.username}
+                                        >
+                                          🗑️ Delete
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Edit User Modal */}
+        {editingUser && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalCard} style={{ maxWidth: '500px' }}>
+              <div className={styles.modalHeader}>
+                <h2>Edit Sub-User Account</h2>
+                <button type="button" className={styles.closeModalBtn} onClick={() => setEditingUser(null)}>✖</button>
+              </div>
+              <form onSubmit={handleEditUserSubmit} className={styles.form} style={{ marginTop: '1rem' }}>
+                <div className={styles.inputGroup}>
+                  <label className={styles.label}>User Phone Number *</label>
+                  <input
+                    type="text"
+                    required
+                    className={styles.input}
+                    value={editUserPhone}
+                    onChange={(e) => setEditUserPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                  />
+                </div>
+                <div className={styles.inputGroup} style={{ marginTop: '1rem' }}>
+                  <label className={styles.label}>Reset Password (leave blank to keep unchanged)</label>
+                  <input
+                    type="password"
+                    className={styles.input}
+                    value={editUserPassword}
+                    onChange={(e) => setEditUserPassword(e.target.value)}
+                    placeholder="Enter new password..."
+                  />
+                </div>
+
+                <div style={{ margin: '1.25rem 0' }}>
+                  <label className={styles.label} style={{ marginBottom: '0.5rem', display: 'block' }}>
+                    Access Permissions:
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem', background: 'rgba(255,255,255,0.02)', padding: '0.8rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    {[
+                      { key: 'leads', label: 'Leads Panel 📥' },
+                      { key: 'tracking', label: 'Shipment Tracker 🚚' },
+                      { key: 'blogs', label: 'Blogs Manager 📰' },
+                      { key: 'analytics', label: 'Analytics Dashboard 📊' },
+                      { key: 'seo', label: 'SEO Settings 🔍' },
+                      { key: 'gallery', label: 'Media Gallery 🖼️' }
+                    ].map(perm => (
+                      <label key={perm.key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--gray-300)', fontSize: '0.82rem' }}>
+                        <input
+                          type="checkbox"
+                          checked={editUserPermissions[perm.key] || false}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setEditUserPermissions(prev => ({ ...prev, [perm.key]: checked }));
+                          }}
+                          style={{ accentColor: 'var(--gold)' }}
+                        />
+                        {perm.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles.modalActions} style={{ marginTop: '1.5rem' }}>
+                  <button type="submit" className={styles.saveBtn}>
+                    💾 Save Updates
+                  </button>
+                  <button type="button" className={styles.modalCancelBtn} onClick={() => setEditingUser(null)}>
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
 

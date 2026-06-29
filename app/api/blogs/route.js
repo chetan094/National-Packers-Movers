@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { getBlogs, createBlog } from '@/lib/supabase';
+import { checkPermission } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,9 +17,8 @@ export async function GET() {
 export async function POST(request) {
   try {
     // Auth Check
-    const cookieStore = await cookies();
-    const session = cookieStore.get('npm_admin_session')?.value;
-    if (session !== 'authenticated') {
+    const allowed = await checkPermission('blogs');
+    if (!allowed) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
