@@ -2143,5 +2143,50 @@
   }
 }
 
+/* ── Volume Calculator Mobile Responsiveness Overrides ── */
+@media (max-width: 640px) {
+  /* Reduce calculator card padding and scale border radius */
+  .calcCard {
+    padding: 1rem !important;
+    border-radius: var(--radius-md) !important;
+    margin-top: 2rem !important;
+  }
+  
+  .calcCategoryGroup {
+    padding: 0.85rem !important;
+  }
+
+  /* Compact padding for the results summary box */
+  .resultsCard {
+    padding: 1.25rem 1rem !important;
+  }
+
+  /* Stack cost estimation boxes to prevent horizontal overflow */
+  .calculatorCostGrid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  .costRangeBox {
+    padding: 0.6rem 0.85rem !important;
+  }
+
+  /* Ensure truck suggestions format cleanly and wrap */
+  .truckSuggestion {
+    padding: 0.75rem !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Prevent disclaimer text from stretching off-screen */
+  .calcDisclaimer {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    padding: 0 0.5rem !important;
+  }
+}
+
 
 
