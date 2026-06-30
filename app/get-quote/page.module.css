@@ -497,6 +497,58 @@
   .swapIcon { display: none; }
   .moveTypeGrid { grid-template-columns: 1fr 1fr; }
   .formGrid { grid-template-columns: 1fr; }
-  .quoteForm { padding: 1.5rem; }
   .stepLabel { display: none; }
+
+  /* Compact Card Layout with border outline */
+  .quoteForm {
+    padding: 1rem !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  .successCard {
+    padding: 1.5rem 1rem !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  /* Stacking buttons and centering */
+  .stepBtns {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .stepBtns :global(.btn),
+  .quoteForm :global(.btn-lg),
+  .successActions :global(.btn) {
+    width: 100%;
+    justify-content: center;
+    padding: 0.85rem 1.5rem !important;
+    font-size: 1rem !important;
+  }
+
+  .successActions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  /* Stack review details rows to prevent horizontal overflow */
+  .reviewRow,
+  .successRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem !important;
+  }
+
+  .reviewValue,
+  .successRow strong {
+    text-align: left;
+    width: 100%;
+    word-break: break-all;
+  }
+
+  /* Autocomplete suggestions height adjustment */
+  .suggestions {
+    max-height: 200px;
+  }
 }
