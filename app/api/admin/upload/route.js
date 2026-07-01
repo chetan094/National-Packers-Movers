@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { checkPermission } from '@/lib/auth';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -7,9 +7,8 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 export async function POST(request) {
   try {
     // 1. Session Auth Check
-    const cookieStore = await cookies();
-    const session = cookieStore.get('npm_admin_session')?.value;
-    if (session !== 'authenticated') {
+    const allowed = (await checkPermission('blogs')) || (await checkPermission('gallery'));
+    if (!allowed) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
