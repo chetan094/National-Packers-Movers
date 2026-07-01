@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { branchesData } from '@/data/branchesData';
-import { routesData } from '@/data/routesData';
+import { routesData, getRoutesForCity } from '@/data/routesData';
 import { getBlogs } from '@/lib/supabase';
 
 // Whitelist of cities per state
@@ -115,9 +115,26 @@ export default async function sitemap() {
     console.error('Error generating blogs for sitemap:', err);
   }
 
-  // Dynamic Route Corridors sitemap URLs
-  const routeRoutes = routesData.map((r) => ({
-    url: `${BASE_URL}/routes/${r.origin}-to-${r.destination}`,
+  // Generate all dynamic routes for sitemap based on our whitelist of cities
+  const dynamicRouteUrls = [];
+  const cap = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+  Object.entries(STATE_CITIES).forEach(([state, cityList]) => {
+    cityList.forEach((cityKey) => {
+      const cityName = cap(cityKey);
+      const routesForCity = getRoutesForCity(cityKey, cityName);
+      
+      routesForCity.forEach((r) => {
+        const routeUrl = `${BASE_URL}/routes/${r.origin}-to-${r.destination}`;
+        if (!dynamicRouteUrls.includes(routeUrl)) {
+          dynamicRouteUrls.push(routeUrl);
+        }
+      });
+    });
+  });
+
+  const routeRoutes = dynamicRouteUrls.map(url => ({
+    url,
     lastModified: new Date(),
     changeFrequency: 'weekly',
     priority: 0.7,
