@@ -2188,5 +2188,33 @@
   }
 }
 
+/* ── Route Link Badges in Branch Sidebar ── */
+.routeLink {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  color: var(--white);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: var(--transition-fast);
+}
+
+.routeLink:hover {
+  background: rgba(247, 183, 49, 0.04);
+  border-color: rgba(247, 183, 49, 0.2);
+  color: var(--gold);
+}
+
+.routeLinkArrow {
+  color: var(--gold);
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+
 
 

@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { branchesData } from '@/data/branchesData';
+import { ratesData } from '@/data/ratesData';
+import { routesData, getRoutesForCity, getRoutesForState } from '@/data/routesData';
 import styles from './BranchPage.module.css';
 import SlotCounter from '@/components/animations/SlotCounter';
 import GalleryCarousel from '@/components/GalleryCarousel/GalleryCarousel';
@@ -140,6 +142,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
   const stateSlug = isCity ? data.stateSlug : data.name.toLowerCase().replace(' ', '-');
   const stateName = isCity ? data.stateName : data.name;
   const cityKey = isCity ? data.name.toLowerCase().replace(/ \(hq\)/i, '').replace(/ /g, '-') : null;
+  const activeRoutes = isCity && cityKey ? getRoutesForCity(cityKey, data.name.replace(/ \(hq\)/i, '').replace(/ \(virtual office\)/i, '').replace(/ \(coming soon\)/i, '')) : [];
 
   // Cover image with fallback system
   const initialImage = isCity 
@@ -613,40 +616,88 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                       </div>
                     </div>
                   )}
+
+                  {/* Popular Routes Card (City Pages Only) */}
+                  {isCity && activeRoutes.length > 0 && (
+                    <div className={styles.sidebarCard} data-reveal="up" data-delay="260">
+                      <h3 className={styles.sidebarTitle}>🚚 Popular Transit Lanes</h3>
+                      <div className={styles.sidebarDivider} />
+                      <p className={styles.localitiesIntro}>
+                        Direct container transport and packers services connecting {data.name.replace(/ \(hq\)/i, '')} to major national destinations:
+                      </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
+                        {activeRoutes.map((r, idx) => (
+                          <Link 
+                            key={idx} 
+                            href={`/routes/${r.origin}-to-${r.destination}`} 
+                            className={styles.routeLink}
+                          >
+                            <span>📍 {r.originName} to {r.destinationName}</span>
+                            <span className={styles.routeLinkArrow}>View Rates ➔</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </>
               ) : (
-                // Cities List for State
-                <div className={styles.sidebarCard} data-reveal="up" data-delay="200">
-                  <h3 className={styles.sidebarTitle}>🏙️ Cities Covered in {data.name}</h3>
-                  <div className={styles.sidebarDivider} />
-                  <div className={styles.stateCitiesGrid}>
-                    {citiesList.length > 0 && citiesList[0] !== 'coming-soon' && citiesList[0] !== 'virtual-office' ? (
-                      citiesList.map((citySlug) => {
-                        const cityName = citySlug
-                          .split('-')
-                          .map(word => {
-                            if (word === 'hq') return '(HQ)';
-                            if (word === 'bsl') return 'BSL';
-                            if (word === 'psu') return 'PSU';
-                            return word.charAt(0).toUpperCase() + word.slice(1);
-                          })
-                          .join(' ');
-                        return (
-                          <Link key={citySlug} href={`/branches/${stateSlug}/${citySlug}`} className={styles.cityBadge}>
-                            📍 {cityName}
-                          </Link>
-                        );
-                      })
-                    ) : (
-                      <p className={styles.sidebarNotice}>
-                        {citiesList[0] === 'virtual-office' 
-                          ? 'We offer virtual logistics coordination in Odisha. All operations are run from our main HQ.'
-                          : 'Physical branches are coming soon to major cities. Inter-state trucks are active daily.'
-                        }
-                      </p>
-                    )}
+                <>
+                  {/* Cities List for State */}
+                  <div className={styles.sidebarCard} data-reveal="up" data-delay="200">
+                    <h3 className={styles.sidebarTitle}>🏙️ Cities Covered in {data.name}</h3>
+                    <div className={styles.sidebarDivider} />
+                    <div className={styles.stateCitiesGrid}>
+                      {citiesList.length > 0 && citiesList[0] !== 'coming-soon' && citiesList[0] !== 'virtual-office' ? (
+                        citiesList.map((citySlug) => {
+                          const cityName = citySlug
+                            .split('-')
+                            .map(word => {
+                              if (word === 'hq') return '(HQ)';
+                              if (word === 'bsl') return 'BSL';
+                              if (word === 'psu') return 'PSU';
+                              return word.charAt(0).toUpperCase() + word.slice(1);
+                            })
+                            .join(' ');
+                          return (
+                            <Link key={citySlug} href={`/branches/${stateSlug}/${citySlug}`} className={styles.cityBadge}>
+                              📍 {cityName}
+                            </Link>
+                          );
+                        })
+                      ) : (
+                        <p className={styles.sidebarNotice}>
+                          {citiesList[0] === 'virtual-office' 
+                            ? 'We offer virtual logistics coordination in Odisha. All operations are run from our main HQ.'
+                            : 'Physical branches are coming soon to major cities. Inter-state trucks are active daily.'
+                          }
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
+
+                  {/* Popular State Routes Card (State Pages Only) */}
+                  {!isCity && stateSlug && (
+                    <div className={styles.sidebarCard} style={{ marginTop: '1.5rem' }} data-reveal="up" data-delay="220">
+                      <h3 className={styles.sidebarTitle}>🚚 Popular Transit Lanes</h3>
+                      <div className={styles.sidebarDivider} />
+                      <p className={styles.localitiesIntro}>
+                        Explore direct container shifting rates connecting {data.name} to major national hubs:
+                      </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
+                        {getRoutesForState(stateSlug, citiesList).map((r, idx) => (
+                          <Link 
+                            key={idx} 
+                            href={`/routes/${r.origin}-to-${r.destination}`} 
+                            className={styles.routeLink}
+                          >
+                            <span>📍 {r.originName} to {r.destinationName}</span>
+                            <span className={styles.routeLinkArrow}>View Rates ➔</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               {/* 🛡️ Verified Credentials Card */}
@@ -769,33 +820,15 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                     <th>Domestic Shifting (Inter-State)</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>1 BHK Home Shifting</strong></td>
-                    <td>₹4,000 – ₹7,000</td>
-                    <td>₹12,000 – ₹20,000</td>
-                  </tr>
-                  <tr>
-                    <td><strong>2 BHK Home Shifting</strong></td>
-                    <td>₹6,500 – ₹11,000</td>
-                    <td>₹16,000 – ₹28,000</td>
-                  </tr>
-                  <tr>
-                    <td><strong>3 BHK Home Shifting</strong></td>
-                    <td>₹9,000 – ₹15,000</td>
-                    <td>₹22,000 – ₹40,000</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Bike Transport</strong></td>
-                    <td>₹2,000 – ₹4,000</td>
-                    <td>₹3,500 – ₹7,500</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Car Transportation</strong></td>
-                    <td>₹5,000 – ₹9,000</td>
-                    <td>₹9,000 – ₹18,000</td>
-                  </tr>
-                </tbody>
+            <tbody>
+              {ratesData.map((row, idx) => (
+                <tr key={idx}>
+                  <td><strong>{row.service}</strong></td>
+                  <td>{row.local}</td>
+                  <td>{row.domestic}</td>
+                </tr>
+              ))}
+            </tbody>
               </table>
             </div>
             <p className={styles.ratesDisclaimer}>
