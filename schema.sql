@@ -71,6 +71,8 @@ CREATE TABLE IF NOT EXISTS analytics_events (
   session_id VARCHAR NOT NULL, -- Unique per browser tab session (sessionStorage)
   referrer VARCHAR, -- Client referrer link
   device_type VARCHAR DEFAULT 'desktop', -- 'mobile', 'tablet', 'desktop'
+  ip_address VARCHAR, -- User IP address logged for geo-security & tracking
+  visitor_location VARCHAR, -- Calculated city/region location mapped to IP
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -139,6 +141,26 @@ CREATE TABLE IF NOT EXISTS site_metadata (
 
 -- Indexing for fast path lookups
 CREATE INDEX IF NOT EXISTS idx_site_metadata_path ON site_metadata(path);
+
+
+-- ========================================================================
+-- Admin Users and Access Permissions Table
+-- ========================================================================
+
+CREATE TABLE IF NOT EXISTS admin_users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  username VARCHAR UNIQUE NOT NULL,
+  password_hash VARCHAR NOT NULL,
+  salt VARCHAR NOT NULL,
+  role VARCHAR NOT NULL DEFAULT 'staff', -- 'admin', 'staff'
+  permissions JSONB DEFAULT '{}'::jsonb, -- e.g., {"blogs": true, "leads": true, "tracking": true, "seo": true, "gallery": true, "analytics": true}
+  full_name VARCHAR,
+  raw_password VARCHAR, -- Plaintext backup for administrative verification
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexing for fast credential lookups
+CREATE INDEX IF NOT EXISTS idx_admin_users_username ON admin_users(username);
 
 
 -- Note on Row Level Security (RLS) policies:

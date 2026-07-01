@@ -137,12 +137,46 @@ const STATE_CITIES = {
   ]
 };
 
+const COORDINATES_MAP = {
+  'jharkhand': { lat: 23.6102, lon: 85.2799 },
+  'west-bengal': { lat: 22.9868, lon: 87.8550 },
+  'bihar': { lat: 25.0961, lon: 85.3131 },
+  'madhya-pradesh': { lat: 22.9734, lon: 78.6569 },
+  'odisha': { lat: 20.9517, lon: 85.0985 },
+  'uttar-pradesh': { lat: 26.8467, lon: 80.9462 },
+  dhanbad: { lat: 23.7957, lon: 86.4304 },
+  ranchi: { lat: 23.3441, lon: 85.3096 },
+  bokaro: { lat: 23.6693, lon: 86.1511 },
+  deoghar: { lat: 24.4820, lon: 86.7001 },
+  jamshedpur: { lat: 22.8046, lon: 86.2029 },
+  kolkata: { lat: 22.5726, lon: 88.3639 },
+  durgapur: { lat: 23.5204, lon: 87.3119 },
+  asansol: { lat: 23.6739, lon: 86.9524 },
+  siliguri: { lat: 26.7271, lon: 88.3953 },
+  patna: { lat: 25.5941, lon: 85.1376 },
+  bhagalpur: { lat: 25.2425, lon: 87.0135 },
+  gaya: { lat: 24.7914, lon: 85.0002 },
+  muzaffarpur: { lat: 26.1197, lon: 85.3909 },
+  singrauli: { lat: 24.1956, lon: 82.6675 },
+  waidhan: { lat: 24.0682, lon: 82.5804 },
+  bhubaneswar: { lat: 20.2961, lon: 85.8245 },
+  cuttack: { lat: 20.4625, lon: 85.8830 },
+  lucknow: { lat: 26.8467, lon: 80.9462 },
+  kanpur: { lat: 26.4499, lon: 80.3319 },
+  ghaziabad: { lat: 28.6692, lon: 77.4538 },
+  noida: { lat: 28.5355, lon: 77.3910 }
+};
+
 export default async function BranchPage({ data, isCity = false, stateData = null }) {
   const galleryPhotos = await getGalleryImages();
   const stateSlug = isCity ? data.stateSlug : data.name.toLowerCase().replace(' ', '-');
   const stateName = isCity ? data.stateName : data.name;
   const cityKey = isCity ? data.name.toLowerCase().replace(/ \(hq\)/i, '').replace(/ /g, '-') : null;
   const activeRoutes = isCity && cityKey ? getRoutesForCity(cityKey, data.name.replace(/ \(hq\)/i, '').replace(/ \(virtual office\)/i, '').replace(/ \(coming soon\)/i, '')) : [];
+
+  const geoCoords = isCity
+    ? (COORDINATES_MAP[cityKey] || COORDINATES_MAP[stateSlug])
+    : COORDINATES_MAP[stateSlug];
 
   // Cover image with fallback system
   const initialImage = isCity 
@@ -338,12 +372,33 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
       'addressRegion': stateName,
       'addressCountry': 'IN'
     },
-    'geo': (isCity && data.latitude && data.longitude) ? {
+    'geo': geoCoords ? {
       '@type': 'GeoCoordinates',
-      'latitude': data.latitude,
-      'longitude': data.longitude
+      'latitude': geoCoords.lat,
+      'longitude': geoCoords.lon
     } : undefined,
-    'areaServed': (isCity && localitiesList.length > 0) ? localitiesList : undefined,
+    'areaServed': isCity 
+      ? (localitiesList.length > 0 ? localitiesList : undefined)
+      : (citiesList.length > 0 ? citiesList.map(c => c.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')) : undefined),
+    'openingHoursSpecification': {
+      '@type': 'OpeningHoursSpecification',
+      'dayOfWeek': [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday'
+      ],
+      'opens': '00:00',
+      'closes': '23:59'
+    },
+    'sameAs': [
+      'https://www.facebook.com/thenationalpackersmovers/',
+      'https://twitter.com/natpackers',
+      'https://www.youtube.com/@nationalpackersmovers'
+    ],
     'parentOrganization': {
       '@type': 'MovingCompany',
       'name': 'National Packers & Movers',
