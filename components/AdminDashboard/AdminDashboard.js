@@ -477,6 +477,57 @@ export default function AdminDashboard() {
       .join(' ');
   };
 
+  const getDeterministicIndex = (str, count) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash) % count;
+  };
+
+  const getSpunContent = (city, stateName) => {
+    const formattedCity = formatCityName(city);
+    const idx = getDeterministicIndex(city.toLowerCase(), 3);
+
+    const titles = [
+      `Best Packers and Movers in ${formattedCity} | National Packers & Movers`,
+      `Professional Shifting & Packers Movers in ${formattedCity} | NPM`,
+      `Trusted Packers and Movers ${formattedCity} | Safe Home Shifting`
+    ];
+
+    const taglines = [
+      `Your Trusted Shifting Partners in ${formattedCity}`,
+      `38+ Years of Honest Packing & Shifting in ${formattedCity}`,
+      `Zero-Hassle Household & Vehicle Relocations in ${formattedCity}`
+    ];
+
+    const descriptions = [
+      `Reliable home shifting, office relocation, and vehicle transport services in ${formattedCity}, ${stateName}. 100% insured, secure packing, transparent rates. Get a free quote.`,
+      `Looking for top packers and movers in ${formattedCity}, ${stateName}? Get IBA-compliant bills, secure container shipping, and damage-free moving. Call today for a free quote!`,
+      `Trusted house shifting and logistics services in ${formattedCity}, ${stateName}. National Packers & Movers offers background-verified crews and locked containers. Secure your shift!`
+    ];
+
+    const intros = [
+      `National Packers & Movers brings our 38+ years of logistics excellence and honest service to ${formattedCity}, ${stateName}. Specializing in household relocations, vehicle shifting, and corporate office moves, our background-verified teams coordinate complete relocations from any neighborhood in ${formattedCity} to any destination across India, backed by direct lockable container vehicles and full transit insurance.`,
+      `Established in 1987, National Packers & Movers provides premium, stress-free shifting solutions in ${formattedCity}, ${stateName}. We specialize in high-end household relocation and secure vehicle carriage using our own closed-container trucks. Our trained and verified packing staff manages the entire move from your doorstep in ${formattedCity} to any city in India, offering full transit insurance coverage and genuine billing.`,
+      `Secure your home or office shift in ${formattedCity}, ${stateName} with National Packers & Movers. Bringing nearly four decades of transport experience, we deliver fully insured household relocation, bike transport, and office shifting services. Coordinated securely via our central operations hubs, our teams ensure honest rates with no hidden fees and provide PSU-compliant reimbursement bills.`
+    ];
+
+    const keywordsList = [
+      `packers and movers ${city}, best packers movers ${city}, shifting services ${city}, house shifting ${city}, vehicle transport ${city}`,
+      `packers and movers in ${city}, household shifting ${city}, home relocation ${city} ${stateName.toLowerCase()}, vehicle transport ${city}`,
+      `best shifting company ${city}, packers movers ${city} ${stateName.toLowerCase()}, house moving ${city}, packers and movers near me`
+    ];
+
+    return {
+      title: titles[idx],
+      tagline: taglines[idx],
+      description: descriptions[idx],
+      introText: intros[idx],
+      keywords: keywordsList[idx]
+    };
+  };
+
   const getDefaultMetadata = (path) => {
     if (STATIC_DEFAULTS[path]) {
       return STATIC_DEFAULTS[path];
@@ -495,12 +546,12 @@ export default function AdminDashboard() {
             keywords: cityData.keywords
           };
         } else {
-          const formattedCity = formatCityName(city);
           const stateName = ALLOWED_STATES_LABEL[state] || formatCityName(state);
+          const spun = getSpunContent(city, stateName);
           return {
-            title: `Best Packers and Movers in ${formattedCity} | National Packers & Movers`,
-            description: `Reliable home shifting, office relocation, and vehicle transport services in ${formattedCity}, ${stateName}. 100% insured, secure packing, transparent rates. Get a free quote.`,
-            keywords: `packers and movers ${city}, best packers movers ${city}, shifting services ${city}, house shifting ${city}, vehicle transport ${city}`
+            title: spun.title,
+            description: spun.description,
+            keywords: spun.keywords
           };
         }
       } else {
