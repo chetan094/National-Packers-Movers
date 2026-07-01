@@ -3,6 +3,13 @@ import { routesData } from '@/data/routesData';
 import styles from './page.module.css';
 import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
 
+const RELOCATION_SERVICES = [
+  { slug: 'household-relocation', name: 'Household Relocation', icon: '🏠', desc: 'Secure home shifting with multi-layer packing.', color: '#F7B731' },
+  { slug: 'corporate-relocation', name: 'Corporate Shifting', icon: '🏢', desc: 'Minimal downtime office shifting for companies and PSUs.', color: '#C1121F' },
+  { slug: 'industrial-relocation', name: 'Industrial Transport', icon: '🏭', desc: 'Heavy machinery and factory logistics handled safely.', color: '#F7B731' },
+  { slug: 'vehicle-relocation', name: 'Vehicle Relocation', icon: '🚗', desc: 'Safe transport of cars and bikes in specialized carriers.', color: '#C1121F' },
+];
+
 // Whitelisted static parameters for Next.js SSG pre-rendering
 export async function generateStaticParams() {
   return routesData.map(route => ({
@@ -168,7 +175,7 @@ export default async function RoutePage({ params }) {
             </div>
             <div className={styles.specItem}>
               <span className={styles.specLabel}>Primary Route</span>
-              <span className={styles.specValue} style={{ fontSize: '1rem', whiteSpace: 'nowrap' }}>{route.route}</span>
+              <span className={styles.specValue} style={{ fontSize: '1.1rem' }}>{route.route}</span>
             </div>
             <div className={styles.specItem}>
               <span className={styles.specLabel}>Est. Base Rate</span>
@@ -290,8 +297,44 @@ export default async function RoutePage({ params }) {
         </div>
       </section>
 
+      {/* ── LOCAL SERVICES GRID ─────────────────────────────── */}
+      <section className="section" style={{ marginTop: '3rem' }}>
+        <div className="container">
+          <div className="section-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <span className="section-tag">Relocation Services</span>
+            <h2 className="section-title" style={{ fontFamily: 'var(--font-heading)', color: 'var(--white)', textTransform: 'uppercase' }}>
+              Services Available for <span>{route.originName} to {route.destinationName}</span>
+            </h2>
+            <div className="divider" style={{ margin: '1rem auto' }} />
+            <p className="section-subtitle" style={{ maxWidth: '600px', margin: '0 auto', color: 'var(--gray-300)', textAlign: 'center' }}>
+              We offer comprehensive logistics &amp; moving support for the {route.originName} to {route.destinationName} route. Click on any service to read details.
+            </p>
+          </div>
+          <div className={styles.servicesGrid}>
+            {RELOCATION_SERVICES.map((service) => (
+              <Link 
+                key={service.slug} 
+                href={`/services/${service.slug}`} 
+                className={styles.serviceCard} 
+                style={{ '--accent': service.color }}
+              >
+                <div className={styles.serviceIconWrap}>
+                  <span className={styles.serviceIcon}>{service.icon}</span>
+                </div>
+                <h3 className={styles.serviceTitle}>{service.name}</h3>
+                <p className={styles.serviceDesc}>{service.desc}</p>
+                <span className={styles.serviceArrow}>Learn More →</span>
+              </Link>
+            ))}
+          </div>
+          <div className={styles.allServicesLink}>
+            <Link href="/services" className="btn btn-secondary">View All Services</Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── FAQ SECTION (Full Width matching style of other pages) ── */}
-      <section className="section bg-section-dark" style={{ marginTop: '5rem' }}>
+      <section className="section bg-section-dark" style={{ marginTop: '3rem' }}>
         <div className="container">
           <div className="section-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <span className="section-tag">Help Desk</span>
