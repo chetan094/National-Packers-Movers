@@ -142,6 +142,7 @@ export default function Footer() {
               <li><Link href="/testimonials" className={styles.footerLink}>→ Testimonials</Link></li>
               <li><Link href="/blog" className={styles.footerLink}>→ Blog</Link></li>
               <li><Link href="/contact" className={styles.footerLink}>→ Contact</Link></li>
+              <li><Link href="/billing-claim-kit" className={styles.footerLink}>→ Relocation Claim Kit</Link></li>
             </ul>
             <div className={styles.ctaBox}>
               <p>Ready to move?</p>

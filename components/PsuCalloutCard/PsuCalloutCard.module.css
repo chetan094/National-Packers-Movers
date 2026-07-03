@@ -147,6 +147,32 @@
   box-shadow: 0 6px 20px rgba(193, 18, 31, 0.4);
 }
 
+.homeExplore {
+  background: transparent;
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  width: 100%;
+  padding: 0.95rem;
+  font-size: 0.95rem;
+  font-family: var(--rajdhani);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.2s, background-color 0.2s, color 0.2s, box-shadow 0.2s;
+  display: block;
+  text-decoration: none;
+}
+
+.homeExplore:hover {
+  transform: translateY(-2px);
+  background-color: var(--gold);
+  color: var(--navy);
+  box-shadow: var(--shadow-gold);
+}
+
 .ctaFoot {
   font-size: 0.75rem;
   color: var(--text-secondary);

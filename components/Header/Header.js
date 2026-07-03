@@ -217,6 +217,10 @@ export default function Header() {
                   <span className={styles.dropdownIcon}>⭐</span>
                   <span>Testimonials</span>
                 </Link>
+                <Link href="/billing-claim-kit" className={styles.dropdownItem}>
+                  <span className={styles.dropdownIcon}>📋</span>
+                  <span>Claim Kit</span>
+                </Link>
               </div>
             </div>
           </li>
@@ -362,6 +366,9 @@ export default function Header() {
                 </Link>
                 <Link href="/testimonials" className={styles.mobileSubLink} onClick={() => { setMobileOpen(false); setMobileExpanded(null); }}>
                   ⭐ Testimonials
+                </Link>
+                <Link href="/billing-claim-kit" className={styles.mobileSubLink} onClick={() => { setMobileOpen(false); setMobileExpanded(null); }}>
+                  📋 Claim Kit
                 </Link>
               </div>
             )}

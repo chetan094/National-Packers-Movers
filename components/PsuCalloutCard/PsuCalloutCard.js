@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 import styles from './PsuCalloutCard.module.css';
 import PsuClaimModal from '@/components/PsuClaimModal/PsuClaimModal';
 
@@ -78,6 +79,12 @@ export default function PsuCalloutCard({ cityName = '', isBranchPage = false }) 
               >
                 📥 Download Shifting Claim Kit (PDF)
               </button>
+              <Link 
+                href="/billing-claim-kit"
+                className={styles.homeExplore}
+              >
+                🔍 Explore Claim Kit Details
+              </Link>
               <span className={styles.ctaFoot}>🔒 Free Official Resource • Immediate Download</span>
             </div>
           </div>

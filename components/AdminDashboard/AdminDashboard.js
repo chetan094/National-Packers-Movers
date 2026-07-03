@@ -155,6 +155,8 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
   const [activeTab, setActiveTab] = useState('blogs'); // 'blogs', 'tracking', 'leads'
+  const [bmsOpen, setBmsOpen] = useState(false);
+  const [marketingOpen, setMarketingOpen] = useState(false);
   const [blogs, setBlogs] = useState([]);
   const [loadingBlogs, setLoadingBlogs] = useState(true);
 
@@ -220,6 +222,39 @@ export default function AdminDashboard() {
   const [leadActionLoading, setLeadActionLoading] = useState(false);
   const [deleteLeadConfirmOpen, setDeleteLeadConfirmOpen] = useState(false);
   const [leadToDelete, setLeadToDelete] = useState(null);
+
+  // BMS State Variables
+  const [bmsQuotes, setBmsQuotes] = useState([]);
+  const [bmsInvoices, setBmsInvoices] = useState([]);
+  const [activeBmsItem, setActiveBmsItem] = useState(null); // Print/View document item
+  const [bmsPrintMode, setBmsPrintMode] = useState(false); // Toggle printable format view
+  const [editingQuoteId, setEditingQuoteId] = useState(null);
+  const [editingInvoiceId, setEditingInvoiceId] = useState(null);
+
+  // BMS Quotation Form Inputs
+  const [qRefNo, setQRefNo] = useState('');
+  const [qDate, setQDate] = useState('');
+  const [qName, setQName] = useState('');
+  const [qPhone, setQPhone] = useState('');
+  const [qOrigin, setQOrigin] = useState('');
+  const [qDest, setQDest] = useState('');
+  const [qDistance, setQDistance] = useState('');
+  const [qMovingType, setQMovingType] = useState('Household Relocation');
+  const [qTransportRate, setQTransportRate] = useState('');
+  const [qPackingRate, setQPackingRate] = useState('');
+
+  // BMS Invoice Form Inputs
+  const [iBillNo, setIBillNo] = useState('');
+  const [iDate, setIDate] = useState('');
+  const [iName, setIName] = useState('');
+  const [iGst, setIGst] = useState('');
+  const [iOrigin, setIOrigin] = useState('');
+  const [iDest, setIDest] = useState('');
+  const [iLrNo, setILrNo] = useState('');
+  const [iVehicleNo, setIVehicleNo] = useState('');
+  const [iTransportRate, setITransportRate] = useState('');
+  const [iPackingRate, setIPackingRate] = useState('');
+  const [iAdvancePaid, setIAdvancePaid] = useState('');
 
   // Analytics states
   const [analyticsData, setAnalyticsData] = useState(null);
@@ -735,6 +770,278 @@ export default function AdminDashboard() {
       }
     }
   }, [currentUser, activeTab]);
+
+  // Load BMS data on mount
+  useEffect(() => {
+    try {
+      const storedQuotes = localStorage.getItem('npm_bms_quotes');
+      if (storedQuotes) setBmsQuotes(JSON.parse(storedQuotes));
+      
+      const storedInvoices = localStorage.getItem('npm_bms_invoices');
+      if (storedInvoices) setBmsInvoices(JSON.parse(storedInvoices));
+    } catch (err) {
+      console.error('Error loading BMS local storage items:', err);
+    }
+  }, []);
+
+  // Save BMS data on updates
+  useEffect(() => {
+    if (bmsQuotes.length > 0) {
+      localStorage.setItem('npm_bms_quotes', JSON.stringify(bmsQuotes));
+    }
+  }, [bmsQuotes]);
+
+  useEffect(() => {
+    if (bmsInvoices.length > 0) {
+      localStorage.setItem('npm_bms_invoices', JSON.stringify(bmsInvoices));
+    }
+  }, [bmsInvoices]);
+
+  const convertNumberToWords = (num) => {
+    const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+    const inWords = (n) => {
+      if (n < 20) return a[n];
+      const digit = n % 10;
+      if (n < 100) return b[Math.floor(n / 10)] + (digit ? '-' + a[digit] : '');
+      if (n < 1000) return a[Math.floor(n / 100)] + 'Hundred ' + (n % 100 !== 0 ? 'and ' + inWords(n % 100) : '');
+      if (n < 100000) return inWords(Math.floor(n / 1000)) + 'Thousand ' + (n % 1000 !== 0 ? inWords(n % 1000) : '');
+      if (n < 10000000) return inWords(Math.floor(n / 100000)) + 'Lakh ' + (n % 100000 !== 0 ? inWords(n % 100000) : '');
+      return inWords(Math.floor(n / 10000000)) + 'Crore ' + (n % 10000000 !== 0 ? inWords(n % 10000000) : '');
+    };
+
+    const integerPart = Math.floor(num);
+    const decimalPart = Math.round((num - integerPart) * 100);
+    
+    let words = inWords(integerPart) + 'Rupees ';
+    if (decimalPart > 0) {
+      words += 'and ' + inWords(decimalPart) + 'Paise ';
+    }
+    return words + 'Only';
+  };
+
+  const handleCreateQuotation = (e) => {
+    e.preventDefault();
+    if (!qName || !qPhone || !qOrigin || !qDest || !qTransportRate || !qPackingRate) {
+      alert('Please fill out all required fields.');
+      return;
+    }
+    const tRate = parseFloat(qTransportRate) || 0;
+    const pRate = parseFloat(qPackingRate) || 0;
+    const tGst = parseFloat((tRate * 0.05).toFixed(2));
+    const pGst = parseFloat((pRate * 0.18).toFixed(2));
+    const totalAmount = tRate + tGst + pRate + pGst;
+
+    if (editingQuoteId) {
+      const updatedQuotes = bmsQuotes.map(quote => {
+        if (quote.id === editingQuoteId) {
+          return {
+            ...quote,
+            refNo: qRefNo || quote.refNo,
+            date: qDate || quote.date,
+            name: qName,
+            phone: qPhone,
+            origin: qOrigin,
+            destination: qDest,
+            distance: qDistance || 'N/A',
+            movingType: qMovingType,
+            transportRate: tRate,
+            packingRate: pRate,
+            transportGst: tGst,
+            packingGst: pGst,
+            total: parseFloat(totalAmount.toFixed(2))
+          };
+        }
+        return quote;
+      });
+      setBmsQuotes(updatedQuotes);
+      setEditingQuoteId(null);
+      alert('Quotation updated successfully!');
+    } else {
+      const newQuote = {
+        id: 'quote_' + Date.now(),
+        refNo: qRefNo || `NPM/26-27/${bmsQuotes.length + 101}`,
+        date: qDate || new Date().toLocaleDateString('en-GB'),
+        name: qName,
+        phone: qPhone,
+        origin: qOrigin,
+        destination: qDest,
+        distance: qDistance || 'N/A',
+        movingType: qMovingType,
+        transportRate: tRate,
+        packingRate: pRate,
+        transportGst: tGst,
+        packingGst: pGst,
+        total: parseFloat(totalAmount.toFixed(2)),
+        inventory: '',
+        type: 'quotation'
+      };
+      setBmsQuotes([newQuote, ...bmsQuotes]);
+      alert('Quotation saved successfully!');
+    }
+
+    setQRefNo('');
+    setQDate('');
+    setQName('');
+    setQPhone('');
+    setQOrigin('');
+    setQDest('');
+    setQDistance('');
+    setQTransportRate('');
+    setQPackingRate('');
+  };
+
+  const handleDeleteQuotation = (id) => {
+    if (confirm('Are you sure you want to delete this quotation?')) {
+      const updated = bmsQuotes.filter(q => q.id !== id);
+      setBmsQuotes(updated);
+      localStorage.setItem('npm_bms_quotes', JSON.stringify(updated));
+    }
+  };
+
+  const startEditQuotation = (quote) => {
+    setEditingQuoteId(quote.id);
+    setQRefNo(quote.refNo);
+    setQDate(quote.date);
+    setQName(quote.name);
+    setQPhone(quote.phone);
+    setQOrigin(quote.origin);
+    setQDest(quote.destination);
+    setQDistance(quote.distance === 'N/A' ? '' : quote.distance);
+    setQMovingType(quote.movingType);
+    setQTransportRate(quote.transportRate.toString());
+    setQPackingRate(quote.packingRate.toString());
+  };
+
+  const cancelEditQuotation = () => {
+    setEditingQuoteId(null);
+    setQRefNo('');
+    setQDate('');
+    setQName('');
+    setQPhone('');
+    setQOrigin('');
+    setQDest('');
+    setQDistance('');
+    setQTransportRate('');
+    setQPackingRate('');
+  };
+
+  const handleCreateInvoice = (e) => {
+    e.preventDefault();
+    if (!iName || !iOrigin || !iDest || !iTransportRate || !iPackingRate) {
+      alert('Please fill out all required fields.');
+      return;
+    }
+    const tRate = parseFloat(iTransportRate) || 0;
+    const pRate = parseFloat(iPackingRate) || 0;
+    const tVal = tRate + pRate;
+    const gstVal = parseFloat((tVal * 0.18).toFixed(2));
+    const totalAmount = tVal + gstVal;
+    const adv = parseFloat(iAdvancePaid) || 0;
+    const bal = totalAmount - adv;
+
+    if (editingInvoiceId) {
+      const updatedInvoices = bmsInvoices.map(invoice => {
+        if (invoice.id === editingInvoiceId) {
+          return {
+            ...invoice,
+            billNo: iBillNo || invoice.billNo,
+            date: iDate || invoice.date,
+            name: iName,
+            gst: iGst || 'N/A',
+            origin: iOrigin,
+            destination: iDest,
+            lrNo: iLrNo || invoice.lrNo,
+            vehicleNo: iVehicleNo || 'N/A',
+            transportRate: tRate,
+            packingRate: pRate,
+            taxableValue: tVal,
+            gstAmount: gstVal,
+            total: parseFloat(totalAmount.toFixed(2)),
+            advance: adv,
+            balance: parseFloat(bal.toFixed(2))
+          };
+        }
+        return invoice;
+      });
+      setBmsInvoices(updatedInvoices);
+      setEditingInvoiceId(null);
+      alert('GST Invoice updated successfully!');
+    } else {
+      const newInvoice = {
+        id: 'invoice_' + Date.now(),
+        billNo: iBillNo || `NPM/26-27/${bmsInvoices.length + 101}`,
+        date: iDate || new Date().toLocaleDateString('en-GB'),
+        name: iName,
+        gst: iGst || 'N/A',
+        origin: iOrigin,
+        destination: iDest,
+        lrNo: iLrNo || `LR-${Math.floor(10000 + Math.random() * 90000)}`,
+        vehicleNo: iVehicleNo || 'N/A',
+        transportRate: tRate,
+        packingRate: pRate,
+        taxableValue: tVal,
+        gstAmount: gstVal,
+        total: parseFloat(totalAmount.toFixed(2)),
+        advance: adv,
+        balance: parseFloat(bal.toFixed(2)),
+        type: 'invoice'
+      };
+      setBmsInvoices([newInvoice, ...bmsInvoices]);
+      alert('GST Invoice saved successfully!');
+    }
+
+    setIBillNo('');
+    setIDate('');
+    setIName('');
+    setIGst('');
+    setIOrigin('');
+    setIDest('');
+    setILrNo('');
+    setIVehicleNo('');
+    setITransportRate('');
+    setIPackingRate('');
+    setIAdvancePaid('');
+  };
+
+  const handleDeleteInvoice = (id) => {
+    if (confirm('Are you sure you want to delete this invoice?')) {
+      const updated = bmsInvoices.filter(i => i.id !== id);
+      setBmsInvoices(updated);
+      localStorage.setItem('npm_bms_invoices', JSON.stringify(updated));
+    }
+  };
+
+  const startEditInvoice = (invoice) => {
+    setEditingInvoiceId(invoice.id);
+    setIBillNo(invoice.billNo);
+    setIDate(invoice.date);
+    setIName(invoice.name);
+    setIGst(invoice.gst === 'N/A' ? '' : invoice.gst);
+    setIOrigin(invoice.origin);
+    setIDest(invoice.destination);
+    setILrNo(invoice.lrNo);
+    setIVehicleNo(invoice.vehicleNo === 'N/A' ? '' : invoice.vehicleNo);
+    setITransportRate(invoice.transportRate.toString());
+    setIPackingRate(invoice.packingRate.toString());
+    setIAdvancePaid(invoice.advance.toString());
+  };
+
+  const cancelEditInvoice = () => {
+    setEditingInvoiceId(null);
+    setIBillNo('');
+    setIDate('');
+    setIName('');
+    setIGst('');
+    setIOrigin('');
+    setIDest('');
+    setILrNo('');
+    setIVehicleNo('');
+    setITransportRate('');
+    setIPackingRate('');
+    setIAdvancePaid('');
+  };
 
   const fetchBlogs = async () => {
     setLoadingBlogs(true);
@@ -1633,6 +1940,350 @@ export default function AdminDashboard() {
     );
   });
 
+  const renderPrintQuotation = (item) => {
+    return (
+      <div style={{ padding: '30px 40px', color: '#000', background: '#fff', fontFamily: 'Arial, sans-serif', fontSize: '14px', lineHeight: '1.4', maxWidth: '800px', margin: '0 auto', boxSizing: 'border-box' }}>
+        {/* Top Header metadata */}
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', marginBottom: '8px' }}>
+          <tbody>
+            <tr>
+              <td style={{ textAlign: 'left', fontWeight: '700', width: '33%' }}>Regd. No.- 30270000000039</td>
+              <td style={{ textAlign: 'center', fontWeight: '700', width: '33%' }}>GST No.: 20AIHPJ7005R1Z6</td>
+              <td style={{ textAlign: 'right', fontWeight: '700', width: '34%' }}>Mob. : 9835168368, 9430706037</td>
+            </tr>
+          </tbody>
+        </table>
+
+        {/* Business Name with Logo Aligned Left */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginBottom: '6px' }}>
+          <img src="/logo.png" alt="NPM Logo" style={{ height: '62px', width: 'auto' }} />
+          <h1 style={{ fontSize: '32px', fontWeight: '900', margin: '0', letterSpacing: '0.5px', fontFamily: 'Georgia, "Times New Roman", serif', textTransform: 'uppercase', color: '#c1121f' }}>
+            NATIONAL PACKERS & MOVERS
+          </h1>
+        </div>
+
+        <div style={{ textAlign: 'center', marginBottom: '4px' }}>
+          <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.5px', marginTop: '2px' }}>
+            HOUSE HOLD GOODS, PACKING, LOADING, UNLOADING, CAR SHIFTING & LOCAL SHIFTING
+          </div>
+          <div style={{ fontSize: '11px', fontWeight: '700', marginTop: '3px' }}>
+            Corporate HQ- Kasturba Nagar Near Police Station Dhanbad, Jharkhand 826001
+          </div>
+          <div style={{ fontSize: '11px', fontWeight: '700', marginTop: '2px' }}>
+            Website : www.thenationalpackersmovers.com | E-mail : npmdhanbad11@gmail.com
+          </div>
+        </div>
+
+        {/* Split Slogan Banner */}
+        <div style={{ display: 'flex', alignItems: 'center', margin: '10px 0', gap: '10px' }}>
+          <div style={{ flex: 1, height: '4px', background: '#000' }}></div>
+          <div style={{ fontWeight: '850', fontSize: '13px', letterSpacing: '1px', whiteSpace: 'nowrap' }}>
+            OUR SERVICE : ALL OVER INDIA
+          </div>
+          <div style={{ flex: 1, height: '4px', background: '#000' }}></div>
+        </div>
+
+        {/* Underlined Document Title */}
+        <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+          <span style={{ fontSize: '18px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '2px', borderBottom: '2px dashed #c1121f', paddingBottom: '3px', color: '#c1121f' }}>QUOTATION</span>
+        </div>
+
+        {/* Ref / Date Row */}
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '15px', fontSize: '14px' }}>
+          <tbody>
+            <tr>
+              <td style={{ width: '50%', textAlign: 'left' }}>
+                <strong>Ref. No. :</strong> {item.refNo}
+              </td>
+              <td style={{ width: '50%', textAlign: 'right' }}>
+                <strong>Date :</strong> {item.date}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        {/* Salutation */}
+        <div style={{ marginBottom: '15px', fontSize: '14px', lineHeight: '1.5' }}>
+          <strong>To,</strong><br />
+          <div style={{ fontSize: '15px', fontWeight: '800', textTransform: 'uppercase', margin: '4px 0' }}>{item.name}</div>
+          <br />
+          <strong>Dear Sir / Mam,</strong><br />
+          <div style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: '4px' }}>
+            WE ARE VERY PLEASURE TO QUOTE OUR LOWEST RATES FOR SHIFTING OF HOUSEHOLD GOODS DETAILS ARE AS UNDER
+          </div>
+        </div>
+
+        {/* Addresses */}
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', fontSize: '13px', lineHeight: '1.5' }}>
+          <tbody>
+            <tr>
+              <td style={{ width: '18%', fontWeight: '700', padding: '4px 0', verticalAlign: 'top' }}>Pickup From</td>
+              <td style={{ width: '82%', padding: '4px 0 4px 10px', verticalAlign: 'top' }}>
+                : {item.origin}
+              </td>
+            </tr>
+            <tr>
+              <td style={{ width: '18%', fontWeight: '700', padding: '4px 0', verticalAlign: 'top' }}>Deliver At</td>
+              <td style={{ width: '82%', padding: '4px 0 4px 10px', verticalAlign: 'top' }}>
+                : {item.destination}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        {/* Details Table */}
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', marginBottom: '20px' }}>
+          <thead>
+            <tr style={{ borderTop: '1px solid #000', borderBottom: '1px solid #000' }}>
+              <th style={{ padding: '6px 4px', textAlign: 'left', width: '8%' }}>Sl.No.</th>
+              <th style={{ padding: '6px 4px', textAlign: 'left', width: '52%' }}>Description</th>
+              <th style={{ padding: '6px 4px', textAlign: 'left', width: '15%' }}>Quantity</th>
+              <th style={{ padding: '6px 4px', textAlign: 'right', width: '12%' }}>Rate</th>
+              <th style={{ padding: '6px 4px', textAlign: 'right', width: '13%' }}>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style={{ verticalAlign: 'top' }}>
+              <td style={{ padding: '8px 4px' }}>1</td>
+              <td style={{ padding: '8px 4px' }}>TRANSPORTING CHARGES FOR HOUSEHOLD GOODS</td>
+              <td style={{ padding: '8px 4px' }}>1 TRUCK</td>
+              <td style={{ padding: '8px 4px', textAlign: 'right' }}>{item.transportRate.toFixed(2)}</td>
+              <td style={{ padding: '8px 4px', textAlign: 'right' }}>{item.transportRate.toFixed(2)}/-</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td style={{ padding: '2px 4px 8px 4px', fontWeight: '700' }}>GST / IGST : &nbsp;&nbsp;&nbsp;&nbsp; 5.00%</td>
+              <td></td>
+              <td></td>
+              <td style={{ padding: '2px 4px 8px 4px', textAlign: 'right', fontWeight: '700' }}>{item.transportGst.toFixed(2)}/-</td>
+            </tr>
+            <tr style={{ verticalAlign: 'top', borderTop: '1px solid #ddd' }}>
+              <td style={{ padding: '8px 4px' }}>2</td>
+              <td style={{ padding: '8px 4px' }}>PACKING,LOADING AND UNLOADING CHARGES FOR HOUSEHOLD GOODS</td>
+              <td style={{ padding: '8px 4px' }}>1 TRUCK</td>
+              <td style={{ padding: '8px 4px', textAlign: 'right' }}>{item.packingRate.toFixed(2)}</td>
+              <td style={{ padding: '8px 4px', textAlign: 'right' }}>{item.packingRate.toFixed(2)}/-</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td style={{ padding: '2px 4px 8px 4px', fontWeight: '700' }}>GST / IGST : &nbsp;&nbsp;&nbsp;&nbsp; 18.00%</td>
+              <td></td>
+              <td></td>
+              <td style={{ padding: '2px 4px 8px 4px', textAlign: 'right', fontWeight: '700' }}>{item.packingGst.toFixed(2)}/-</td>
+            </tr>
+          </tbody>
+        </table>
+
+        {/* Amount in words & Red Accented Total Box */}
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
+          <tbody>
+            <tr>
+              <td style={{ width: '60%', verticalAlign: 'top', border: 'none', padding: '0' }}>
+                <div style={{ border: '1px solid #cbd5e1', borderRadius: '4px', padding: '10px', background: '#f8fafc', fontSize: '12px' }}>
+                  <strong>Amount In Words:</strong><br />
+                  [ {convertNumberToWords(item.total)} ]
+                </div>
+              </td>
+              <td style={{ width: '40%', verticalAlign: 'top', paddingLeft: '15px', border: 'none', padding: '0' }}>
+                <div style={{ border: '1.5px solid #c1121f', padding: '10px', textAlign: 'right', fontSize: '14px', fontWeight: '800', background: '#f1f5f9', color: '#c1121f' }}>
+                  Total Amount: ₹{item.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}/-
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        {/* Salutations footer */}
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '35px', fontSize: '14px' }}>
+          <tbody>
+            <tr>
+              <td style={{ textAlign: 'left', fontWeight: '700' }}>Thanking You</td>
+              <td style={{ textAlign: 'right', fontWeight: '700' }}>Your's Faithfully</td>
+            </tr>
+          </tbody>
+        </table>
+
+        {/* Terms & Conditions list */}
+        <div style={{ borderTop: '1px dashed #000', paddingTop: '15px', fontSize: '11px', lineHeight: '1.6' }}>
+          <div style={{ fontWeight: '700', marginBottom: '6px' }}>Terms & Conditions :</div>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <tbody>
+              <tr>
+                <td style={{ width: '55%', verticalAlign: 'top', padding: '0' }}>
+                  1. GST Charges Extra as per Billing Amount.<br />
+                  2. Insurance Charges Extra ap per Valuation.<br />
+                  3. 90% Advance after Loading & Balance after Unloading.
+                </td>
+                <td style={{ width: '45%', verticalAlign: 'top', padding: '0' }}>
+                  4. Work start after receiving the Work Order.<br />
+                  5. Quatation valid upto 15 days.<br />
+                  6. Keep Important Documents/ cash or jewellery in your personal Lock/Custody.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Head Office centered footer */}
+        <div style={{ textAlign: 'center', marginTop: '20px', paddingTop: '8px', borderTop: '1px solid #ddd', fontSize: '12px', fontWeight: '700' }}>
+          Head Office (Zonal) : Rajarhat, Kolkata [W.B.]
+        </div>
+      </div>
+    );
+  };
+
+  const renderPrintInvoice = (item) => {
+    return (
+      <div style={{ padding: '30px 40px', color: '#000', background: '#fff', fontFamily: 'Arial, sans-serif', fontSize: '14px', lineHeight: '1.4', maxWidth: '800px', margin: '0 auto', boxSizing: 'border-box' }}>
+        {/* Top Header metadata */}
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', marginBottom: '8px' }}>
+          <tbody>
+            <tr>
+              <td style={{ textAlign: 'left', fontWeight: '700', width: '33%' }}>Regd. No.- 30270000000039</td>
+              <td style={{ textAlign: 'center', fontWeight: '700', width: '33%' }}>GST No.: 20AIHPJ7005R1Z6</td>
+              <td style={{ textAlign: 'right', fontWeight: '700', width: '34%' }}>Mob. : 9835168368, 9430706037</td>
+            </tr>
+          </tbody>
+        </table>
+
+        {/* Business Name with Logo Aligned Left */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginBottom: '6px' }}>
+          <img src="/logo.png" alt="NPM Logo" style={{ height: '62px', width: 'auto' }} />
+          <h1 style={{ fontSize: '32px', fontWeight: '900', margin: '0', letterSpacing: '0.5px', fontFamily: 'Georgia, "Times New Roman", serif', textTransform: 'uppercase', color: '#c1121f' }}>
+            NATIONAL PACKERS & MOVERS
+          </h1>
+        </div>
+
+        <div style={{ textAlign: 'center', marginBottom: '4px' }}>
+          <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.5px', marginTop: '2px' }}>
+            HOUSE HOLD GOODS, PACKING, LOADING, UNLOADING, CAR SHIFTING & LOCAL SHIFTING
+          </div>
+          <div style={{ fontSize: '11px', fontWeight: '700', marginTop: '3px' }}>
+            Corporate HQ- Kasturba Nagar Near Police Station Dhanbad, Jharkhand 826001
+          </div>
+          <div style={{ fontSize: '11px', fontWeight: '700', marginTop: '2px' }}>
+            Website : www.thenationalpackersmovers.com | E-mail : npmdhanbad11@gmail.com
+          </div>
+        </div>
+
+        {/* Split Slogan Banner */}
+        <div style={{ display: 'flex', alignItems: 'center', margin: '10px 0', gap: '10px' }}>
+          <div style={{ flex: 1, height: '4px', background: '#000' }}></div>
+          <div style={{ fontWeight: '850', fontSize: '13px', letterSpacing: '1px', whiteSpace: 'nowrap' }}>
+            OUR SERVICE : ALL OVER INDIA
+          </div>
+          <div style={{ flex: 1, height: '4px', background: '#000' }}></div>
+        </div>
+
+        <div style={{ fontSize: '18px', fontWeight: '800', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '3px', marginTop: '10px', marginBottom: '15px', textDecoration: 'underline', color: '#c1121f' }}>Bill</div>
+
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '15px' }}>
+          <tbody>
+            <tr>
+              <td style={{ fontWeight: '700', width: '15%', border: 'none', padding: '3px 0' }}>Bill No.:</td>
+              <td style={{ width: '35%', border: 'none', padding: '3px 0' }}>{item.billNo}</td>
+              <td style={{ fontWeight: '700', width: '15%', border: 'none', padding: '3px 0' }}>Date:</td>
+              <td style={{ width: '35%', border: 'none', padding: '3px 0' }}>{item.date}</td>
+            </tr>
+            <tr>
+              <td style={{ fontWeight: '700', width: '15%', border: 'none', padding: '3px 0' }}>M/s (To):</td>
+              <td style={{ width: '35%', border: 'none', padding: '3px 0', fontWeight: '700' }}>{item.name}</td>
+              <td style={{ fontWeight: '700', width: '15%', border: 'none', padding: '3px 0' }}>Client GSTIN:</td>
+              <td style={{ width: '35%', border: 'none', padding: '3px 0' }}>{item.gst}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '15px', background: '#f8fafc', border: '1px solid #cbd5e1' }}>
+          <tbody>
+            <tr>
+              <td style={{ padding: '8px 12px', verticalAlign: 'top', width: '50%', border: '1px solid #cbd5e1' }}>
+                <div style={{ fontSize: '11px', textTransform: 'uppercase', fontWeight: '700', color: '#475569', marginBottom: '4px' }}>📍 Pickup From (Source)</div>
+                <div style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a' }}>{item.origin}</div>
+              </td>
+              <td style={{ padding: '8px 12px', verticalAlign: 'top', width: '50%', border: '1px solid #cbd5e1' }}>
+                <div style={{ fontSize: '11px', textTransform: 'uppercase', fontWeight: '700', color: '#475569', marginBottom: '4px' }}>🏁 Deliver At (Destination)</div>
+                <div style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a' }}>{item.destination}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', marginBottom: '15px' }}>
+          <thead>
+            <tr>
+              <th style={{ background: '#f1f5f9', color: '#333', fontWeight: '700', border: '1px solid #cbd5e1', padding: '8px', textAlign: 'left', width: '10%' }}>Sl.No.</th>
+              <th style={{ background: '#f1f5f9', color: '#333', fontWeight: '700', border: '1px solid #cbd5e1', padding: '8px', textAlign: 'left', width: '50%' }}>P A R T I C U L A R S</th>
+              <th style={{ background: '#f1f5f9', color: '#333', fontWeight: '700', border: '1px solid #cbd5e1', padding: '8px', textAlign: 'center', width: '15%' }}>Quantity</th>
+              <th style={{ background: '#f1f5f9', color: '#333', fontWeight: '700', border: '1px solid #cbd5e1', padding: '8px', textAlign: 'right', width: '12%' }}>Rate (₹)</th>
+              <th style={{ background: '#f1f5f9', color: '#333', fontWeight: '700', border: '1px solid #cbd5e1', padding: '8px', textAlign: 'right', width: '13%' }}>Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{ border: '1px solid #cbd5e1', padding: '8px', textAlign: 'center' }}>1</td>
+              <td style={{ border: '1px solid #cbd5e1', padding: '8px' }}>
+                <strong>TRANSPORTING CHARGES FOR HOUSEHOLD GOODS</strong>
+                <div style={{ fontSize: '10px', color: '#555', marginTop: '4px' }}>
+                  HSN CODE-9965 (Goods Transport Agency Services) | LR: {item.lrNo} | Vehicle: {item.vehicleNo}
+                </div>
+                <div style={{ fontSize: '10px', fontWeight: '700', color: '#444', marginTop: '8px' }}>
+                  SGST + CGST : 18.00%
+                </div>
+              </td>
+              <td style={{ border: '1px solid #cbd5e1', padding: '8px', textAlign: 'center' }}>1 TRUCK</td>
+              <td style={{ border: '1px solid #cbd5e1', padding: '8px', textAlign: 'right' }}>{item.taxableValue.toFixed(2)}</td>
+              <td style={{ border: '1px solid #cbd5e1', padding: '8px', textAlign: 'right' }}>{item.taxableValue.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td style={{ border: '1px solid #cbd5e1', padding: '8px' }}></td>
+              <td colspan="3" style={{ border: '1px solid #cbd5e1', padding: '8px', textAlign: 'right', fontWeight: '700' }}>SGST + CGST (18.00%) Tax Value</td>
+              <td style={{ border: '1px solid #cbd5e1', padding: '8px', textAlign: 'right', fontWeight: '700' }}>{item.gstAmount.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '15px' }}>
+          <tbody>
+            <tr>
+              <td style={{ width: '60%', verticalAlign: 'top', border: 'none', padding: '0' }}>
+                <div style={{ border: '1px solid #cbd5e1', borderRadius: '4px', padding: '10px', background: '#f8fafc', fontSize: '12px' }}>
+                  <strong>Amount In Words:</strong><br />
+                  {convertNumberToWords(item.total)}
+                </div>
+              </td>
+              <td style={{ width: '40%', verticalAlign: 'top', paddingLeft: '15px', border: 'none', padding: '0' }}>
+                <div style={{ border: '1.5px solid #c1121f', padding: '10px', textAlign: 'right', fontSize: '14px', fontWeight: '800', background: '#f1f5f9', color: '#c1121f' }}>
+                  Total Amount: ₹{item.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}/-
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px' }}>
+          <tbody>
+            <tr>
+              <td style={{ width: '60%', verticalAlign: 'top', padding: '0', border: 'none' }}>
+                <div style={{ border: '1px solid #cbd5e1', borderRadius: '4px', padding: '12px', background: '#fff', fontSize: '11px', lineHeight: '1.5' }}>
+                  <div style={{ fontWeight: '700', color: '#c1121f', marginBottom: '6px', fontSize: '12px', textTransform: 'uppercase' }}>🏦 HDFC Bank Settlement Details</div>
+                  <strong>Beneficiary Name:</strong> National Packers & Movers<br />
+                  <strong>Bank Name:</strong> HDFC BANK<br />
+                  <strong>Account Number:</strong> 50200005442392<br />
+                  <strong>IFSC Code:</strong> HDFC0000244
+                </div>
+              </td>
+              <td style={{ width: '40%', textAlign: 'right', verticalAlign: 'bottom', fontWeight: '700', fontSize: '11px', padding: '0', border: 'none' }}>
+                For National Packers & Movers<br /><br /><br /><br />
+                (Authorized Signatory)
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
   if (!authorized) {
     return (
       <div className={styles.loadingScreen}>
@@ -1642,8 +2293,68 @@ export default function AdminDashboard() {
     );
   }
 
+  const currentQuotePreview = {
+    refNo: qRefNo || 'NPM/26-27/TEMP',
+    date: qDate || new Date().toLocaleDateString('en-GB'),
+    name: qName || 'SRI CUSTOMER NAME',
+    phone: qPhone || '9876543210',
+    origin: qOrigin || 'Pickup Address...',
+    destination: qDest || 'Destination Address...',
+    distance: qDistance || 'N/A',
+    movingType: qMovingType,
+    transportRate: parseFloat(qTransportRate) || 0,
+    packingRate: parseFloat(qPackingRate) || 0,
+    transportGst: parseFloat(((parseFloat(qTransportRate) || 0) * 0.05).toFixed(2)),
+    packingGst: parseFloat(((parseFloat(qPackingRate) || 0) * 0.18).toFixed(2)),
+    total: parseFloat(((parseFloat(qTransportRate) || 0) * 1.05 + (parseFloat(qPackingRate) || 0) * 1.18).toFixed(2)),
+    inventory: '',
+    type: 'quotation'
+  };
+
+  const currentInvoicePreview = {
+    billNo: iBillNo || 'NPM/26-27/TEMP',
+    date: iDate || new Date().toLocaleDateString('en-GB'),
+    name: iName || 'M/S PARTY NAME',
+    gst: iGst || 'N/A',
+    origin: iOrigin || 'Pickup Address...',
+    destination: iDest || 'Destination Address...',
+    lrNo: iLrNo || 'LR-XXXXX',
+    vehicleNo: iVehicleNo || 'JH-10-CD-XXXX',
+    transportRate: parseFloat(iTransportRate) || 0,
+    packingRate: parseFloat(iPackingRate) || 0,
+    taxableValue: (parseFloat(iTransportRate) || 0) + (parseFloat(iPackingRate) || 0),
+    gstAmount: parseFloat((((parseFloat(iTransportRate) || 0) + (parseFloat(iPackingRate) || 0)) * 0.18).toFixed(2)),
+    total: parseFloat((((parseFloat(iTransportRate) || 0) + (parseFloat(iPackingRate) || 0)) * 1.18).toFixed(2)),
+    advance: parseFloat(iAdvancePaid) || 0,
+    balance: parseFloat(((((parseFloat(iTransportRate) || 0) + (parseFloat(iPackingRate) || 0)) * 1.18) - (parseFloat(iAdvancePaid) || 0)).toFixed(2)),
+    type: 'invoice'
+  };
+
   return (
     <div className={styles.dashboardLayout}>
+      {bmsPrintMode && activeBmsItem && (
+        <div className={styles.printOverlay}>
+          <div className="no-print" style={{ display: 'flex', gap: '10px', padding: '15px', background: '#333', color: '#fff', position: 'sticky', top: 0, zIndex: 9999 }}>
+            <button 
+              type="button" 
+              onClick={() => window.print()} 
+              style={{ padding: '8px 16px', background: 'var(--gold)', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', color: '#000' }}
+            >
+              🖨️ Print Document
+            </button>
+            <button 
+              type="button" 
+              onClick={() => { setBmsPrintMode(false); setActiveBmsItem(null); }} 
+              style={{ padding: '8px 16px', background: '#555', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              🏠 Back to Dashboard
+            </button>
+          </div>
+          <div style={{ background: '#fff', minHeight: '100vh', padding: '20px 0' }}>
+            {activeBmsItem.type === 'quotation' ? renderPrintQuotation(activeBmsItem) : renderPrintInvoice(activeBmsItem)}
+          </div>
+        </div>
+      )}
       {/* SIDEBAR */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
@@ -1655,14 +2366,58 @@ export default function AdminDashboard() {
         </div>
 
         <nav className={styles.sidebarNav}>
-          {(currentUser?.role === 'admin' || currentUser?.permissions?.blogs) && (
-            <button
-              type="button"
-              className={`${styles.navItem} ${activeTab === 'blogs' ? styles.navItemActive : ''}`}
-              onClick={() => setActiveTab('blogs')}
-            >
-              📰 Blogs Manager
-            </button>
+          {(currentUser?.role === 'admin' || currentUser?.permissions?.blogs || currentUser?.permissions?.analytics || currentUser?.permissions?.seo || currentUser?.permissions?.gallery) && (
+            <>
+              <button
+                type="button"
+                className={`${styles.navItem} ${['blogs', 'analytics', 'seo', 'gallery'].includes(activeTab) ? styles.navItemActive : ''}`}
+                onClick={() => setMarketingOpen(!marketingOpen)}
+                style={{ justifyContent: 'space-between' }}
+              >
+                <span>📈 Marketing & Growth</span>
+                <span style={{ fontSize: '0.75rem' }}>{marketingOpen ? '▲' : '▼'}</span>
+              </button>
+              {marketingOpen && (
+                <div className={styles.subMenu}>
+                  {(currentUser?.role === 'admin' || currentUser?.permissions?.blogs) && (
+                    <button
+                      type="button"
+                      className={`${styles.subNavItem} ${activeTab === 'blogs' ? styles.subNavItemActive : ''}`}
+                      onClick={() => setActiveTab('blogs')}
+                    >
+                      📰 Blogs Manager
+                    </button>
+                  )}
+                  {(currentUser?.role === 'admin' || currentUser?.permissions?.analytics) && (
+                    <button
+                      type="button"
+                      className={`${styles.subNavItem} ${activeTab === 'analytics' ? styles.subNavItemActive : ''}`}
+                      onClick={() => setActiveTab('analytics')}
+                    >
+                      📊 Analytics
+                    </button>
+                  )}
+                  {(currentUser?.role === 'admin' || currentUser?.permissions?.seo) && (
+                    <button
+                      type="button"
+                      className={`${styles.subNavItem} ${activeTab === 'seo' ? styles.subNavItemActive : ''}`}
+                      onClick={() => setActiveTab('seo')}
+                    >
+                      🔍 SEO Settings
+                    </button>
+                  )}
+                  {(currentUser?.role === 'admin' || currentUser?.permissions?.gallery) && (
+                    <button
+                      type="button"
+                      className={`${styles.subNavItem} ${activeTab === 'gallery' ? styles.subNavItemActive : ''}`}
+                      onClick={() => setActiveTab('gallery')}
+                    >
+                      🖼️ Media Gallery
+                    </button>
+                  )}
+                </div>
+              )}
+            </>
           )}
           {(currentUser?.role === 'admin' || currentUser?.permissions?.tracking) && (
             <button
@@ -1673,6 +2428,37 @@ export default function AdminDashboard() {
               🚚 Shipment Tracker
             </button>
           )}
+          {(currentUser?.role === 'admin') && (
+            <>
+              <button
+                type="button"
+                className={`${styles.navItem} ${['bms-quotations', 'bms-invoices'].includes(activeTab) ? styles.navItemActive : ''}`}
+                onClick={() => setBmsOpen(!bmsOpen)}
+                style={{ justifyContent: 'space-between' }}
+              >
+                <span>💼 Billing & Documents</span>
+                <span style={{ fontSize: '0.75rem' }}>{bmsOpen ? '▲' : '▼'}</span>
+              </button>
+              {bmsOpen && (
+                <div className={styles.subMenu}>
+                  <button
+                    type="button"
+                    className={`${styles.subNavItem} ${activeTab === 'bms-quotations' ? styles.subNavItemActive : ''}`}
+                    onClick={() => setActiveTab('bms-quotations')}
+                  >
+                    📝 Quotations
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.subNavItem} ${activeTab === 'bms-invoices' ? styles.subNavItemActive : ''}`}
+                    onClick={() => setActiveTab('bms-invoices')}
+                  >
+                    🧾 GST Invoices
+                  </button>
+                </div>
+              )}
+            </>
+          )}
           {(currentUser?.role === 'admin' || currentUser?.permissions?.leads) && (
             <button
               type="button"
@@ -1680,33 +2466,6 @@ export default function AdminDashboard() {
               onClick={() => setActiveTab('leads')}
             >
               📥 Leads Panel
-            </button>
-          )}
-          {(currentUser?.role === 'admin' || currentUser?.permissions?.analytics) && (
-            <button
-              type="button"
-              className={`${styles.navItem} ${activeTab === 'analytics' ? styles.navItemActive : ''}`}
-              onClick={() => setActiveTab('analytics')}
-            >
-              📊 Analytics
-            </button>
-          )}
-          {(currentUser?.role === 'admin' || currentUser?.permissions?.seo) && (
-            <button
-              type="button"
-              className={`${styles.navItem} ${activeTab === 'seo' ? styles.navItemActive : ''}`}
-              onClick={() => setActiveTab('seo')}
-            >
-              🔍 SEO Settings
-            </button>
-          )}
-          {(currentUser?.role === 'admin' || currentUser?.permissions?.gallery) && (
-            <button
-              type="button"
-              className={`${styles.navItem} ${activeTab === 'gallery' ? styles.navItemActive : ''}`}
-              onClick={() => setActiveTab('gallery')}
-            >
-              🖼️ Media Gallery
             </button>
           )}
           <button
@@ -3352,6 +4111,484 @@ export default function AdminDashboard() {
                 )}
               </div>
             </section>
+          </div>
+        )}
+
+        {activeTab === 'bms-quotations' && (
+          <div>
+            <header className={styles.panelHeader}>
+              <div>
+                <h1 className={styles.panelTitle}>BMS Quotations Manager</h1>
+                <p className={styles.panelSubtitle}>Create, view, and print professional A4 quotations for your clients</p>
+              </div>
+            </header>
+
+            <div className={styles.splitPane} style={{ gridTemplateColumns: '1.1fr 0.9fr' }}>
+              <div className={styles.editorPane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>📝 Create Shifting Quotation</h2>
+                  <form onSubmit={handleCreateQuotation} className={styles.form}>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Quotation Ref. No.</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={qRefNo}
+                          onChange={(e) => setQRefNo(e.target.value)}
+                          placeholder="Leave blank for auto-gen"
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Date</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={qDate}
+                          onChange={(e) => setQDate(e.target.value)}
+                          placeholder="e.g. 15/06/2026"
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Client Name *</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={qName}
+                          onChange={(e) => setQName(e.target.value)}
+                          placeholder="Full Name"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Contact Phone *</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={qPhone}
+                          onChange={(e) => setQPhone(e.target.value)}
+                          placeholder="Phone number"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Pickup From (Source) *</label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={qOrigin}
+                        onChange={(e) => setQOrigin(e.target.value)}
+                        placeholder="Complete origin address & floor details"
+                        required
+                      />
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Deliver At (Destination) *</label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={qDest}
+                        onChange={(e) => setQDest(e.target.value)}
+                        placeholder="Complete destination address & floor details"
+                        required
+                      />
+                    </div>
+
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Distance (in Kms)</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={qDistance}
+                          onChange={(e) => setQDistance(e.target.value)}
+                          placeholder="e.g. ~320 Kms"
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Moving Type</label>
+                        <select
+                          className={styles.select}
+                          value={qMovingType}
+                          onChange={(e) => setQMovingType(e.target.value)}
+                        >
+                          <option value="Household Relocation">Household Relocation</option>
+                          <option value="Corporate Shifting">Corporate Shifting</option>
+                          <option value="Vehicle Shifting">Vehicle Shifting</option>
+                          <option value="Industrial Transport">Industrial Transport</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Transport charges * (GST 5%)</label>
+                        <input
+                          type="number"
+                          className={styles.input}
+                          value={qTransportRate}
+                          onChange={(e) => setQTransportRate(e.target.value)}
+                          placeholder="e.g. 24000"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Packing & Labour * (GST 18%)</label>
+                        <input
+                          type="number"
+                          className={styles.input}
+                          value={qPackingRate}
+                          onChange={(e) => setQPackingRate(e.target.value)}
+                          placeholder="e.g. 12543"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {editingQuoteId ? (
+                      <div style={{ display: 'flex', gap: '10px' }}>
+                        <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
+                          🔄 Update Quotation
+                        </button>
+                        <button type="button" className="btn btn-secondary" style={{ background: '#555', color: '#fff', border: 'none', borderRadius: '4px', padding: '0 12px' }} onClick={cancelEditQuotation}>
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                        💾 Save Quotation
+                      </button>
+                    )}
+                  </form>
+                </div>
+                <div className={styles.livePreviewContainer}>
+                  <div className={styles.livePreviewTitle}>📄 Live A4 Document Preview</div>
+                  <div className={styles.a4Paper}>
+                    {renderPrintQuotation(currentQuotePreview)}
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.tablePane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>📋 Quotation Registry ({bmsQuotes.length})</h2>
+                  {bmsQuotes.length === 0 ? (
+                    <p style={{ color: 'var(--gray-400)', fontSize: '0.9rem' }}>No quotations generated yet.</p>
+                  ) : (
+                    <div className={styles.tableWrapper}>
+                      <table className={styles.table}>
+                        <thead>
+                          <tr>
+                            <th>Ref No.</th>
+                            <th>Customer Info</th>
+                            <th>Net Total (₹)</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {bmsQuotes.map((quote) => (
+                            <tr key={quote.id}>
+                              <td>
+                                <strong style={{ color: 'var(--gold)' }}>{quote.refNo}</strong>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-400)' }}>{quote.date}</div>
+                              </td>
+                              <td>
+                                <div style={{ fontWeight: '600' }}>{quote.name}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-400)' }}>📞 {quote.phone}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-300)' }}>{quote.origin.substring(0, 20)}...</div>
+                              </td>
+                              <td>
+                                <strong style={{ color: 'var(--white)' }}>₹{quote.total.toLocaleString()}</strong>
+                              </td>
+                              <td>
+                                <div className={styles.actionRow} style={{ display: 'flex', gap: '0.5rem' }}>
+                                  <button
+                                    type="button"
+                                    className={styles.editBtn}
+                                    onClick={() => startEditQuotation(quote)}
+                                    style={{ background: '#0284c7', color: '#fff' }}
+                                  >
+                                    ✏️ Edit
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={styles.editBtn}
+                                    onClick={() => {
+                                      setActiveBmsItem(quote);
+                                      setBmsPrintMode(true);
+                                    }}
+                                  >
+                                    🖨️ Print
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={styles.deleteBtn}
+                                    onClick={() => handleDeleteQuotation(quote.id)}
+                                  >
+                                    🗑️ Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'bms-invoices' && (
+          <div>
+            <header className={styles.panelHeader}>
+              <div>
+                <h1 className={styles.panelTitle}>BMS Invoices Manager</h1>
+                <p className={styles.panelSubtitle}>Generate and print GST tax invoices with outstanding ledger balance tracking</p>
+              </div>
+            </header>
+
+            <div className={styles.splitPane} style={{ gridTemplateColumns: '1.1fr 0.9fr' }}>
+              <div className={styles.editorPane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>🧾 Generate GST Tax Invoice</h2>
+                  <form onSubmit={handleCreateInvoice} className={styles.form}>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Bill/Invoice Number</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={iBillNo}
+                          onChange={(e) => setIBillNo(e.target.value)}
+                          placeholder="Leave blank for auto-gen"
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Invoice Date</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={iDate}
+                          onChange={(e) => setIDate(e.target.value)}
+                          placeholder="e.g. 18/06/2026"
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Client Name *</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={iName}
+                          onChange={(e) => setIName(e.target.value)}
+                          placeholder="M/s Name or Corporate entity"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Client GSTIN (if corporate)</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={iGst}
+                          onChange={(e) => setIGst(e.target.value)}
+                          placeholder="e.g. 20AAACI1681G3Z1"
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Lorry Receipt (LR) No.</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={iLrNo}
+                          onChange={(e) => setILrNo(e.target.value)}
+                          placeholder="Leave blank for auto-gen"
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Vehicle Number</label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={iVehicleNo}
+                          onChange={(e) => setIVehicleNo(e.target.value)}
+                          placeholder="e.g. JH-10-CD-9402"
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Pickup From (Source) *</label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={iOrigin}
+                        onChange={(e) => setIOrigin(e.target.value)}
+                        placeholder="Pickup address details"
+                        required
+                      />
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Deliver At (Destination) *</label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={iDest}
+                        onChange={(e) => setIDest(e.target.value)}
+                        placeholder="Destination address details"
+                        required
+                      />
+                    </div>
+
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Transport charges * (Taxable)</label>
+                        <input
+                          type="number"
+                          className={styles.input}
+                          value={iTransportRate}
+                          onChange={(e) => setITransportRate(e.target.value)}
+                          placeholder="e.g. 72500"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Packing & Labour * (Taxable)</label>
+                        <input
+                          type="number"
+                          className={styles.input}
+                          value={iPackingRate}
+                          onChange={(e) => setIPackingRate(e.target.value)}
+                          placeholder="e.g. 0"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Advance Paid Amount</label>
+                      <input
+                        type="number"
+                        className={styles.input}
+                        value={iAdvancePaid}
+                        onChange={(e) => setIAdvancePaid(e.target.value)}
+                        placeholder="e.g. 10000"
+                      />
+                    </div>
+
+                    {editingInvoiceId ? (
+                      <div style={{ display: 'flex', gap: '10px' }}>
+                        <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
+                          🔄 Update GST Bill
+                        </button>
+                        <button type="button" className="btn btn-secondary" style={{ background: '#555', color: '#fff', border: 'none', borderRadius: '4px', padding: '0 12px' }} onClick={cancelEditInvoice}>
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                        💾 Save GST Bill
+                      </button>
+                    )}
+                  </form>
+                </div>
+                <div className={styles.livePreviewContainer}>
+                  <div className={styles.livePreviewTitle}>📄 Live A4 Document Preview</div>
+                  <div className={styles.a4Paper}>
+                    {renderPrintInvoice(currentInvoicePreview)}
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.tablePane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>📋 Invoice Registry ({bmsInvoices.length})</h2>
+                  {bmsInvoices.length === 0 ? (
+                    <p style={{ color: 'var(--gray-400)', fontSize: '0.9rem' }}>No bills generated yet.</p>
+                  ) : (
+                    <div className={styles.tableWrapper}>
+                      <table className={styles.table}>
+                        <thead>
+                          <tr>
+                            <th>Bill No.</th>
+                            <th>Party Name</th>
+                            <th>Total (₹)</th>
+                            <th>Balance (₹)</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {bmsInvoices.map((inv) => (
+                            <tr key={inv.id}>
+                              <td>
+                                <strong style={{ color: 'var(--gold)' }}>{inv.billNo}</strong>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-400)' }}>{inv.date}</div>
+                              </td>
+                              <td>
+                                <div style={{ fontWeight: '600' }}>{inv.name}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-300)' }}>{inv.origin.substring(0, 15)} ➔ {inv.destination.substring(0, 15)}</div>
+                              </td>
+                              <td>
+                                <strong style={{ color: 'var(--white)' }}>₹{inv.total.toLocaleString()}</strong>
+                              </td>
+                              <td>
+                                <strong style={{ color: inv.balance > 0 ? 'var(--gold)' : 'green' }}>
+                                  ₹{inv.balance.toLocaleString()}
+                                </strong>
+                              </td>
+                              <td>
+                                <div className={styles.actionRow} style={{ display: 'flex', gap: '0.5rem' }}>
+                                  <button
+                                    type="button"
+                                    className={styles.editBtn}
+                                    onClick={() => startEditInvoice(inv)}
+                                    style={{ background: '#0284c7', color: '#fff' }}
+                                  >
+                                    ✏️ Edit
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={styles.editBtn}
+                                    onClick={() => {
+                                      setActiveBmsItem(inv);
+                                      setBmsPrintMode(true);
+                                    }}
+                                  >
+                                    🖨️ Print
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={styles.deleteBtn}
+                                    onClick={() => handleDeleteInvoice(inv.id)}
+                                  >
+                                    🗑️ Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
