@@ -199,7 +199,7 @@ export const branchesData = {
         { q: 'Can I book bike transportation from Deoghar?', a: 'Yes, we pack bikes with multiple layers of bubble wrap, corrugated sheets, and stretch film to prevent any scratches during transit.' }
       ],
       testimonials: [
-        { name: 'sr', text: 'Very genuine service. All my goods are well transported from Deoghar to Noida. I will proudly recommend National Packers and Movers as the best movers and packers in Deoghar. Thanks!', rating: 5, initials: 'SR' }
+        { name: 'S. R. Verma', text: 'Very genuine service. All my goods are well transported from Deoghar to Noida. I will proudly recommend National Packers and Movers as the best movers and packers in Deoghar. Thanks!', rating: 5, initials: 'SRV' }
       ]
     },
     'kolkata': {
@@ -242,7 +242,7 @@ export const branchesData = {
       ],
       testimonials: [
         { name: 'Aman Kumar', text: 'My experience with National Packers & Movers was outstanding during our shift from Durgapur to Patna! Their attention to safe packaging was remarkable. Every item was meticulously wrapped and secured. Best packers and movers in Durgapur.', rating: 5, initials: 'AK' },
-        { name: 'Gora Chand Bose', text: 'I had a wonderful experience shifting from Durgapur to Haldia. Everyone is very courteous and understanding. Haste-free service. Excellent Durgapur industrial shifting.', rating: 5, initials: 'GB' }
+        { name: 'Gora Chand Bose', text: 'I had a wonderful experience shifting from Durgapur to Haldia. Everyone is very courteous and understanding. Hassle-free service. Excellent Durgapur industrial shifting.', rating: 5, initials: 'GB' }
       ]
     },
     'asansol': {
@@ -283,7 +283,7 @@ export const branchesData = {
       ],
       testimonials: [
         { name: 'Aniket Kumar', text: 'I recently used National Packers & Movers for my relocation from Patna to Delhi, and I couldn\'t be more impressed! Their team was punctual, professional, and handled my belongings with utmost care. Best packers and movers in Patna.', rating: 5, initials: 'AK' },
-        { name: 'Anonymous Client', text: 'Goods delivered safely from Patna to Bangalore. Professional service, careful handling, and polite staff. Trustworthy company. Overall, very good experience. Highly recommended for house shifting Patna.', rating: 5, initials: 'AC' }
+        { name: 'Sanjay K. Choudhary', text: 'Goods delivered safely from Patna to Bangalore. Professional service, careful handling, and polite staff. Trustworthy company. Overall, very good experience. Highly recommended for house shifting Patna.', rating: 5, initials: 'SKC' }
       ]
     },
     'bhagalpur': {

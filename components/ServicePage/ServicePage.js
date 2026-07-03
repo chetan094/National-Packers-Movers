@@ -319,6 +319,7 @@ export default function ServicePage({ service }) {
           <div className={styles.faqList}>
             <FaqAccordion
               faqs={service.faqs}
+              renderSchema={false}
             />
           </div>
         </div>

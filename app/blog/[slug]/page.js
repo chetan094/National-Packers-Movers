@@ -392,7 +392,7 @@ export default async function BlogPostPage({ params }) {
             <section className={styles.faqSection} id="faq-section">
               <h2 className={styles.faqSectionTitle}>Frequently Asked Questions (FAQs)</h2>
               <div className={styles.faqAccordionContainer}>
-                <FaqAccordion faqs={faqsList.map(f => ({ q: f.question, a: f.answer }))} />
+                <FaqAccordion faqs={faqsList.map(f => ({ q: f.question, a: f.answer }))} renderSchema={false} />
               </div>
             </section>
           </div>

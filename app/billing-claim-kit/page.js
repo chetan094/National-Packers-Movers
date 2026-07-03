@@ -32,9 +32,46 @@ export async function generateMetadata() {
   };
 }
 
+const faqsList = [
+  {
+    q: 'What is a Lorry Receipt (LR) and why is it mandatory for claims?',
+    a: 'A Lorry Receipt (or Consignment Note) is proof that goods were handed over to a logistics transporter. It records the transport vehicle number (like JH-10-CD-XXXX) and HSN Code 9965. Audit departments require this to prove actual physical transport occurred.'
+  },
+  {
+    q: 'Can I get a claim document kit if I shift across states?',
+    a: 'Yes! We issue inter-state IGST invoices for transport routes between West Bengal, Jharkhand, Bihar, Madhya Pradesh, Uttar Pradesh, and all other Indian states.'
+  },
+  {
+    q: 'What GST percentage is required for PSU employee claims?',
+    a: 'For Goods Transport Agency (GTA) services, GST can be applied at 5% (without Input Tax Credit claims) or 18% (full packing & logistics). We customize the invoice formatting to match whatever rate is sanctioned by your employer\'s policy.'
+  },
+  {
+    q: 'Is an IBA approved bill mandatory for Bank and Railway employee transfers?',
+    a: 'Most Public Sector Banks (like SBI, PNB) and Government bodies (like Railways, Coal India) mandate packing and movers bills that follow Indian Banks\' Association (IBA) guidelines. We ensure all print formats are fully compliant.'
+  }
+];
+
 export default function BillingClaimKitPage() {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': faqsList.map(f => ({
+      '@type': 'Question',
+      'name': f.q,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': f.a
+      }
+    }))
+  };
+
   return (
     <div className={styles.page}>
+      {/* ── FAQ Structured Schema ── */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       {/* ── HERO ── */}
       <section className={styles.hero}>
         <div className={styles.heroBg} />
@@ -120,24 +157,7 @@ export default function BillingClaimKitPage() {
           </div>
 
           <div className={styles.faqList}>
-            {[
-              {
-                q: 'What is a Lorry Receipt (LR) and why is it mandatory for claims?',
-                a: 'A Lorry Receipt (or Consignment Note) is proof that goods were handed over to a logistics transporter. It records the transport vehicle number (like JH-10-CD-XXXX) and HSN Code 9965. Audit departments require this to prove actual physical transport occurred.'
-              },
-              {
-                q: 'Can I get a claim document kit if I shift across states?',
-                a: 'Yes! We issue inter-state IGST invoices for transport routes between West Bengal, Jharkhand, Bihar, Madhya Pradesh, Uttar Pradesh, and all other Indian states.'
-              },
-              {
-                q: 'What GST percentage is required for PSU employee claims?',
-                a: 'For Goods Transport Agency (GTA) services, GST can be applied at 5% (without Input Tax Credit claims) or 18% (full packing & logistics). We customize the invoice formatting to match whatever rate is sanctioned by your employer\'s policy.'
-              },
-              {
-                q: 'Is an IBA approved bill mandatory for Bank and Railway employee transfers?',
-                a: 'Most Public Sector Banks (like SBI, PNB) and Government bodies (like Railways, Coal India) mandate packing and movers bills that follow Indian Banks\' Association (IBA) guidelines. We ensure all print formats are fully compliant.'
-              }
-            ].map((f, idx) => (
+            {faqsList.map((f, idx) => (
               <div key={idx} className={styles.faqItem}>
                 <h3 className={styles.faqQuestion}>❓ {f.q}</h3>
                 <p className={styles.faqAnswer}>{f.a}</p>

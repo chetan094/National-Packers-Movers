@@ -612,20 +612,18 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                     <div className={styles.sidebarDivider} />
                     <p className={styles.branchAddress}>{data.address}</p>
                     
-                    {data.mapEmbed && (
-                      <div className={styles.mapEmbedContainer}>
-                        <iframe 
-                          src={data.mapEmbed}
-                          width="100%" 
-                          height="200" 
-                          style={{ border: 0, borderRadius: '6px', marginTop: '1rem', display: 'block' }} 
-                          allowFullScreen="" 
-                          loading="lazy"
-                          referrerPolicy="no-referrer-when-downgrade"
-                          title={`${data.name} Location Map`}
-                        />
-                      </div>
-                    )}
+                    <div className={styles.mapEmbedContainer}>
+                      <iframe 
+                        src={data.mapEmbed || `https://maps.google.com/maps?q=${encodeURIComponent(data.name.includes('Coming Soon') ? data.stateName : `${data.name.replace(/ \(hq\)/i, '')}, ${data.stateName}`)}&t=&z=12&ie=UTF8&iwloc=&output=embed`}
+                        width="100%" 
+                        height="200" 
+                        style={{ border: 0, borderRadius: '6px', marginTop: '1rem', display: 'block' }} 
+                        allowFullScreen="" 
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title={`${data.name} Location Map`}
+                      />
+                    </div>
                     
                     <h3 className={styles.sidebarTitle} style={{ marginTop: '1.5rem' }}>📞 Phone Numbers</h3>
                     <div className={styles.sidebarDivider} />
@@ -727,6 +725,24 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                           }
                         </p>
                       )}
+                    </div>
+                  </div>
+
+                  {/* Territory Map for State */}
+                  <div className={styles.sidebarCard} style={{ marginTop: '1.5rem' }} data-reveal="up" data-delay="210">
+                    <h3 className={styles.sidebarTitle}>🗺️ {data.name} Territory Map</h3>
+                    <div className={styles.sidebarDivider} />
+                    <div className={styles.mapEmbedContainer}>
+                      <iframe 
+                        src={data.mapEmbed || `https://maps.google.com/maps?q=${encodeURIComponent(data.name)}&t=&z=8&ie=UTF8&iwloc=&output=embed`}
+                        width="100%" 
+                        height="200" 
+                        style={{ border: 0, borderRadius: '6px', marginTop: '1rem', display: 'block' }} 
+                        allowFullScreen="" 
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title={`${data.name} Service Map`}
+                      />
                     </div>
                   </div>
 
@@ -1004,6 +1020,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
             <div className={styles.faqList}>
               <FaqAccordion
                 faqs={allFaqs}
+                renderSchema={false}
               />
             </div>
           </div>

@@ -7,7 +7,8 @@ export default function FaqAccordion({
   itemClass = 'centralFaqItem',
   questionClass = 'centralFaqQuestion',
   iconClass = 'centralFaqToggleIcon',
-  answerClass = 'centralFaqAnswer'
+  answerClass = 'centralFaqAnswer',
+  renderSchema = true
 }) {
   const [activeIndex, setActiveIndex] = useState(null);
   const detailsRefs = useRef([]);
@@ -84,8 +85,27 @@ export default function FaqAccordion({
     }
   };
 
+  const faqSchema = renderSchema && faqs && faqs.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': faqs.map(faq => ({
+      '@type': 'Question',
+      'name': faq.q,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': faq.a
+      }
+    }))
+  } : null;
+
   return (
     <>
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
       {faqs.map((faq, i) => {
         return (
           <details
