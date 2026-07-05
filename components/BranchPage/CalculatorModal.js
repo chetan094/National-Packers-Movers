@@ -7,16 +7,24 @@ const INVENTORY_ITEMS = [
   { id: 'doubleBed', name: 'Double Bed (with Mattress)', volume: 60, icon: '🛏️', category: 'Furniture' },
   { id: 'singleBed', name: 'Single Bed (with Mattress)', volume: 30, icon: '🛏️', category: 'Furniture' },
   { id: 'wardrobe', name: 'Large Wardrobe', volume: 50, icon: '🚪', category: 'Furniture' },
-  { id: 'sofaSet', name: 'Sofa Set (3-Seater)', volume: 35, icon: '🛋️', category: 'Furniture' },
+  { id: 'sofa3', name: 'Sofa (3-Seater)', volume: 35, icon: '🛋️', category: 'Furniture' },
+  { id: 'sofa1', name: 'Sofa (1-Seater)', volume: 15, icon: '🛋️', category: 'Furniture' },
   { id: 'diningTable', name: 'Dining Table (4 Chairs)', volume: 40, icon: '🪑', category: 'Furniture' },
   { id: 'studyTable', name: 'Study / Center Table', volume: 12, icon: '📝', category: 'Furniture' },
+  { id: 'shoeRack', name: 'Shoe Rack', volume: 12, icon: '👞', category: 'Furniture' },
   { id: 'fridge', name: 'Refrigerator', volume: 30, icon: '❄️', category: 'Appliances' },
   { id: 'washer', name: 'Washing Machine', volume: 20, icon: '🧼', category: 'Appliances' },
   { id: 'ac', name: 'Air Conditioner (AC)', volume: 15, icon: '💨', category: 'Appliances' },
   { id: 'tv', name: 'LED TV with Stand', volume: 15, icon: '📺', category: 'Appliances' },
   { id: 'microwave', name: 'Microwave Oven', volume: 5, icon: '⚡', category: 'Appliances' },
+  { id: 'waterPurifier', name: 'Water Purifier', volume: 5, icon: '💧', category: 'Appliances' },
+  { id: 'geyser', name: 'Geyser', volume: 6, icon: '🔥', category: 'Appliances' },
   { id: 'box', name: 'Shifting Carton (Standard)', volume: 3, icon: '📦', category: 'Boxes & Bags' },
-  { id: 'bag', name: 'Suitcase / Travel Bag', volume: 4, icon: '💼', category: 'Boxes & Bags' }
+  { id: 'bag', name: 'Suitcase / Travel Bag', volume: 4, icon: '💼', category: 'Boxes & Bags' },
+  { id: 'cooler', name: 'Desert Cooler', volume: 15, icon: '🌬️', category: 'Boxes & Bags' },
+  { id: 'flowerPot', name: 'Flower Pot', volume: 3, icon: '🪴', category: 'Boxes & Bags' },
+  { id: 'bicycle', name: 'Bicycle', volume: 12, icon: '🚲', category: 'Vehicles' },
+  { id: 'bike', name: 'Bike / Two-Wheeler', volume: 35, icon: '🏍️', category: 'Vehicles' }
 ];
 
 export default function CalculatorModal({ cityName }) {
@@ -24,16 +32,24 @@ export default function CalculatorModal({ cityName }) {
     doubleBed: 0,
     singleBed: 0,
     wardrobe: 0,
-    sofaSet: 0,
+    sofa3: 0,
+    sofa1: 0,
     diningTable: 0,
     studyTable: 0,
+    shoeRack: 0,
     fridge: 0,
     washer: 0,
     ac: 0,
     tv: 0,
     microwave: 0,
+    waterPurifier: 0,
+    geyser: 0,
     box: 0,
-    bag: 0
+    bag: 0,
+    cooler: 0,
+    flowerPot: 0,
+    bicycle: 0,
+    bike: 0
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,8 +67,10 @@ export default function CalculatorModal({ cityName }) {
 
   const handleResetInventory = () => {
     setInventory({
-      doubleBed: 0, singleBed: 0, wardrobe: 0, sofaSet: 0, diningTable: 0, studyTable: 0,
-      fridge: 0, washer: 0, ac: 0, tv: 0, microwave: 0, box: 0, bag: 0
+      doubleBed: 0, singleBed: 0, wardrobe: 0, sofa3: 0, sofa1: 0, diningTable: 0, studyTable: 0, shoeRack: 0,
+      fridge: 0, washer: 0, ac: 0, tv: 0, microwave: 0, waterPurifier: 0, geyser: 0,
+      box: 0, bag: 0, cooler: 0, flowerPot: 0,
+      bicycle: 0, bike: 0
     });
   };
 
@@ -65,21 +83,21 @@ export default function CalculatorModal({ cityName }) {
     
     let localMin = 0, localMax = 0, domesticMin = 0, domesticMax = 0;
     
-    if (totalCft <= 80) {
-      localMin = 3000; localMax = 5000;
-      domesticMin = 8000; domesticMax = 14000;
-    } else if (totalCft <= 220) {
-      localMin = 4500; localMax = 7500;
+    if (totalCft <= 200) {
+      localMin = 3000; localMax = 6000;
       domesticMin = 12000; domesticMax = 20000;
-    } else if (totalCft <= 450) {
+    } else if (totalCft <= 350) {
+      localMin = 4500; localMax = 8500;
+      domesticMin = 16000; domesticMax = 29000;
+    } else if (totalCft <= 600) {
       localMin = 6500; localMax = 11500;
-      domesticMin = 16000; domesticMax = 28000;
-    } else if (totalCft <= 850) {
+      domesticMin = 23000; domesticMax = 43000;
+    } else if (totalCft <= 1000) {
       localMin = 9000; localMax = 16000;
-      domesticMin = 22000; domesticMax = 38000;
+      domesticMin = 28000; domesticMax = 60000;
     } else {
       localMin = 15000; localMax = 25000;
-      domesticMin = 35000; domesticMax = 60000;
+      domesticMin = 38000; domesticMax = 95000;
     }
     
     return {
@@ -91,10 +109,10 @@ export default function CalculatorModal({ cityName }) {
   const matchedTruck = useMemo(() => {
     const cft = totalCft;
     if (cft === 0) return { name: 'No Items Selected', desc: 'Select items below to estimate cargo volume and matched truck.', icon: '📋' };
-    if (cft <= 80) return { name: 'Tata Ace (Chota Hathi)', desc: 'Ideal for single-room luggage shifts, bike transit, or micro-moves (Max 850kg capacity).', icon: '🚚' };
-    if (cft <= 220) return { name: 'Mahindra Bolero Pickup', desc: 'Best fit for 1 BHK local apartment relocations or partial shifting loads (Max 1.5 Tons capacity).', icon: '🛻' };
-    if (cft <= 450) return { name: '14-Foot Closed Container Truck', desc: 'Secure weather-proof container for 1.5 BHK or standard 2 BHK moves (Max 3.5 Tons capacity).', icon: '🚛' };
-    if (cft <= 850) return { name: '17-Foot / 19-Foot Container Truck', desc: 'Heavy-duty closed container perfect for standard 3 BHK residential shifts (Max 5 Tons capacity).', icon: '🚛' };
+    if (cft <= 200) return { name: 'Tata Ace (Chota Hathi)', desc: 'Ideal for single-room luggage shifts, bike transit, or micro-moves (Max 850kg capacity).', icon: '🚚' };
+    if (cft <= 350) return { name: 'Mahindra Bolero Pickup', desc: 'Best fit for 1 BHK local apartment relocations or partial shifting loads (Max 1.5 Tons capacity).', icon: '🛻' };
+    if (cft <= 600) return { name: '14-Foot Closed Container Truck', desc: 'Secure weather-proof container for 1.5 BHK or standard 2 BHK moves (Max 3.5 Tons capacity).', icon: '🚛' };
+    if (cft <= 1000) return { name: '17-Foot / 19-Foot Container Truck', desc: 'Heavy-duty closed container perfect for standard 3 BHK residential shifts (Max 5 Tons capacity).', icon: '🚛' };
     return { name: '20-Foot / 24-Foot Large Container or Multiple Trips', desc: 'Required for large bungalow shifting, corporate offices, or massive cargo loads.', icon: '🚚' };
   }, [totalCft]);
 
@@ -199,7 +217,7 @@ export default function CalculatorModal({ cityName }) {
               
               {/* Left Column: Input Categories */}
               <div className={styles.calcInputs}>
-                {['Furniture', 'Appliances', 'Boxes & Bags'].map((cat) => (
+                {['Furniture', 'Appliances', 'Boxes & Bags', 'Vehicles'].map((cat) => (
                   <div key={cat} className={styles.calcCategoryGroup}>
                     <h4 className={styles.calcCategoryTitle}>{cat}</h4>
                     <div className={styles.calcItemsList}>

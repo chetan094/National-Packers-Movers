@@ -88,6 +88,41 @@ const GLOBAL_BRANCH_FAQS = [
   }
 ];
 
+const DETAILED_SERVICES_TEMPLATE = [
+  {
+    slug: 'household-relocation',
+    icon: '🏠',
+    title: 'Household Shifting',
+    text: 'Secure home shifting in [Location] handled by background-verified packing experts. We utilize multi-layer premium packing (high-grade bubble wrap, heavy-duty cartons, stretch wrap padding) to shield all electronics, glassware, and furniture. Complete door-to-door transit is executed in secure closed containers with destination unpacking and reassembly.',
+    highlights: ['Bubble & Foam Wraps', 'Closed-Container Transit', 'Bed & Wardrobe Setup'],
+    color: '#F7B731'
+  },
+  {
+    slug: 'corporate-relocation',
+    icon: '🏢',
+    title: 'Corporate Shifting',
+    text: 'Business-aligned office shifting and employee transfer services in [Location]. We are the preferred logistics partner for corporate sectors, banks, railways, and PSU companies (like Coal India, NTPC, SBI). Features customized weekend shifting packages to ensure near-zero operational downtime, secure data server packing in specialized anti-static crates, and full billing documentation.',
+    highlights: ['Zero Shifting Downtime', 'IBA-Compliant Billing', 'Anti-Static Server Crates'],
+    color: '#C1121F'
+  },
+  {
+    slug: 'vehicle-relocation',
+    icon: '🚗',
+    title: 'Car & Bike Transport',
+    text: 'Secure door-to-door car and bike transport services from [Location] to anywhere in India. Motorcycles are padded and packed in multi-layer wraps to prevent highway scratches, while cars are loaded in heavy-duty, double-deck enclosed car carriers. Includes full transit insurance coverage, transparent condition reports, and real-time GPS coordinates updates.',
+    highlights: ['Enclosed Car Carriers', 'Scratch-Proof Wrapping', 'Transit GPS Tracking'],
+    color: '#F7B731'
+  },
+  {
+    slug: 'industrial-relocation',
+    icon: '🏭',
+    title: 'Industrial Transport',
+    text: 'Heavy machinery relocation, warehouse logistics, and Over-Dimensional Cargo (ODC) shipping services active in [Location]. Our industrial logistics division coordinates heavy crane loading, custom wooden crating for precision factory gear, and secure highway lashing. Fully compliant with national permit standards, transit safety protocols, and commercial clearances.',
+    highlights: ['Heavy Crane Loading', 'Industrial Wooden Crates', 'National Permits & Clearance'],
+    color: '#C1121F'
+  }
+];
+
 const LOCALITY_MAP = {
   dhanbad: ['Kasturba Nagar', 'Saraidhela', 'Jharia', 'Katras', 'Govindpur', 'Dhansar', 'Chirkunda', 'Sindri'],
   ranchi: ['Lalpur', 'Kanke', 'Bariatu', 'Morabadi', 'Hinoo', 'Doranda', 'Namkum', 'Hatia'],
@@ -111,7 +146,7 @@ const STATE_CITIES = {
   ],
   'west-bengal': [
     'kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur', 
-    'haldia', 'bardhaman', 'burdwan', 'malda', 'jaljaiguri', 'cooch-behar', 'purulia', 
+    'haldia', 'bardhaman', 'burdwan', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 
     'bankura', 'midnapore', 'medinipur', 'krishnanagar', 'barasat', 'barrackpore', 
     'serampore', 'chinsurah', 'shantiniketan', 'bolpur', 'raniganj', 'burnpur', 'salt-lake', 'newtown', 'rajarhat'
   ],
@@ -172,6 +207,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
   const stateSlug = isCity ? data.stateSlug : data.name.toLowerCase().replace(' ', '-');
   const stateName = isCity ? data.stateName : data.name;
   const cityKey = isCity ? data.name.toLowerCase().replace(/ \(hq\)/i, '').replace(/ /g, '-') : null;
+  const cleanCityName = data.name.replace(/ \(hq\)/i, '').replace(/ \(virtual office\)/i, '').replace(/ \(coming soon\)/i, '');
   const activeRoutes = isCity && cityKey ? getRoutesForCity(cityKey, data.name.replace(/ \(hq\)/i, '').replace(/ \(virtual office\)/i, '').replace(/ \(coming soon\)/i, '')) : [];
 
   const geoCoords = isCity
@@ -244,7 +280,6 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
     const slicedList = list.slice(0, finalCount).map(t => ({ ...t }));
 
     // Dynamically replace Dhanbad location references on non-Dhanbad/non-Jharkhand views to optimize SEO relevance
-    const cleanCityName = data.name.replace(/ \(hq\)/i, '').replace(/ \(virtual office\)/i, '').replace(/ \(coming soon\)/i, '');
     const shouldFilterDhanbad = (isCity && cityKey !== 'dhanbad') || (!isCity && stateSlug !== 'jharkhand');
 
     return slicedList.map(t => {
@@ -599,6 +634,37 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
 
               {/* Localized PSU Shifting Claim Approval Kit B2B Callout */}
               <PsuCalloutCard cityName={data.name} isBranchPage={true} />
+
+              {/* Detailed Shifting & Logistics Services */}
+              <div className={styles.detailedServicesSection} data-reveal="up" data-delay="150">
+                <h3 className={styles.detailedServicesMainTitle}>
+                  Shifting &amp; Logistics Services in <span>{cleanCityName}</span>
+                </h3>
+                <div className={styles.detailedServicesList}>
+                  {DETAILED_SERVICES_TEMPLATE.map((service) => {
+                    const textSpun = service.text.replace(/\[Location\]/g, cleanCityName);
+                    return (
+                      <div key={service.slug} className={styles.detailedServiceCard} style={{ '--accent': service.color }}>
+                        <h4 className={styles.detailedServiceTitle}>
+                          <span className={styles.detailedServiceIcon}>{service.icon}</span>
+                          {service.title} in {cleanCityName}
+                        </h4>
+                        <p className={styles.detailedServiceText}>{textSpun}</p>
+                        <div className={styles.detailedServiceHighlights}>
+                          {service.highlights.map((highlight, hIdx) => (
+                            <span key={hIdx} className={styles.detailedHighlightTag}>
+                              <span className={styles.detailedHighlightCheck}>✓</span> {highlight}
+                            </span>
+                          ))}
+                        </div>
+                        <Link href={`/services/${service.slug}`} className={styles.detailedServiceLink}>
+                          Learn More ➔
+                        </Link>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
 

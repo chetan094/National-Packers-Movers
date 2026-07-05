@@ -57,6 +57,34 @@
   flex-direction: column;
   gap: 0.5rem;
   flex: 1;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+  transition: scrollbar-color 0.2s ease;
+}
+
+.sidebarNav:hover {
+  scrollbar-color: rgba(247, 183, 49, 0.4) transparent;
+}
+
+/* Custom premium scrollbar for sidebar */
+.sidebarNav::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+.sidebarNav::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebarNav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+.sidebarNav:hover::-webkit-scrollbar-thumb {
+  background: rgba(247, 183, 49, 0.2);
+}
+.sidebarNav::-webkit-scrollbar-thumb:hover {
+  background: rgba(247, 183, 49, 0.6) !important;
 }
 
 .navItem {

@@ -223,13 +223,35 @@ export default function AdminDashboard() {
   const [deleteLeadConfirmOpen, setDeleteLeadConfirmOpen] = useState(false);
   const [leadToDelete, setLeadToDelete] = useState(null);
 
+  // Manual lead entry form
+  const [showManualLeadForm, setShowManualLeadForm] = useState(false);
+  const [mlName, setMlName] = useState('');
+  const [mlPhone, setMlPhone] = useState('');
+  const [mlEmail, setMlEmail] = useState('');
+  const [mlFromCity, setMlFromCity] = useState('');
+  const [mlToCity, setMlToCity] = useState('');
+  const [mlMovingDate, setMlMovingDate] = useState('');
+  const [mlNotes, setMlNotes] = useState('');
+  const [mlSource, setMlSource] = useState('Phone Call');
+  const [mlLoading, setMlLoading] = useState(false);
+  const [mlError, setMlError] = useState('');
+
   // BMS State Variables
   const [bmsQuotes, setBmsQuotes] = useState([]);
   const [bmsInvoices, setBmsInvoices] = useState([]);
+  const [bmsChallans, setBmsChallans] = useState([]);
+  const [bmsItems, setBmsItems] = useState([]);
+  const [bmsLorryReceipts, setBmsLorryReceipts] = useState([]);
   const [activeBmsItem, setActiveBmsItem] = useState(null); // Print/View document item
   const [bmsPrintMode, setBmsPrintMode] = useState(false); // Toggle printable format view
   const [editingQuoteId, setEditingQuoteId] = useState(null);
   const [editingInvoiceId, setEditingInvoiceId] = useState(null);
+
+  // Pipeline State — carries data between all 5 document steps
+  const [activePipelineData, setActivePipelineData] = useState({
+    name: '', phone: '', origin: '', destination: '', date: '',
+    distance: '', notes: '', vehicleNo: '', driverName: '', driverPhone: '', items: []
+  });
 
   // BMS Quotation Form Inputs
   const [qRefNo, setQRefNo] = useState('');
@@ -255,6 +277,47 @@ export default function AdminDashboard() {
   const [iTransportRate, setITransportRate] = useState('');
   const [iPackingRate, setIPackingRate] = useState('');
   const [iAdvancePaid, setIAdvancePaid] = useState('');
+
+  // BMS Challan Form Inputs
+  const [chChallanNo, setChChallanNo] = useState('');
+  const [chDate, setChDate] = useState('');
+  const [chName, setChName] = useState('');
+  const [chPhone, setChPhone] = useState('');
+  const [chOrigin, setChOrigin] = useState('');
+  const [chDest, setChDest] = useState('');
+  const [chVehicleNo, setChVehicleNo] = useState('');
+  const [chDriverName, setChDriverName] = useState('');
+  const [chDriverLicense, setChDriverLicense] = useState('');
+  const [chDriverPhone, setChDriverPhone] = useState('');
+  const [chSupervisor, setChSupervisor] = useState('');
+
+  // BMS Packing Item List Form Inputs
+  const [plRefNo, setPlRefNo] = useState('');
+  const [plDate, setPlDate] = useState('');
+  const [plName, setPlName] = useState('');
+  const [plPhone, setPlPhone] = useState('');
+  const [plOrigin, setPlOrigin] = useState('');
+  const [plDest, setPlDest] = useState('');
+  const [plRows, setPlRows] = useState([{ item: '', qty: '', condition: '' }]);
+
+  // BMS Lorry Receipt (Bilty) Form Inputs
+  const [lrNumber, setLrNumber] = useState('');
+  const [lrDate, setLrDate] = useState('');
+  const [lrName, setLrName] = useState('');
+  const [lrPhone, setLrPhone] = useState('');
+  const [lrConsignerGst, setLrConsignerGst] = useState('');
+  const [lrConsigneeGst, setLrConsigneeGst] = useState('');
+  const [lrVehicleNo, setLrVehicleNo] = useState('');
+  const [lrOrigin, setLrOrigin] = useState('');
+  const [lrDest, setLrDest] = useState('');
+  const [lrGoodsDesc, setLrGoodsDesc] = useState('Household Goods as per Packing List');
+  const [lrWeight, setLrWeight] = useState('');
+  const [lrVolume, setLrVolume] = useState('');
+  const [lrHsn, setLrHsn] = useState('9965');
+  const [lrFreight, setLrFreight] = useState('');
+  const [lrPacking, setLrPacking] = useState('');
+  const [lrLabour, setLrLabour] = useState('');
+  const [lrInsurance, setLrInsurance] = useState('');
 
   // Analytics states
   const [analyticsData, setAnalyticsData] = useState(null);
@@ -779,6 +842,15 @@ export default function AdminDashboard() {
       
       const storedInvoices = localStorage.getItem('npm_bms_invoices');
       if (storedInvoices) setBmsInvoices(JSON.parse(storedInvoices));
+
+      const storedChallans = localStorage.getItem('npm_bms_challans');
+      if (storedChallans) setBmsChallans(JSON.parse(storedChallans));
+
+      const storedItems = localStorage.getItem('npm_bms_items');
+      if (storedItems) setBmsItems(JSON.parse(storedItems));
+
+      const storedLorry = localStorage.getItem('npm_bms_lorry_receipts');
+      if (storedLorry) setBmsLorryReceipts(JSON.parse(storedLorry));
     } catch (err) {
       console.error('Error loading BMS local storage items:', err);
     }
@@ -796,6 +868,24 @@ export default function AdminDashboard() {
       localStorage.setItem('npm_bms_invoices', JSON.stringify(bmsInvoices));
     }
   }, [bmsInvoices]);
+
+  useEffect(() => {
+    if (bmsChallans.length > 0) {
+      localStorage.setItem('npm_bms_challans', JSON.stringify(bmsChallans));
+    }
+  }, [bmsChallans]);
+
+  useEffect(() => {
+    if (bmsItems.length > 0) {
+      localStorage.setItem('npm_bms_items', JSON.stringify(bmsItems));
+    }
+  }, [bmsItems]);
+
+  useEffect(() => {
+    if (bmsLorryReceipts.length > 0) {
+      localStorage.setItem('npm_bms_lorry_receipts', JSON.stringify(bmsLorryReceipts));
+    }
+  }, [bmsLorryReceipts]);
 
   const convertNumberToWords = (num) => {
     const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
@@ -1042,6 +1132,452 @@ export default function AdminDashboard() {
     setIPackingRate('');
     setIAdvancePaid('');
   };
+
+  // ─── PIPELINE STATE ────────────────────────────────────────────────────────
+  const [pipelineOpen, setPipelineOpen] = useState(false);
+  const [pipelineLead, setPipelineLead] = useState(null);
+  const [pipelineStep, setPipelineStep] = useState(0); // 0=Quote 1=Challan 2=PL 3=Invoice 4=LR
+  const [pipelineCarry, setPipelineCarry] = useState({});
+  const [viewLeadOpen, setViewLeadOpen] = useState(false);
+  const [viewingLead, setViewingLead] = useState(null);
+  const [pipelineSavedIds, setPipelineSavedIds] = useState({});
+  const [docSearchQuery, setDocSearchQuery] = useState('');
+  const [docTypeFilter, setDocTypeFilter] = useState('All');
+
+  const formatSuffix = (num) => {
+    if (num < 10) return `00${num}`;
+    if (num < 100) return `0${num}`;
+    return `${num}`;
+  };
+
+  const getOrAssignLeadSuffix = (lead) => {
+    if (!lead || !lead.id) return '001';
+    try {
+      const stored = localStorage.getItem('npm_lead_suffixes');
+      const suffixMap = stored ? JSON.parse(stored) : {};
+      if (suffixMap[lead.id]) {
+        return formatSuffix(parseInt(suffixMap[lead.id], 10));
+      }
+      const values = Object.values(suffixMap).map(v => parseInt(v, 10)).filter(Number);
+      const maxVal = values.length > 0 ? Math.max(...values) : 0;
+      const nextVal = maxVal + 1;
+      suffixMap[lead.id] = nextVal;
+      localStorage.setItem('npm_lead_suffixes', JSON.stringify(suffixMap));
+      return formatSuffix(nextVal);
+    } catch (e) {
+      console.error('Error in getOrAssignLeadSuffix:', e);
+      return '001';
+    }
+  };
+
+  // ─── OPEN PIPELINE ─────────────────────────────────────────────────────────
+  // --- VIEW PANEL: Edit and Delete document handlers ---
+  const handleViewDocEdit = (doc) => {
+    setViewLeadOpen(false);
+    if (doc.type === 'quotation') {
+      startEditQuotation(doc);
+      setBmsOpen(true); setActiveTab('bms-quotations');
+    } else if (doc.type === 'invoice') {
+      startEditInvoice(doc);
+      setBmsOpen(true); setActiveTab('bms-invoices');
+    } else if (doc.type === 'challan') {
+      setChChallanNo(doc.challanNo||''); setChDate(doc.date||''); setChName(doc.name||''); setChPhone(doc.phone||'');
+      setChOrigin(doc.origin||''); setChDest(doc.destination||''); setChVehicleNo(doc.vehicleNo||'');
+      setChDriverName(doc.driverName||''); setChDriverLicense(doc.driverLicense||''); setChDriverPhone(doc.driverPhone||''); setChSupervisor(doc.supervisor||'');
+      setBmsOpen(true); setActiveTab('bms-challans');
+    } else if (doc.type === 'packing_list') {
+      setPlRefNo(doc.refNo||''); setPlDate(doc.date||''); setPlName(doc.name||''); setPlPhone(doc.phone||'');
+      setPlOrigin(doc.origin||''); setPlDest(doc.destination||'');
+      setPlRows(doc.rows?.length ? doc.rows : [{ item: '', qty: '', condition: '' }]);
+      setBmsOpen(true); setActiveTab('bms-items');
+    } else if (doc.type === 'lorry_receipt') {
+      setLrNumber(doc.lrNo||''); setLrDate(doc.date||''); setLrName(doc.name||''); setLrPhone(doc.phone||'');
+      setLrConsignerGst(doc.consignerGst==='N/A'?'':doc.consignerGst||''); setLrConsigneeGst(doc.consigneeGst==='N/A'?'':doc.consigneeGst||'');
+      setLrVehicleNo(doc.vehicleNo||''); setLrOrigin(doc.origin||''); setLrDest(doc.destination||'');
+      setLrGoodsDesc(doc.goodsDesc||''); setLrHsn(doc.hsn||'9965');
+      setLrWeight(doc.weight==='N/A'?'':doc.weight||''); setLrVolume(doc.volume==='N/A'?'':doc.volume||'');
+      setLrFreight(doc.freight?.toString()||''); setLrPacking(doc.packing?.toString()||'');
+      setLrLabour(doc.labour?.toString()||''); setLrInsurance(doc.insurance?.toString()||'');
+      setBmsOpen(true); setActiveTab('bms-lorry');
+    }
+  };
+
+  const handleViewDocDelete = (doc) => {
+    if (!confirm(`Delete this ${doc.docType}? This cannot be undone.`)) return;
+    if (doc.type === 'quotation') {
+      const u = bmsQuotes.filter(d => d.id !== doc.id); setBmsQuotes(u); localStorage.setItem('npm_bms_quotes', JSON.stringify(u));
+    } else if (doc.type === 'invoice') {
+      const u = bmsInvoices.filter(d => d.id !== doc.id); setBmsInvoices(u); localStorage.setItem('npm_bms_invoices', JSON.stringify(u));
+    } else if (doc.type === 'challan') {
+      const u = bmsChallans.filter(d => d.id !== doc.id); setBmsChallans(u); localStorage.setItem('npm_bms_challans', JSON.stringify(u));
+    } else if (doc.type === 'packing_list') {
+      const u = bmsItems.filter(d => d.id !== doc.id); setBmsItems(u); localStorage.setItem('npm_bms_items', JSON.stringify(u));
+    } else if (doc.type === 'lorry_receipt') {
+      const u = bmsLorryReceipts.filter(d => d.id !== doc.id); setBmsLorryReceipts(u); localStorage.setItem('npm_bms_lorry_receipts', JSON.stringify(u));
+    }
+  };
+
+  const openPipeline = (lead) => {
+    const today = new Date().toLocaleDateString('en-GB');
+    const suffix = getOrAssignLeadSuffix(lead);
+    const carry = {
+      name: lead.name || '',
+      phone: lead.phone || '',
+      origin: lead.from_city || '',
+      destination: lead.to_city || '',
+      date: lead.moving_date || today,
+      vehicleNo: '', driverName: '', driverPhone: '',
+      challanNo: '', lrNo: '',
+      goodsDesc: 'Household Goods as per Packing List',
+    };
+    setQRefNo("NPM/26-27/" + suffix);
+    setQName(carry.name); setQPhone(carry.phone);
+    setQOrigin(carry.origin); setQDest(carry.destination);
+    setQDate(carry.date); setQDistance('');
+    setQMovingType('Household Relocation');
+    setQTransportRate(''); setQPackingRate('');
+    setPipelineLead(lead);
+    setPipelineCarry(carry);
+    setPipelineStep(0);
+    setPipelineSavedIds({});
+    setPipelineOpen(true);
+  };
+
+  // ─── ADVANCE PIPELINE (carry-forward + pre-fill ONLY if next step not yet saved) ─
+  const advancePipeline = (savedDoc, stepIndex, ids) => {
+    const savedIds = ids || pipelineSavedIds;
+    const suffix = getOrAssignLeadSuffix(pipelineLead);
+    let c = { ...pipelineCarry };
+    if (stepIndex === 0) {
+      c.name = savedDoc.name || c.name;
+      c.phone = savedDoc.phone || c.phone;
+      c.origin = savedDoc.origin || c.origin;
+      c.destination = savedDoc.destination || c.destination;
+      c.date = savedDoc.date || c.date;
+      if (!savedIds[1]) {
+        setChChallanNo("NPM/CH/26-27/" + suffix); setChDate(c.date);
+        setChName(c.name); setChPhone(c.phone);
+        setChOrigin(c.origin); setChDest(c.destination);
+        setChVehicleNo(''); setChDriverName('');
+        setChDriverLicense(''); setChDriverPhone(''); setChSupervisor('');
+      }
+    }
+    if (stepIndex === 1) {
+      c.vehicleNo   = savedDoc.vehicleNo   || c.vehicleNo;
+      c.driverName  = savedDoc.driverName  || c.driverName;
+      c.driverPhone = savedDoc.driverPhone || c.driverPhone;
+      c.challanNo   = savedDoc.challanNo   || c.challanNo;
+      c.lrNo        = savedDoc.challanNo   || c.lrNo;
+      if (!savedIds[2]) {
+        setPlRefNo("NPM/PL/26-27/" + suffix); setPlDate(c.date);
+        setPlName(c.name); setPlPhone(c.phone);
+        setPlOrigin(c.origin); setPlDest(c.destination);
+        setPlRows([{ item: '', qty: '', condition: '' }]);
+      }
+    }
+    if (stepIndex === 2) {
+      const items = savedDoc.rows || [];
+      c.goodsDesc = items.length
+        ? items.map(r => r.item).filter(Boolean).join(', ')
+        : 'Household Goods as per Packing List';
+      if (!savedIds[3]) {
+        setIBillNo("NPM/26-27/" + suffix); setIDate(c.date);
+        setIName(c.name); setIGst('');
+        setIOrigin(c.origin); setIDest(c.destination);
+        setILrNo(c.lrNo); setIVehicleNo(c.vehicleNo);
+        setITransportRate(''); setIPackingRate(''); setIAdvancePaid('');
+      }
+    }
+    if (stepIndex === 3) {
+      if (!savedIds[4]) {
+        setLrNumber("NPM/LR/26-27/" + suffix); setLrDate(c.date);
+        setLrName(c.name); setLrPhone(c.phone);
+        setLrConsignerGst(''); setLrConsigneeGst('');
+        setLrVehicleNo(c.vehicleNo);
+        setLrOrigin(c.origin); setLrDest(c.destination);
+        setLrGoodsDesc(c.goodsDesc);
+        setLrHsn('9965');
+        setLrWeight(''); setLrVolume('');
+        setLrFreight(''); setLrPacking('');
+        setLrLabour(''); setLrInsurance('');
+      }
+    }
+    setPipelineCarry(c);
+    if (stepIndex < 4) {
+      setPipelineStep(stepIndex + 1);
+    } else {
+      setPipelineOpen(false);
+      setPipelineLead(null);
+      setPipelineStep(0);
+      setPipelineCarry({});
+      setPipelineSavedIds({});
+    }
+  };
+
+  // ─── PIPELINE STEP SAVE HANDLERS (update-or-create, no duplicates) ──────────
+  const handlePipelineSave0 = (e) => {
+    e.preventDefault();
+    if (!qName || !qOrigin || !qDest) { alert('Name, Origin and Destination are required.'); return; }
+    const tRate = parseFloat(qTransportRate) || 0;
+    const pRate = parseFloat(qPackingRate) || 0;
+    const tGst  = parseFloat((tRate * 0.05).toFixed(2));
+    const pGst  = parseFloat((pRate * 0.18).toFixed(2));
+    const total = parseFloat((tRate + tGst + pRate + pGst).toFixed(2));
+    const existingId = pipelineSavedIds[0];
+    const docId = existingId || ('quote_' + Date.now());
+    const suffix = getOrAssignLeadSuffix(pipelineLead);
+    const doc = {
+      id: docId,
+      refNo: qRefNo || ("NPM/26-27/" + suffix),
+      date: qDate || new Date().toLocaleDateString('en-GB'),
+      name: qName, phone: qPhone, origin: qOrigin, destination: qDest,
+      distance: qDistance || 'N/A', movingType: qMovingType,
+      transportRate: tRate, packingRate: pRate,
+      transportGst: tGst, packingGst: pGst, total,
+      inventory: '', type: 'quotation',
+      leadId: pipelineLead?.id,
+    };
+    const updated = existingId ? bmsQuotes.map(q => q.id === existingId ? doc : q) : [doc, ...bmsQuotes];
+    setBmsQuotes(updated);
+    localStorage.setItem('npm_bms_quotes', JSON.stringify(updated));
+    const newIds = { ...pipelineSavedIds, 0: docId };
+    setPipelineSavedIds(newIds);
+    advancePipeline(doc, 0, newIds);
+  };
+
+  const handlePipelineSave1 = (e) => {
+    e.preventDefault();
+    if (!chName || !chOrigin || !chDest) { alert('Name, Origin and Destination are required.'); return; }
+    const existingId = pipelineSavedIds[1];
+    const docId = existingId || ('challan_' + Date.now());
+    const suffix = getOrAssignLeadSuffix(pipelineLead);
+    const doc = {
+      id: docId,
+      challanNo: chChallanNo || ("NPM/CH/26-27/" + suffix),
+      date: chDate || new Date().toLocaleDateString('en-GB'),
+      name: chName, phone: chPhone, origin: chOrigin, destination: chDest,
+      vehicleNo: chVehicleNo || 'N/A', driverName: chDriverName || 'N/A',
+      driverLicense: chDriverLicense || 'N/A', driverPhone: chDriverPhone || 'N/A',
+      supervisor: chSupervisor || 'N/A', type: 'challan',
+      leadId: pipelineLead?.id,
+    };
+    const updated = existingId ? bmsChallans.map(c => c.id === existingId ? doc : c) : [doc, ...bmsChallans];
+    setBmsChallans(updated);
+    localStorage.setItem('npm_bms_challans', JSON.stringify(updated));
+    const newIds = { ...pipelineSavedIds, 1: docId };
+    setPipelineSavedIds(newIds);
+    advancePipeline(doc, 1, newIds);
+  };
+
+  const handlePipelineSave2 = (e) => {
+    e.preventDefault();
+    if (!plName || !plOrigin || !plDest) { alert('Name, Origin and Destination are required.'); return; }
+    const existingId = pipelineSavedIds[2];
+    const docId = existingId || ('pl_' + Date.now());
+    const suffix = getOrAssignLeadSuffix(pipelineLead);
+    const doc = {
+      id: docId,
+      refNo: plRefNo || ("NPM/PL/26-27/" + suffix),
+      date: plDate || new Date().toLocaleDateString('en-GB'),
+      name: plName, phone: plPhone, origin: plOrigin, destination: plDest,
+      rows: plRows.filter(r => r.item.trim()),
+      type: 'packing_list', leadId: pipelineLead?.id,
+    };
+    const updated = existingId ? bmsItems.map(i => i.id === existingId ? doc : i) : [doc, ...bmsItems];
+    setBmsItems(updated);
+    localStorage.setItem('npm_bms_items', JSON.stringify(updated));
+    const newIds = { ...pipelineSavedIds, 2: docId };
+    setPipelineSavedIds(newIds);
+    advancePipeline(doc, 2, newIds);
+  };
+
+  const handlePipelineSave3 = (e) => {
+    e.preventDefault();
+    if (!iName || !iOrigin || !iDest) { alert('Name, Origin and Destination are required.'); return; }
+    const tRate = parseFloat(iTransportRate) || 0;
+    const pRate = parseFloat(iPackingRate) || 0;
+    const tVal  = tRate + pRate;
+    const gstVal = parseFloat((tVal * 0.18).toFixed(2));
+    const totalAmount = parseFloat((tVal + gstVal).toFixed(2));
+    const adv = parseFloat(iAdvancePaid) || 0;
+    const existingId = pipelineSavedIds[3];
+    const docId = existingId || ('invoice_' + Date.now());
+    const suffix = getOrAssignLeadSuffix(pipelineLead);
+    const doc = {
+      id: docId,
+      billNo: iBillNo || ("NPM/26-27/" + suffix),
+      date: iDate || new Date().toLocaleDateString('en-GB'),
+      name: iName, gst: iGst || 'N/A',
+      origin: iOrigin, destination: iDest,
+      lrNo: iLrNo || `LR-${Math.floor(10000 + Math.random() * 90000)}`,
+      vehicleNo: iVehicleNo || 'N/A',
+      transportRate: tRate, packingRate: pRate,
+      taxableValue: tVal, gstAmount: gstVal,
+      total: totalAmount, advance: adv,
+      balance: parseFloat((totalAmount - adv).toFixed(2)),
+      type: 'invoice', leadId: pipelineLead?.id,
+    };
+    const updated = existingId ? bmsInvoices.map(i => i.id === existingId ? doc : i) : [doc, ...bmsInvoices];
+    setBmsInvoices(updated);
+    localStorage.setItem('npm_bms_invoices', JSON.stringify(updated));
+    const newIds = { ...pipelineSavedIds, 3: docId };
+    setPipelineSavedIds(newIds);
+    advancePipeline(doc, 3, newIds);
+  };
+
+  const handlePipelineSave4 = (e) => {
+    e.preventDefault();
+    if (!lrName || !lrOrigin || !lrDest) { alert('Name, Origin and Destination are required.'); return; }
+    const freight   = parseFloat(lrFreight) || 0;
+    const packing   = parseFloat(lrPacking) || 0;
+    const labour    = parseFloat(lrLabour) || 0;
+    const insurance = parseFloat(lrInsurance) || 0;
+    const grandTotal = freight + packing + labour + insurance;
+    const existingId = pipelineSavedIds[4];
+    const docId = existingId || ('lr_' + Date.now());
+    const suffix = getOrAssignLeadSuffix(pipelineLead);
+    const doc = {
+      id: docId,
+      lrNo: lrNumber || ("NPM/LR/26-27/" + suffix),
+      date: lrDate || new Date().toLocaleDateString('en-GB'),
+      name: lrName, phone: lrPhone,
+      consignerGst: lrConsignerGst || 'N/A', consigneeGst: lrConsigneeGst || 'N/A',
+      vehicleNo: lrVehicleNo, origin: lrOrigin, destination: lrDest,
+      goodsDesc: lrGoodsDesc, weight: lrWeight || 'N/A', volume: lrVolume || 'N/A',
+      hsn: lrHsn || '9965',
+      freight, packing, labour, insurance, grandTotal,
+      type: 'lorry_receipt', leadId: pipelineLead?.id,
+    };
+    const updated = existingId ? bmsLorryReceipts.map(r => r.id === existingId ? doc : r) : [doc, ...bmsLorryReceipts];
+    setBmsLorryReceipts(updated);
+    localStorage.setItem('npm_bms_lorry_receipts', JSON.stringify(updated));
+    const newIds = { ...pipelineSavedIds, 4: docId };
+    setPipelineSavedIds(newIds);
+    advancePipeline(doc, 4, newIds);
+  };
+  const handleCreateChallan = (e) => {
+    e.preventDefault();
+    if (!chName || !chOrigin || !chDest || !chVehicleNo || !chDriverName) {
+      alert('Please fill out all required fields.');
+      return;
+    }
+    const newChallan = {
+      id: 'challan_' + Date.now(),
+      challanNo: chChallanNo || `NPM/CH/26-27/${String(bmsChallans.length + 1).padStart(3,'0')}`,
+      date: chDate || new Date().toLocaleDateString('en-GB'),
+      name: chName,
+      phone: chPhone,
+      origin: chOrigin,
+      destination: chDest,
+      vehicleNo: chVehicleNo,
+      driverName: chDriverName,
+      driverLicense: chDriverLicense || 'N/A',
+      driverPhone: chDriverPhone || 'N/A',
+      supervisor: chSupervisor || 'N/A',
+      type: 'challan'
+    };
+    const updated = [newChallan, ...bmsChallans];
+    setBmsChallans(updated);
+    localStorage.setItem('npm_bms_challans', JSON.stringify(updated));
+    alert('Challan saved successfully!');
+    setChChallanNo(''); setChDate(''); setChName(''); setChPhone('');
+    setChOrigin(''); setChDest(''); setChVehicleNo(''); setChDriverName('');
+    setChDriverLicense(''); setChDriverPhone(''); setChSupervisor('');
+  };
+
+  // ─── PACKING LIST SAVE HANDLER ────────────────────────────────────────────
+  const handleCreatePackingList = (e) => {
+    e.preventDefault();
+    if (!plName || !plOrigin || !plDest) {
+      alert('Please fill out all required fields.');
+      return;
+    }
+    const filledRows = plRows.filter(r => r.item.trim());
+    const newPL = {
+      id: 'pl_' + Date.now(),
+      refNo: plRefNo || `NPM/PL/26-27/${String(bmsItems.length + 1).padStart(3,'0')}`,
+      date: plDate || new Date().toLocaleDateString('en-GB'),
+      name: plName,
+      phone: plPhone,
+      origin: plOrigin,
+      destination: plDest,
+      rows: filledRows,
+      type: 'packing_list'
+    };
+    const updated = [newPL, ...bmsItems];
+    setBmsItems(updated);
+    localStorage.setItem('npm_bms_items', JSON.stringify(updated));
+    alert('Packing List saved successfully!');
+    setPlRefNo(''); setPlDate(''); setPlName(''); setPlPhone('');
+    setPlOrigin(''); setPlDest(''); setPlRows([{ item: '', qty: '', condition: '' }]);
+  };
+
+  // ─── LORRY RECEIPT SAVE HANDLER ───────────────────────────────────────────
+  const handleCreateLorryReceipt = (e) => {
+    e.preventDefault();
+    if (!lrName || !lrOrigin || !lrDest || !lrVehicleNo) {
+      alert('Please fill out all required fields (Name, Origin, Destination, Vehicle No.).');
+      return;
+    }
+    const freight = parseFloat(lrFreight) || 0;
+    const packing = parseFloat(lrPacking) || 0;
+    const labour = parseFloat(lrLabour) || 0;
+    const insurance = parseFloat(lrInsurance) || 0;
+    const grandTotal = freight + packing + labour + insurance;
+    const newLR = {
+      id: 'lr_' + Date.now(),
+      lrNo: lrNumber || `NPM/LR/26-27/${String(bmsLorryReceipts.length + 1).padStart(3,'0')}`,
+      date: lrDate || new Date().toLocaleDateString('en-GB'),
+      name: lrName,
+      phone: lrPhone,
+      consignerGst: lrConsignerGst || 'N/A',
+      consigneeGst: lrConsigneeGst || 'N/A',
+      vehicleNo: lrVehicleNo,
+      origin: lrOrigin,
+      destination: lrDest,
+      goodsDesc: lrGoodsDesc,
+      weight: lrWeight || 'N/A',
+      volume: lrVolume || 'N/A',
+      hsn: lrHsn || '9965',
+      freight, packing, labour, insurance, grandTotal,
+      type: 'lorry_receipt'
+    };
+    const updated = [newLR, ...bmsLorryReceipts];
+    setBmsLorryReceipts(updated);
+    localStorage.setItem('npm_bms_lorry_receipts', JSON.stringify(updated));
+    alert('Lorry Receipt saved successfully!');
+    setLrNumber(''); setLrDate(''); setLrName(''); setLrPhone('');
+    setLrConsignerGst(''); setLrConsigneeGst(''); setLrVehicleNo('');
+    setLrOrigin(''); setLrDest(''); setLrGoodsDesc('Household Goods as per Packing List');
+    setLrWeight(''); setLrVolume(''); setLrHsn('9965');
+    setLrFreight(''); setLrPacking(''); setLrLabour(''); setLrInsurance('');
+  };
+
+  const handleDeleteChallan = (id) => {
+    if (confirm('Delete this challan?')) {
+      const updated = bmsChallans.filter(c => c.id !== id);
+      setBmsChallans(updated);
+      localStorage.setItem('npm_bms_challans', JSON.stringify(updated));
+    }
+  };
+
+  const handleDeletePackingList = (id) => {
+    if (confirm('Delete this packing list?')) {
+      const updated = bmsItems.filter(p => p.id !== id);
+      setBmsItems(updated);
+      localStorage.setItem('npm_bms_items', JSON.stringify(updated));
+    }
+  };
+
+  const handleDeleteLorryReceipt = (id) => {
+    if (confirm('Delete this lorry receipt?')) {
+      const updated = bmsLorryReceipts.filter(l => l.id !== id);
+      setBmsLorryReceipts(updated);
+      localStorage.setItem('npm_bms_lorry_receipts', JSON.stringify(updated));
+    }
+  };
+
+
 
   const fetchBlogs = async () => {
     setLoadingBlogs(true);
@@ -1593,6 +2129,44 @@ export default function AdminDashboard() {
     }
   };
 
+  // ─── MANUAL LEAD ENTRY ─────────────────────────────────────────────────────
+  const handleAddManualLead = async (e) => {
+    e.preventDefault();
+    if (!mlName.trim() || !mlPhone.trim()) {
+      setMlError('Name and Phone are required.');
+      return;
+    }
+    setMlLoading(true);
+    setMlError('');
+    try {
+      const res = await fetch('/api/admin/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: mlName.trim(),
+          phone: mlPhone.trim(),
+          email: mlEmail.trim() || null,
+          from_city: mlFromCity.trim() || null,
+          to_city: mlToCity.trim() || null,
+          moving_date: mlMovingDate || null,
+          notes: mlNotes.trim() || null,
+          source: mlSource,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to add lead');
+      await fetchLeads();
+      setMlName(''); setMlPhone(''); setMlEmail('');
+      setMlFromCity(''); setMlToCity(''); setMlMovingDate('');
+      setMlNotes(''); setMlSource('Phone Call');
+      setShowManualLeadForm(false);
+    } catch (err) {
+      setMlError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setMlLoading(false);
+    }
+  };
+
   const handleDownloadCSV = () => {
     const filteredLeads = leads.filter(lead => {
       const matchesStatus = leadFilterStatus === 'All' || lead.status === leadFilterStatus;
@@ -1939,6 +2513,294 @@ export default function AdminDashboard() {
       (ship.current_location && ship.current_location.toLowerCase().includes(query))
     );
   });
+
+  // ─── SHARED PRINT HEADER (same style for all 5 documents) ────────────────
+  const renderDocHeader = (docTitle) => (
+    <div>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', marginBottom: '8px' }}>
+        <tbody>
+          <tr>
+            <td style={{ textAlign: 'left', fontWeight: '700', width: '33%' }}>Regd. No.- 30270000000039</td>
+            <td style={{ textAlign: 'center', fontWeight: '700', width: '33%' }}>GST No.: 20AIHPJ7005R1Z6</td>
+            <td style={{ textAlign: 'right', fontWeight: '700', width: '34%' }}>Mob. : 9835168368, 9430706037</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginBottom: '6px' }}>
+        <img src="/logo.png" alt="NPM Logo" style={{ height: '62px', width: 'auto' }} />
+        <h1 style={{ fontSize: '32px', fontWeight: '900', margin: '0', letterSpacing: '0.5px', fontFamily: 'Georgia, "Times New Roman", serif', textTransform: 'uppercase', color: '#c1121f' }}>
+          NATIONAL PACKERS &amp; MOVERS
+        </h1>
+      </div>
+      <div style={{ textAlign: 'center', marginBottom: '4px' }}>
+        <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.5px', marginTop: '2px' }}>
+          HOUSE HOLD GOODS, PACKING, LOADING, UNLOADING, CAR SHIFTING &amp; LOCAL SHIFTING
+        </div>
+        <div style={{ fontSize: '11px', fontWeight: '700', marginTop: '3px' }}>
+          Corporate HQ- Kasturba Nagar Near Police Station Dhanbad, Jharkhand 826001
+        </div>
+        <div style={{ fontSize: '11px', fontWeight: '700', marginTop: '2px' }}>
+          Website : www.thenationalpackersmovers.com | E-mail : npmdhanbad11@gmail.com
+        </div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', margin: '10px 0', gap: '10px' }}>
+        <div style={{ flex: 1, height: '4px', background: '#000' }}></div>
+        <div style={{ fontWeight: '850', fontSize: '13px', letterSpacing: '1px', whiteSpace: 'nowrap' }}>OUR SERVICE : ALL OVER INDIA</div>
+        <div style={{ flex: 1, height: '4px', background: '#000' }}></div>
+      </div>
+      <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+        <span style={{ fontSize: '18px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '2px', borderBottom: '2px dashed #c1121f', paddingBottom: '3px', color: '#c1121f' }}>
+          {docTitle}
+        </span>
+      </div>
+    </div>
+  );
+
+  // ─── RENDER: CARRIAGE CHALLAN ─────────────────────────────────────────────
+  const renderPrintChallan = (item) => (
+    <div style={{ padding: '30px 40px', color: '#000', background: '#fff', fontFamily: 'Arial, sans-serif', fontSize: '14px', lineHeight: '1.4', maxWidth: '800px', margin: '0 auto', boxSizing: 'border-box' }}>
+      {renderDocHeader('CHALLAN')}
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '15px' }}>
+        <tbody>
+          <tr>
+            <td style={{ fontWeight: '700', width: '20%', padding: '4px 0' }}>Challan No.:</td>
+            <td style={{ width: '30%', padding: '4px 0' }}>{item.challanNo}</td>
+            <td style={{ fontWeight: '700', width: '20%', padding: '4px 0' }}>Date:</td>
+            <td style={{ width: '30%', padding: '4px 0' }}>{item.date}</td>
+          </tr>
+          <tr>
+            <td style={{ fontWeight: '700', padding: '4px 0' }}>Party Name:</td>
+            <td style={{ padding: '4px 0', fontWeight: '700', textTransform: 'uppercase' }} colSpan={3}>{item.name} | {item.phone}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', background: '#f8fafc', border: '1px solid #cbd5e1' }}>
+        <tbody>
+          <tr>
+            <td style={{ padding: '8px 12px', width: '50%', border: '1px solid #cbd5e1', verticalAlign: 'top' }}>
+              <div style={{ fontSize: '11px', fontWeight: '700', color: '#475569', textTransform: 'uppercase', marginBottom: '4px' }}>📍 Loading From (Source)</div>
+              <div style={{ fontSize: '13px', fontWeight: '600' }}>{item.origin}</div>
+            </td>
+            <td style={{ padding: '8px 12px', width: '50%', border: '1px solid #cbd5e1', verticalAlign: 'top' }}>
+              <div style={{ fontSize: '11px', fontWeight: '700', color: '#475569', textTransform: 'uppercase', marginBottom: '4px' }}>🏁 Unloading At (Destination)</div>
+              <div style={{ fontSize: '13px', fontWeight: '600' }}>{item.destination}</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', marginBottom: '20px', border: '1px solid #000' }}>
+        <thead>
+          <tr style={{ background: '#f1f5f9', borderBottom: '1px solid #000' }}>
+            <th style={{ padding: '8px', textAlign: 'left', border: '1px solid #000', width: '25%' }}>Vehicle Reg. No.</th>
+            <th style={{ padding: '8px', textAlign: 'left', border: '1px solid #000', width: '25%' }}>Driver Name</th>
+            <th style={{ padding: '8px', textAlign: 'left', border: '1px solid #000', width: '25%' }}>Driver License</th>
+            <th style={{ padding: '8px', textAlign: 'left', border: '1px solid #000', width: '25%' }}>Driver Mobile</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style={{ padding: '8px', border: '1px solid #000', fontWeight: '700' }}>{item.vehicleNo}</td>
+            <td style={{ padding: '8px', border: '1px solid #000' }}>{item.driverName}</td>
+            <td style={{ padding: '8px', border: '1px solid #000' }}>{item.driverLicense}</td>
+            <td style={{ padding: '8px', border: '1px solid #000' }}>{item.driverPhone}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '35px', fontSize: '13px' }}>
+        <tbody>
+          <tr>
+            <td style={{ fontWeight: '700', padding: '4px 0' }}>Loading Supervisor:</td>
+            <td style={{ padding: '4px 0' }}>{item.supervisor}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '30px' }}>
+        <tbody>
+          <tr>
+            <td style={{ width: '33%', textAlign: 'center', fontWeight: '700', fontSize: '12px', paddingTop: '40px', borderTop: '1px solid #000' }}>Driver Signature</td>
+            <td style={{ width: '33%', textAlign: 'center', fontWeight: '700', fontSize: '12px', paddingTop: '40px', borderTop: '1px solid #000' }}>Supervisor Signature</td>
+            <td style={{ width: '33%', textAlign: 'center', fontWeight: '700', fontSize: '12px', paddingTop: '40px', borderTop: '1px solid #000' }}>For National Packers &amp; Movers</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style={{ textAlign: 'center', marginTop: '20px', paddingTop: '8px', borderTop: '1px solid #ddd', fontSize: '12px', fontWeight: '700' }}>
+        Head Office (Zonal) : Rajarhat, Kolkata [W.B.]
+      </div>
+    </div>
+  );
+
+  // ─── RENDER: PACKING ITEM LIST ────────────────────────────────────────────
+  const renderPrintPackingList = (item) => (
+    <div style={{ padding: '30px 40px', color: '#000', background: '#fff', fontFamily: 'Arial, sans-serif', fontSize: '14px', lineHeight: '1.4', maxWidth: '800px', margin: '0 auto', boxSizing: 'border-box' }}>
+      {renderDocHeader('PACKING LIST / ITEM CHECKLIST')}
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '15px' }}>
+        <tbody>
+          <tr>
+            <td style={{ fontWeight: '700', width: '20%', padding: '4px 0' }}>Ref. No.:</td>
+            <td style={{ width: '30%', padding: '4px 0' }}>{item.refNo}</td>
+            <td style={{ fontWeight: '700', width: '20%', padding: '4px 0' }}>Date:</td>
+            <td style={{ width: '30%', padding: '4px 0' }}>{item.date}</td>
+          </tr>
+          <tr>
+            <td style={{ fontWeight: '700', padding: '4px 0' }}>Party Name:</td>
+            <td colSpan={3} style={{ padding: '4px 0', fontWeight: '700', textTransform: 'uppercase' }}>{item.name} | {item.phone}</td>
+          </tr>
+          <tr>
+            <td style={{ fontWeight: '700', padding: '4px 0' }}>From:</td>
+            <td style={{ padding: '4px 0' }}>{item.origin}</td>
+            <td style={{ fontWeight: '700', padding: '4px 0' }}>To:</td>
+            <td style={{ padding: '4px 0' }}>{item.destination}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', marginBottom: '20px', border: '1px solid #000' }}>
+        <thead>
+          <tr style={{ background: '#f1f5f9', borderBottom: '2px solid #000' }}>
+            <th style={{ padding: '8px', border: '1px solid #000', width: '6%', textAlign: 'center' }}>Sl.</th>
+            <th style={{ padding: '8px', border: '1px solid #000', width: '50%', textAlign: 'left' }}>Item Description</th>
+            <th style={{ padding: '8px', border: '1px solid #000', width: '14%', textAlign: 'center' }}>Qty</th>
+            <th style={{ padding: '8px', border: '1px solid #000', width: '30%', textAlign: 'left' }}>Condition / Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          {(item.rows && item.rows.length > 0 ? item.rows : [{ item: '', qty: '', condition: '' }]).map((row, idx) => (
+            <tr key={idx}>
+              <td style={{ padding: '7px 8px', border: '1px solid #ccc', textAlign: 'center' }}>{idx + 1}</td>
+              <td style={{ padding: '7px 8px', border: '1px solid #ccc' }}>{row.item}</td>
+              <td style={{ padding: '7px 8px', border: '1px solid #ccc', textAlign: 'center' }}>{row.qty}</td>
+              <td style={{ padding: '7px 8px', border: '1px solid #ccc' }}>{row.condition}</td>
+            </tr>
+          ))}
+          {Array.from({ length: Math.max(0, 8 - (item.rows ? item.rows.length : 0)) }).map((_, idx) => (
+            <tr key={'blank_' + idx}>
+              <td style={{ padding: '7px 8px', border: '1px solid #ccc', textAlign: 'center' }}>&nbsp;</td>
+              <td style={{ padding: '7px 8px', border: '1px solid #ccc' }}>&nbsp;</td>
+              <td style={{ padding: '7px 8px', border: '1px solid #ccc' }}>&nbsp;</td>
+              <td style={{ padding: '7px 8px', border: '1px solid #ccc' }}>&nbsp;</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '30px' }}>
+        <tbody>
+          <tr>
+            <td style={{ width: '33%', textAlign: 'center', fontWeight: '700', fontSize: '12px', paddingTop: '40px', borderTop: '1px solid #000' }}>Party / Customer Signature</td>
+            <td style={{ width: '33%', textAlign: 'center', fontWeight: '700', fontSize: '12px', paddingTop: '40px', borderTop: '1px solid #000' }}>Packing Supervisor</td>
+            <td style={{ width: '33%', textAlign: 'center', fontWeight: '700', fontSize: '12px', paddingTop: '40px', borderTop: '1px solid #000' }}>For National Packers &amp; Movers</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style={{ textAlign: 'center', marginTop: '20px', paddingTop: '8px', borderTop: '1px solid #ddd', fontSize: '12px', fontWeight: '700' }}>
+        Head Office (Zonal) : Rajarhat, Kolkata [W.B.]
+      </div>
+    </div>
+  );
+
+  // ─── RENDER: LORRY RECEIPT (BILTY) ────────────────────────────────────────
+  const renderPrintBilty = (item) => (
+    <div style={{ padding: '30px 40px', color: '#000', background: '#fff', fontFamily: 'Arial, sans-serif', fontSize: '14px', lineHeight: '1.4', maxWidth: '800px', margin: '0 auto', boxSizing: 'border-box' }}>
+      {renderDocHeader('LORRY RECEIPT (BILTY / CONSIGNMENT NOTE)')}
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '12px' }}>
+        <tbody>
+          <tr>
+            <td style={{ fontWeight: '700', width: '20%', padding: '4px 0' }}>L.R. No.:</td>
+            <td style={{ width: '30%', padding: '4px 0', fontWeight: '700', color: '#c1121f' }}>{item.lrNo}</td>
+            <td style={{ fontWeight: '700', width: '20%', padding: '4px 0' }}>Date:</td>
+            <td style={{ width: '30%', padding: '4px 0' }}>{item.date}</td>
+          </tr>
+          <tr>
+            <td style={{ fontWeight: '700', padding: '4px 0' }}>Consigner (From):</td>
+            <td style={{ padding: '4px 0', fontWeight: '700', textTransform: 'uppercase' }}>{item.name}</td>
+            <td style={{ fontWeight: '700', padding: '4px 0' }}>GSTIN:</td>
+            <td style={{ padding: '4px 0' }}>{item.consignerGst}</td>
+          </tr>
+          <tr>
+            <td style={{ fontWeight: '700', padding: '4px 0' }}>Consignee (To):</td>
+            <td style={{ padding: '4px 0' }}>{item.name}</td>
+            <td style={{ fontWeight: '700', padding: '4px 0' }}>GSTIN:</td>
+            <td style={{ padding: '4px 0' }}>{item.consigneeGst}</td>
+          </tr>
+          <tr>
+            <td style={{ fontWeight: '700', padding: '4px 0' }}>Vehicle No.:</td>
+            <td style={{ padding: '4px 0', fontWeight: '700' }}>{item.vehicleNo}</td>
+            <td style={{ fontWeight: '700', padding: '4px 0' }}>HSN Code:</td>
+            <td style={{ padding: '4px 0' }}>{item.hsn}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '15px', background: '#f8fafc', border: '1px solid #cbd5e1' }}>
+        <tbody>
+          <tr>
+            <td style={{ padding: '8px 12px', width: '50%', border: '1px solid #cbd5e1', verticalAlign: 'top' }}>
+              <div style={{ fontSize: '11px', fontWeight: '700', color: '#475569', textTransform: 'uppercase', marginBottom: '4px' }}>📍 From</div>
+              <div style={{ fontSize: '13px', fontWeight: '600' }}>{item.origin}</div>
+            </td>
+            <td style={{ padding: '8px 12px', width: '50%', border: '1px solid #cbd5e1', verticalAlign: 'top' }}>
+              <div style={{ fontSize: '11px', fontWeight: '700', color: '#475569', textTransform: 'uppercase', marginBottom: '4px' }}>🏁 To</div>
+              <div style={{ fontSize: '13px', fontWeight: '600' }}>{item.destination}</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', marginBottom: '15px', border: '1px solid #000' }}>
+        <thead>
+          <tr style={{ background: '#f1f5f9', borderBottom: '1px solid #000' }}>
+            <th style={{ padding: '8px', border: '1px solid #000', textAlign: 'left', width: '40%' }}>Description of Goods</th>
+            <th style={{ padding: '8px', border: '1px solid #000', textAlign: 'center', width: '15%' }}>Weight (Kg)</th>
+            <th style={{ padding: '8px', border: '1px solid #000', textAlign: 'center', width: '15%' }}>Volume (CFT)</th>
+            <th style={{ padding: '8px', border: '1px solid #000', textAlign: 'right', width: '30%' }}>Declared Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style={{ padding: '8px', border: '1px solid #000' }}>{item.goodsDesc}</td>
+            <td style={{ padding: '8px', border: '1px solid #000', textAlign: 'center' }}>{item.weight}</td>
+            <td style={{ padding: '8px', border: '1px solid #000', textAlign: 'center' }}>{item.volume}</td>
+            <td style={{ padding: '8px', border: '1px solid #000', textAlign: 'right' }}>As Per Invoice</td>
+          </tr>
+        </tbody>
+      </table>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '15px' }}>
+        <tbody>
+          <tr>
+            <td style={{ width: '60%', verticalAlign: 'top', padding: '0', border: 'none' }}>
+              <div style={{ border: '1px solid #cbd5e1', borderRadius: '4px', padding: '10px', background: '#f8fafc', fontSize: '12px', lineHeight: '1.8' }}>
+                <strong>Freight Charges:</strong> ₹{(item.freight || 0).toFixed(2)}<br />
+                <strong>Packing Material:</strong> ₹{(item.packing || 0).toFixed(2)}<br />
+                <strong>Loading / Unloading:</strong> ₹{(item.labour || 0).toFixed(2)}<br />
+                <strong>Insurance Charges:</strong> ₹{(item.insurance || 0).toFixed(2)}
+              </div>
+            </td>
+            <td style={{ width: '40%', verticalAlign: 'top', border: 'none', padding: '0 0 0 15px' }}>
+              <div style={{ border: '1.5px solid #c1121f', padding: '10px', textAlign: 'right', fontSize: '14px', fontWeight: '800', background: '#f1f5f9', color: '#c1121f' }}>
+                Grand Total: ₹{(item.grandTotal || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}/-
+              </div>
+              <div style={{ fontSize: '11px', marginTop: '8px', textAlign: 'right', color: '#555' }}>
+                [{convertNumberToWords(item.grandTotal || 0)}]
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div style={{ border: '1px solid #cbd5e1', borderRadius: '4px', padding: '10px', fontSize: '10px', lineHeight: '1.5', marginBottom: '20px', background: '#fffbf0' }}>
+        <strong>Conditions of Carriage:</strong> The consignment will be delivered subject to payment of freight and other charges. The company is not responsible for any damage caused due to natural calamities, road accidents, or any act beyond our control. All disputes are subject to Dhanbad jurisdiction only.
+      </div>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+        <tbody>
+          <tr>
+            <td style={{ width: '33%', textAlign: 'center', fontWeight: '700', fontSize: '12px', paddingTop: '40px', borderTop: '1px solid #000' }}>Consigner Signature</td>
+            <td style={{ width: '33%', textAlign: 'center', fontWeight: '700', fontSize: '12px', paddingTop: '40px', borderTop: '1px solid #000' }}>Driver Acknowledgement</td>
+            <td style={{ width: '33%', textAlign: 'center', fontWeight: '700', fontSize: '12px', paddingTop: '40px', borderTop: '1px solid #000' }}>For National Packers &amp; Movers</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style={{ textAlign: 'center', marginTop: '20px', paddingTop: '8px', borderTop: '1px solid #ddd', fontSize: '12px', fontWeight: '700' }}>
+        Head Office (Zonal) : Rajarhat, Kolkata [W.B.]
+      </div>
+    </div>
+  );
+
+
 
   const renderPrintQuotation = (item) => {
     return (
@@ -2351,7 +3213,11 @@ export default function AdminDashboard() {
             </button>
           </div>
           <div style={{ background: '#fff', minHeight: '100vh', padding: '20px 0' }}>
-            {activeBmsItem.type === 'quotation' ? renderPrintQuotation(activeBmsItem) : renderPrintInvoice(activeBmsItem)}
+            {activeBmsItem.type === 'quotation' ? renderPrintQuotation(activeBmsItem)
+              : activeBmsItem.type === 'invoice' ? renderPrintInvoice(activeBmsItem)
+              : activeBmsItem.type === 'challan' ? renderPrintChallan(activeBmsItem)
+              : activeBmsItem.type === 'packing_list' ? renderPrintPackingList(activeBmsItem)
+              : renderPrintBilty(activeBmsItem)}
           </div>
         </div>
       )}
@@ -2432,7 +3298,7 @@ export default function AdminDashboard() {
             <>
               <button
                 type="button"
-                className={`${styles.navItem} ${['bms-quotations', 'bms-invoices'].includes(activeTab) ? styles.navItemActive : ''}`}
+                className={`${styles.navItem} ${['bms-quotations', 'bms-invoices', 'bms-challans', 'bms-items', 'bms-lorry'].includes(activeTab) ? styles.navItemActive : ''}`}
                 onClick={() => setBmsOpen(!bmsOpen)}
                 style={{ justifyContent: 'space-between' }}
               >
@@ -2455,6 +3321,27 @@ export default function AdminDashboard() {
                   >
                     🧾 GST Invoices
                   </button>
+                  <button
+                    type="button"
+                    className={`${styles.subNavItem} ${activeTab === 'bms-challans' ? styles.subNavItemActive : ''}`}
+                    onClick={() => setActiveTab('bms-challans')}
+                  >
+                    🚛 Carriage Challan
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.subNavItem} ${activeTab === 'bms-items' ? styles.subNavItemActive : ''}`}
+                    onClick={() => setActiveTab('bms-items')}
+                  >
+                    📦 Packing List
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.subNavItem} ${activeTab === 'bms-lorry' ? styles.subNavItemActive : ''}`}
+                    onClick={() => setActiveTab('bms-lorry')}
+                  >
+                    📋 Lorry Receipt
+                  </button>
                 </div>
               )}
             </>
@@ -2466,6 +3353,15 @@ export default function AdminDashboard() {
               onClick={() => setActiveTab('leads')}
             >
               📥 Leads Panel
+            </button>
+          )}
+          {(currentUser?.role === 'admin' || currentUser?.permissions?.leads) && (
+            <button
+              type="button"
+              className={`${styles.navItem} ${activeTab === 'docs' ? styles.navItemActive : ''}`}
+              onClick={() => setActiveTab('docs')}
+            >
+              🗂️ All Documents
             </button>
           )}
           <button
@@ -2779,58 +3675,316 @@ export default function AdminDashboard() {
                                 View Live Page ↗
                               </a>
                             </td>
-                            <td className={styles.tdDate}>
-                              {new Date(blog.created_at).toLocaleDateString('en-IN', {
-                                day: '2-digit',
-                                month: 'short',
-                                year: 'numeric',
-                              })}
-                            </td>
-                            <td className={styles.tdActions}>
-                              <div className={styles.actionRow}>
-                                <button
-                                  type="button"
-                                  className={styles.editBtn}
-                                  onClick={() => loadBlogForEdit(blog)}
-                                >
-                                  ✏️ Edit
-                                </button>
-                                <button
-                                  type="button"
-                                  className={styles.deleteBtn}
-                                  onClick={() => triggerDeleteConfirm(blog.id, blog.title)}
-                                >
-                                  🗑️ Delete
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                             <td className={styles.tdDate}>
+                               {new Date(blog.created_at).toLocaleDateString('en-IN', {
+                                 day: '2-digit',
+                                 month: 'short',
+                                 year: 'numeric',
+                               })}
+                             </td>
+                             <td className={styles.tdActions}>
+                               <div className={styles.actionRow}>
+                                 <button
+                                   type="button"
+                                   className={styles.editBtn}
+                                   onClick={() => loadBlogForEdit(blog)}
+                                 >
+                                   ✏️ Edit
+                                 </button>
+                                 <button
+                                   type="button"
+                                   className={styles.deleteBtn}
+                                   onClick={() => triggerDeleteConfirm(blog.id, blog.title)}
+                                 >
+                                   🗑️ Delete
+                                 </button>
+                               </div>
+                             </td>
+                           </tr>
+                         ))}
+                       </tbody>
+                     </table>
+                   </div>
+                 )}
+               </div>
+             </section>
+           </div>
+         )}
+
+        {activeTab === 'docs' && (
+          <div className={styles.leadsModuleWrapper}>
+            <div className={styles.leadsHeader}>
+              <div className={styles.leadsHeaderLeft}>
+                <h1>All Generated Documents</h1>
+                <p>Search, filter, edit, delete, and print/download all generated business paperwork in one unified list.</p>
+              </div>
+            </div>
+
+            {/* Filter Toolbar */}
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', background: 'rgba(255, 255, 255, 0.02)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.05)', flexWrap: 'wrap' }}>
+              <div style={{ flex: 1, minWidth: '250px', position: 'relative' }}>
+                <input
+                  type="text"
+                  placeholder="Search by customer name, ref number (e.g. 004, NPM/CH/...)"
+                  className={styles.input}
+                  style={{ width: '100%', padding: '0.65rem 1rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#fff', borderRadius: '6px' }}
+                  value={docSearchQuery}
+                  onChange={(e) => setDocSearchQuery(e.target.value)}
+                />
+                {docSearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setDocSearchQuery('')}
+                    style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--gray-400)', cursor: 'pointer', fontSize: '0.9rem' }}
+                  >
+                    ✖
+                  </button>
                 )}
               </div>
-            </section>
+
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--gray-400)' }}>Type:</span>
+                <select
+                  className={styles.input}
+                  style={{ padding: '0.6rem 1rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#fff', borderRadius: '6px', cursor: 'pointer' }}
+                  value={docTypeFilter}
+                  onChange={(e) => setDocTypeFilter(e.target.value)}
+                >
+                  <option value="All" style={{ background: '#0b1329', color: '#fff' }}>All Documents</option>
+                  <option value="Quotation" style={{ background: '#0b1329', color: '#fff' }}>📝 Quotation</option>
+                  <option value="Challan" style={{ background: '#0b1329', color: '#fff' }}>🚛 Challan</option>
+                  <option value="Packing List" style={{ background: '#0b1329', color: '#fff' }}>📦 Packing List</option>
+                  <option value="GST Invoice" style={{ background: '#0b1329', color: '#fff' }}>🧾 GST Invoice</option>
+                  <option value="Lorry Receipt" style={{ background: '#0b1329', color: '#fff' }}>📋 Lorry Receipt</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Documents List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              {(() => {
+                const allDocs = [
+                  ...bmsQuotes.map(d => ({ ...d, docType: 'Quotation', ref: d.refNo, summary: 'Total: Rs.' + d.total?.toLocaleString(), date: d.date })),
+                  ...bmsChallans.map(d => ({ ...d, docType: 'Challan', ref: d.challanNo, summary: 'Vehicle: ' + d.vehicleNo, date: d.date })),
+                  ...bmsItems.map(d => ({ ...d, docType: 'Packing List', ref: d.refNo, summary: (d.rows?.length || 0) + ' items', date: d.date })),
+                  ...bmsInvoices.map(d => ({ ...d, docType: 'GST Invoice', ref: d.billNo, summary: 'Total: Rs.' + d.total?.toLocaleString(), date: d.date })),
+                  ...bmsLorryReceipts.map(d => ({ ...d, docType: 'Lorry Receipt', ref: d.lrNo, summary: 'Grand Total: Rs.' + d.grandTotal?.toLocaleString(), date: d.date }))
+                ];
+
+                // Filter logic
+                const filtered = allDocs.filter(doc => {
+                  const matchesType = docTypeFilter === 'All' || doc.docType === docTypeFilter;
+                  
+                  const query = docSearchQuery.trim().toLowerCase();
+                  if (!query) return matchesType;
+
+                  const matchesName = doc.name?.toLowerCase().includes(query);
+                  const matchesRef = doc.ref?.toLowerCase().includes(query);
+                  return matchesType && (matchesName || matchesRef);
+                });
+
+                if (filtered.length === 0) {
+                  return (
+                    <div style={{ textAlign: 'center', padding: '3rem 1.5rem', background: 'rgba(255, 255, 255, 0.01)', border: '1px solid rgba(255, 255, 255, 0.03)', borderRadius: '8px', color: 'var(--gray-500)', fontSize: '0.9rem' }}>
+                      No documents found matching search criteria.
+                    </div>
+                  );
+                }
+
+                return filtered.map((doc, idx) => {
+                  let badgeBg = 'rgba(59, 130, 246, 0.1)';
+                  let badgeBorder = '1px solid rgba(59, 130, 246, 0.3)';
+                  let badgeColor = '#60a5fa';
+
+                  if (doc.docType === 'Challan') {
+                    badgeBg = 'rgba(247, 183, 49, 0.1)';
+                    badgeBorder = '1px solid rgba(247, 183, 49, 0.3)';
+                    badgeColor = 'var(--gold)';
+                  } else if (doc.docType === 'Packing List') {
+                    badgeBg = 'rgba(16, 185, 129, 0.1)';
+                    badgeBorder = '1px solid rgba(16, 185, 129, 0.3)';
+                    badgeColor = '#34d399';
+                  } else if (doc.docType === 'GST Invoice') {
+                    badgeBg = 'rgba(239, 68, 68, 0.1)';
+                    badgeBorder = '1px solid rgba(239, 68, 68, 0.3)';
+                    badgeColor = '#f87171';
+                  } else if (doc.docType === 'Lorry Receipt') {
+                    badgeBg = 'rgba(139, 92, 246, 0.1)';
+                    badgeBorder = '1px solid rgba(139, 92, 246, 0.3)';
+                    badgeColor = '#a78bfa';
+                  }
+
+                  return (
+                    <div key={idx} style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '8px', padding: '1rem 1.25rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                            <span style={{ background: badgeBg, border: badgeBorder, color: badgeColor, fontSize: '0.75rem', fontWeight: 700, padding: '0.2rem 0.6rem', borderRadius: '4px' }}>
+                              {doc.docType}
+                            </span>
+                            <span style={{ fontWeight: 700, color: 'var(--white)', fontSize: '0.92rem' }}>
+                              {doc.name}
+                            </span>
+                            {doc.phone && (
+                              <span style={{ color: 'var(--gray-400)', fontSize: '0.8rem' }}>
+                                ({doc.phone})
+                              </span>
+                            )}
+                          </div>
+                          <div style={{ display: 'flex', gap: '1.25rem', marginTop: '0.4rem', fontSize: '0.78rem', color: 'var(--gray-400)', flexWrap: 'wrap' }}>
+                            <div>Ref: <strong style={{ color: 'var(--gold)' }}>{doc.ref}</strong></div>
+                            <div>Date: <strong>{doc.date}</strong></div>
+                            <div>Details: <strong>{doc.summary}</strong></div>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            onClick={() => handleViewDocEdit(doc)}
+                            style={{ background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.35)', color: '#60a5fa', padding: '0.45rem 0.9rem', borderRadius: '6px', fontWeight: 600, fontSize: '0.8rem', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                          >
+                            ✏️ Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleViewDocDelete(doc)}
+                            style={{ background: 'rgba(220, 53, 69, 0.12)', border: '1px solid rgba(220, 53, 69, 0.3)', color: '#f87171', padding: '0.45rem 0.9rem', borderRadius: '6px', fontWeight: 600, fontSize: '0.8rem', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                          >
+                            🗑️ Delete
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setActiveBmsItem(doc); setBmsPrintMode(true); }}
+                            style={{ background: 'var(--gold)', color: '#000', border: 'none', padding: '0.45rem 1rem', borderRadius: '6px', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                          >
+                            🖨️ Print / Download
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
           </div>
         )}
-
         {activeTab === 'leads' && (
           <div className={styles.leadsModuleWrapper}>
             <div className={styles.leadsHeader}>
               <div className={styles.leadsHeaderLeft}>
-                <h1>Leads & Enquiry CRM</h1>
-                <p>Track, modify, and manage incoming website moving requests</p>
+                <h1>Leads &amp; Enquiry CRM</h1>
+                <p>Track, modify, and manage incoming website moving requests and offline enquiries</p>
               </div>
-              <button 
-                type="button" 
-                className={styles.downloadCsvBtn}
-                onClick={handleDownloadCSV}
-                disabled={leads.length === 0}
-              >
-                📥 Download Filtered CSV
-              </button>
+              <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  onClick={() => { setShowManualLeadForm(prev => !prev); setMlError(""); }}
+                  style={{
+                    background: showManualLeadForm ? "rgba(247,183,49,0.15)" : "rgba(247,183,49,0.08)",
+                    border: "1px solid rgba(247,183,49,0.4)",
+                    color: "var(--gold)",
+                    padding: "0.6rem 1.25rem",
+                    borderRadius: "6px",
+                    fontWeight: "600",
+                    fontSize: "0.85rem",
+                    cursor: "pointer",
+                  }}
+                >
+                  {showManualLeadForm ? "✖ Cancel" : "➕ Add Lead Manually"}
+                </button>
+                <button
+                  type="button"
+                  className={styles.downloadCsvBtn}
+                  onClick={handleDownloadCSV}
+                  disabled={leads.length === 0}
+                >
+                  📥 Download Filtered CSV
+                </button>
+              </div>
             </div>
+
+            {/* Manual Lead Entry Form */}
+            {showManualLeadForm && (
+              <div style={{
+                background: "var(--black-100)",
+                border: "1px solid rgba(247,183,49,0.25)",
+                borderRadius: "10px",
+                padding: "1.5rem",
+                marginBottom: "1.5rem",
+              }}>
+                <h3 style={{ margin: "0 0 1.25rem 0", color: "var(--gold)", fontSize: "1rem", fontWeight: "700" }}>
+                  📋 Add Lead from Offline Source
+                </h3>
+                <form onSubmit={handleAddManualLead}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1rem" }}>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Full Name *</label>
+                      <input type="text" className={styles.input} value={mlName}
+                        onChange={e => setMlName(e.target.value)} placeholder="Customer full name" required />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Phone Number *</label>
+                      <input type="text" className={styles.input} value={mlPhone}
+                        onChange={e => setMlPhone(e.target.value)} placeholder="e.g. 9835168368" required />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Email (optional)</label>
+                      <input type="email" className={styles.input} value={mlEmail}
+                        onChange={e => setMlEmail(e.target.value)} placeholder="customer@email.com" />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>From City / Origin</label>
+                      <input type="text" className={styles.input} value={mlFromCity}
+                        onChange={e => setMlFromCity(e.target.value)} placeholder="e.g. Dhanbad" />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>To City / Destination</label>
+                      <input type="text" className={styles.input} value={mlToCity}
+                        onChange={e => setMlToCity(e.target.value)} placeholder="e.g. Patna" />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Moving Date</label>
+                      <input type="date" className={styles.input} value={mlMovingDate}
+                        onChange={e => setMlMovingDate(e.target.value)} />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Lead Source</label>
+                      <select className={styles.select} value={mlSource}
+                        onChange={e => setMlSource(e.target.value)} style={{ padding: "0.8rem 1rem" }}>
+                        <option value="Phone Call">📞 Phone Call</option>
+                        <option value="Walk-in">🚶 Walk-in</option>
+                        <option value="Referral">🤝 Referral</option>
+                        <option value="WhatsApp">💬 WhatsApp</option>
+                        <option value="Just Dial">📒 Just Dial</option>
+                        <option value="Google">🔍 Google</option>
+                        <option value="Other">📌 Other</option>
+                      </select>
+                    </div>
+                    <div className={styles.inputGroup} style={{ gridColumn: "span 2" }}>
+                      <label className={styles.label}>Notes / Requirements</label>
+                      <textarea className={styles.textarea} style={{ height: "80px" }} value={mlNotes}
+                        onChange={e => setMlNotes(e.target.value)}
+                        placeholder="Any extra details — items, special requests, budget range..." />
+                    </div>
+                  </div>
+                  {mlError && <div className={styles.formError} style={{ marginTop: "1rem" }}>⚠️ {mlError}</div>}
+                  <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.25rem" }}>
+                    <button type="submit" disabled={mlLoading}
+                      style={{ background: "var(--gold)", color: "var(--black)", border: "none", padding: "0.7rem 2rem",
+                        borderRadius: "6px", fontWeight: "700", fontSize: "0.9rem",
+                        cursor: mlLoading ? "not-allowed" : "pointer", opacity: mlLoading ? 0.7 : 1 }}>
+                      {mlLoading ? "Saving..." : "💾 Save Lead"}
+                    </button>
+                    <button type="button" onClick={() => setShowManualLeadForm(false)}
+                      style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.1)",
+                        color: "var(--gray-300)", padding: "0.7rem 1.5rem", borderRadius: "6px", cursor: "pointer" }}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
 
             {/* Filters Bar */}
             <div className={styles.crmFilters}>
@@ -2962,6 +4116,42 @@ export default function AdminDashboard() {
                           </td>
                           <td>
                             <div className={styles.actionButtons}>
+                              <button
+                                type="button"
+                                onClick={() => { setViewingLead(lead); setViewLeadOpen(true); }}
+                                title="View Lead & Documents"
+                                style={{
+                                  background: "rgba(96,165,250,0.12)",
+                                  border: "1px solid rgba(96,165,250,0.3)",
+                                  color: "#60a5fa",
+                                  borderRadius: "4px",
+                                  padding: "0.3rem 0.7rem",
+                                  cursor: "pointer",
+                                  fontSize: "0.78rem",
+                                  fontWeight: 600,
+                                  lineHeight: 1.4,
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                View Documents
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => openPipeline(lead)}
+                                title="Generate Documents for this Lead"
+                                style={{
+                                  background: 'rgba(247,183,49,0.12)',
+                                  border: '1px solid rgba(247,183,49,0.35)',
+                                  color: 'var(--gold)',
+                                  borderRadius: '4px',
+                                  padding: '0.3rem 0.55rem',
+                                  cursor: 'pointer',
+                                  fontSize: '0.9rem',
+                                  lineHeight: 1,
+                                }}
+                              >
+                                📄
+                              </button>
                               <button
                                 type="button"
                                 className={styles.editBtn}
@@ -4592,6 +5782,461 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {/* ═══════════════════════════════════════════════════════ */}
+        {/* BMS CHALLAN TAB                                         */}
+        {/* ═══════════════════════════════════════════════════════ */}
+        {activeTab === 'bms-challans' && (
+          <div>
+            <header className={styles.panelHeader}>
+              <div>
+                <h1 className={styles.panelTitle}>Carriage Challan Manager</h1>
+                <p className={styles.panelSubtitle}>Generate and print loading slips with full vehicle, driver & supervisor details</p>
+              </div>
+            </header>
+            <div className={styles.splitPane} style={{ gridTemplateColumns: '1.1fr 0.9fr' }}>
+              <div className={styles.editorPane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>🚛 Create Carriage Challan</h2>
+                  <form onSubmit={handleCreateChallan} className={styles.form}>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Challan Number</label>
+                        <input type="text" className={styles.input} value={chChallanNo} onChange={e => setChChallanNo(e.target.value)} placeholder="Leave blank for auto-gen" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Date</label>
+                        <input type="text" className={styles.input} value={chDate} onChange={e => setChDate(e.target.value)} placeholder="e.g. 04/07/2026" />
+                      </div>
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Party Name *</label>
+                        <input type="text" className={styles.input} required value={chName} onChange={e => setChName(e.target.value)} placeholder="Customer full name" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Phone</label>
+                        <input type="text" className={styles.input} value={chPhone} onChange={e => setChPhone(e.target.value)} placeholder="Contact number" />
+                      </div>
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Loading From (Origin) *</label>
+                        <input type="text" className={styles.input} required value={chOrigin} onChange={e => setChOrigin(e.target.value)} placeholder="Full address" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Deliver To (Destination) *</label>
+                        <input type="text" className={styles.input} required value={chDest} onChange={e => setChDest(e.target.value)} placeholder="Delivery address" />
+                      </div>
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Vehicle Reg. No. *</label>
+                        <input type="text" className={styles.input} required value={chVehicleNo} onChange={e => setChVehicleNo(e.target.value.toUpperCase())} placeholder="e.g. JH-10-AC-5401" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Driver Name *</label>
+                        <input type="text" className={styles.input} required value={chDriverName} onChange={e => setChDriverName(e.target.value)} placeholder="Driver full name" />
+                      </div>
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Driver License No.</label>
+                        <input type="text" className={styles.input} value={chDriverLicense} onChange={e => setChDriverLicense(e.target.value)} placeholder="DL-XXXXXXXXXXXX" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Driver Mobile</label>
+                        <input type="text" className={styles.input} value={chDriverPhone} onChange={e => setChDriverPhone(e.target.value)} placeholder="10-digit" />
+                      </div>
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Loading Supervisor Name</label>
+                      <input type="text" className={styles.input} value={chSupervisor} onChange={e => setChSupervisor(e.target.value)} placeholder="Supervisor name" />
+                    </div>
+                    <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem' }}>💾 Save Challan</button>
+                  </form>
+                </div>
+                <div className={styles.livePreviewContainer}>
+                  <div className={styles.livePreviewTitle}>📄 Live A4 Document Preview</div>
+                  <div className={styles.a4Paper}>
+                    {renderPrintChallan({
+                      challanNo: chChallanNo || 'NPM/CH/26-27/001',
+                      date: chDate || new Date().toLocaleDateString('en-GB'),
+                      name: chName || 'PARTY NAME',
+                      phone: chPhone || 'XXXXXXXXXX',
+                      origin: chOrigin || 'Loading Address...',
+                      destination: chDest || 'Delivery Address...',
+                      vehicleNo: chVehicleNo || 'JH-XX-XX-XXXX',
+                      driverName: chDriverName || 'Driver Name',
+                      driverLicense: chDriverLicense || 'N/A',
+                      driverPhone: chDriverPhone || 'N/A',
+                      supervisor: chSupervisor || 'N/A',
+                    })}
+                  </div>
+                </div>
+              </div>
+              <div className={styles.tablePane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>📋 Challan Registry ({bmsChallans.length})</h2>
+                  {bmsChallans.length === 0 ? (
+                    <p style={{ color: 'var(--gray-400)', fontSize: '0.9rem' }}>No challans generated yet.</p>
+                  ) : (
+                    <div className={styles.tableWrapper}>
+                      <table className={styles.table}>
+                        <thead>
+                          <tr>
+                            <th>Challan No.</th>
+                            <th>Party / Vehicle</th>
+                            <th>Route</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {bmsChallans.map(ch => (
+                            <tr key={ch.id}>
+                              <td>
+                                <strong style={{ color: 'var(--gold)' }}>{ch.challanNo}</strong>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-400)' }}>{ch.date}</div>
+                              </td>
+                              <td>
+                                <div style={{ fontWeight: '600' }}>{ch.name}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-300)' }}>🚛 {ch.vehicleNo}</div>
+                              </td>
+                              <td><div style={{ fontSize: '0.85rem' }}>{ch.origin} ➔ {ch.destination}</div></td>
+                              <td>
+                                <div className={styles.actionRow} style={{ display: 'flex', gap: '0.5rem' }}>
+                                  <button type="button" className={styles.editBtn}
+                                    onClick={() => { setActiveBmsItem(ch); setBmsPrintMode(true); }}>🖨️ Print</button>
+                                  <button type="button" className={styles.deleteBtn}
+                                    onClick={() => handleDeleteChallan(ch.id)}>🗑️ Delete</button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════ */}
+        {/* BMS PACKING ITEM LIST TAB                              */}
+        {/* ═══════════════════════════════════════════════════════ */}
+        {activeTab === 'bms-items' && (
+          <div>
+            <header className={styles.panelHeader}>
+              <div>
+                <h1 className={styles.panelTitle}>Packing List Manager</h1>
+                <p className={styles.panelSubtitle}>Create item-by-item packing checklists with condition reports for each shifting job</p>
+              </div>
+            </header>
+            <div className={styles.splitPane} style={{ gridTemplateColumns: '1.1fr 0.9fr' }}>
+              <div className={styles.editorPane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>📦 Create Packing Item List</h2>
+                  <form onSubmit={handleCreatePackingList} className={styles.form}>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Ref. No.</label>
+                        <input type="text" className={styles.input} value={plRefNo} onChange={e => setPlRefNo(e.target.value)} placeholder="Leave blank for auto-gen" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Date</label>
+                        <input type="text" className={styles.input} value={plDate} onChange={e => setPlDate(e.target.value)} placeholder="e.g. 04/07/2026" />
+                      </div>
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Party Name *</label>
+                        <input type="text" className={styles.input} required value={plName} onChange={e => setPlName(e.target.value)} placeholder="Customer full name" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Phone</label>
+                        <input type="text" className={styles.input} value={plPhone} onChange={e => setPlPhone(e.target.value)} placeholder="Contact number" />
+                      </div>
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>From (Origin) *</label>
+                        <input type="text" className={styles.input} required value={plOrigin} onChange={e => setPlOrigin(e.target.value)} placeholder="Origin address" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>To (Destination) *</label>
+                        <input type="text" className={styles.input} required value={plDest} onChange={e => setPlDest(e.target.value)} placeholder="Destination address" />
+                      </div>
+                    </div>
+                    <div style={{ marginTop: '1rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <label className={styles.label} style={{ margin: 0 }}>Item Rows</label>
+                        <button type="button" onClick={() => setPlRows(prev => [...prev, { item: '', qty: '', condition: '' }])}
+                          style={{ background: 'none', border: '1px solid var(--gold)', color: 'var(--gold)', padding: '0.2rem 0.75rem', borderRadius: '4px', fontSize: '0.8rem', cursor: 'pointer' }}>
+                          + Add Row
+                        </button>
+                      </div>
+                      {plRows.map((row, idx) => (
+                        <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr auto auto auto', gap: '0.5rem', marginBottom: '0.4rem', alignItems: 'center' }}>
+                          <input type="text" className={styles.input} style={{ margin: 0 }} placeholder={`Item ${idx + 1} (e.g. Sofa, TV, Fridge)`}
+                            value={row.item} onChange={e => { const r = [...plRows]; r[idx].item = e.target.value; setPlRows(r); }} />
+                          <input type="text" className={styles.input} style={{ margin: 0, width: '60px' }} placeholder="Qty"
+                            value={row.qty} onChange={e => { const r = [...plRows]; r[idx].qty = e.target.value; setPlRows(r); }} />
+                          <input type="text" className={styles.input} style={{ margin: 0, width: '120px' }} placeholder="Condition"
+                            value={row.condition} onChange={e => { const r = [...plRows]; r[idx].condition = e.target.value; setPlRows(r); }} />
+                          {plRows.length > 1 && (
+                            <button type="button" onClick={() => setPlRows(plRows.filter((_, i) => i !== idx))}
+                              style={{ background: 'none', border: 'none', color: '#c1121f', fontSize: '1.1rem', cursor: 'pointer', padding: '0 0.25rem' }}>✕</button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>💾 Save Packing List</button>
+                  </form>
+                </div>
+                <div className={styles.livePreviewContainer}>
+                  <div className={styles.livePreviewTitle}>📄 Live A4 Document Preview</div>
+                  <div className={styles.a4Paper}>
+                    {renderPrintPackingList({
+                      refNo: plRefNo || 'NPM/PL/26-27/001',
+                      date: plDate || new Date().toLocaleDateString('en-GB'),
+                      name: plName || 'PARTY NAME',
+                      phone: plPhone || 'XXXXXXXXXX',
+                      origin: plOrigin || 'Origin Address...',
+                      destination: plDest || 'Destination Address...',
+                      rows: plRows.filter(r => r.item.trim()),
+                    })}
+                  </div>
+                </div>
+              </div>
+              <div className={styles.tablePane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>📋 Packing List Registry ({bmsItems.length})</h2>
+                  {bmsItems.length === 0 ? (
+                    <p style={{ color: 'var(--gray-400)', fontSize: '0.9rem' }}>No packing lists generated yet.</p>
+                  ) : (
+                    <div className={styles.tableWrapper}>
+                      <table className={styles.table}>
+                        <thead>
+                          <tr>
+                            <th>Ref. No.</th>
+                            <th>Party Info</th>
+                            <th>Items</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {bmsItems.map(pl => (
+                            <tr key={pl.id}>
+                              <td>
+                                <strong style={{ color: 'var(--gold)' }}>{pl.refNo}</strong>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-400)' }}>{pl.date}</div>
+                              </td>
+                              <td>
+                                <div style={{ fontWeight: '600' }}>{pl.name}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-300)' }}>{pl.origin} ➔ {pl.destination}</div>
+                              </td>
+                              <td><span style={{ color: 'var(--white)' }}>{pl.rows ? pl.rows.length : 0} items</span></td>
+                              <td>
+                                <div className={styles.actionRow} style={{ display: 'flex', gap: '0.5rem' }}>
+                                  <button type="button" className={styles.editBtn}
+                                    onClick={() => { setActiveBmsItem(pl); setBmsPrintMode(true); }}>🖨️ Print</button>
+                                  <button type="button" className={styles.deleteBtn}
+                                    onClick={() => handleDeletePackingList(pl.id)}>🗑️ Delete</button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════ */}
+        {/* BMS LORRY RECEIPT TAB                                  */}
+        {/* ═══════════════════════════════════════════════════════ */}
+        {activeTab === 'bms-lorry' && (
+          <div>
+            <header className={styles.panelHeader}>
+              <div>
+                <h1 className={styles.panelTitle}>Lorry Receipt (Bilty) Manager</h1>
+                <p className={styles.panelSubtitle}>Generate the final transport consignment note with freight details and carrier acknowledgement</p>
+              </div>
+            </header>
+            <div className={styles.splitPane} style={{ gridTemplateColumns: '1.1fr 0.9fr' }}>
+              <div className={styles.editorPane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>📋 Create Lorry Receipt / Bilty</h2>
+                  <form onSubmit={handleCreateLorryReceipt} className={styles.form}>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>L.R. Number</label>
+                        <input type="text" className={styles.input} value={lrNumber} onChange={e => setLrNumber(e.target.value)} placeholder="Leave blank for auto-gen" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Date</label>
+                        <input type="text" className={styles.input} value={lrDate} onChange={e => setLrDate(e.target.value)} placeholder="e.g. 04/07/2026" />
+                      </div>
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Consigner Name *</label>
+                        <input type="text" className={styles.input} required value={lrName} onChange={e => setLrName(e.target.value)} placeholder="Party name" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Phone</label>
+                        <input type="text" className={styles.input} value={lrPhone} onChange={e => setLrPhone(e.target.value)} placeholder="Contact" />
+                      </div>
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Consigner GSTIN</label>
+                        <input type="text" className={styles.input} value={lrConsignerGst} onChange={e => setLrConsignerGst(e.target.value)} placeholder="GSTIN (if applicable)" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Consignee GSTIN</label>
+                        <input type="text" className={styles.input} value={lrConsigneeGst} onChange={e => setLrConsigneeGst(e.target.value)} placeholder="GSTIN (if applicable)" />
+                      </div>
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Vehicle No. *</label>
+                        <input type="text" className={styles.input} required value={lrVehicleNo} onChange={e => setLrVehicleNo(e.target.value.toUpperCase())} placeholder="e.g. JH-10-AC-5401" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>HSN Code</label>
+                        <input type="text" className={styles.input} value={lrHsn} onChange={e => setLrHsn(e.target.value)} placeholder="9965" />
+                      </div>
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>From (Origin) *</label>
+                        <input type="text" className={styles.input} required value={lrOrigin} onChange={e => setLrOrigin(e.target.value)} placeholder="Pickup address" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>To (Destination) *</label>
+                        <input type="text" className={styles.input} required value={lrDest} onChange={e => setLrDest(e.target.value)} placeholder="Delivery address" />
+                      </div>
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Description of Goods</label>
+                      <input type="text" className={styles.input} value={lrGoodsDesc} onChange={e => setLrGoodsDesc(e.target.value)} placeholder="e.g. Household Goods as per Packing List" />
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Weight (Kg)</label>
+                        <input type="text" className={styles.input} value={lrWeight} onChange={e => setLrWeight(e.target.value)} placeholder="Approx. weight" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Volume (CFT)</label>
+                        <input type="text" className={styles.input} value={lrVolume} onChange={e => setLrVolume(e.target.value)} placeholder="e.g. 120 CFT" />
+                      </div>
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Freight Charges (₹)</label>
+                        <input type="number" className={styles.input} value={lrFreight} onChange={e => setLrFreight(e.target.value)} placeholder="Transport charges" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Packing Material (₹)</label>
+                        <input type="number" className={styles.input} value={lrPacking} onChange={e => setLrPacking(e.target.value)} placeholder="Packing cost" />
+                      </div>
+                    </div>
+                    <div className={styles.formGrid}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Labour Charges (₹)</label>
+                        <input type="number" className={styles.input} value={lrLabour} onChange={e => setLrLabour(e.target.value)} placeholder="Loading/unloading" />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Insurance (₹)</label>
+                        <input type="number" className={styles.input} value={lrInsurance} onChange={e => setLrInsurance(e.target.value)} placeholder="Insurance charges" />
+                      </div>
+                    </div>
+                    <div style={{ background: 'rgba(247,183,49,0.05)', border: '1px solid rgba(247,183,49,0.15)', borderRadius: '6px', padding: '0.75rem 1rem', textAlign: 'right', fontSize: '1rem', fontWeight: '700', color: 'var(--gold)', marginTop: '0.5rem' }}>
+                      Grand Total: ₹{((parseFloat(lrFreight)||0)+(parseFloat(lrPacking)||0)+(parseFloat(lrLabour)||0)+(parseFloat(lrInsurance)||0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}/-
+                    </div>
+                    <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '0.75rem' }}>💾 Save Lorry Receipt</button>
+                  </form>
+                </div>
+                <div className={styles.livePreviewContainer}>
+                  <div className={styles.livePreviewTitle}>📄 Live A4 Document Preview</div>
+                  <div className={styles.a4Paper}>
+                    {renderPrintBilty({
+                      lrNo: lrNumber || 'NPM/LR/26-27/001',
+                      date: lrDate || new Date().toLocaleDateString('en-GB'),
+                      name: lrName || 'PARTY NAME',
+                      phone: lrPhone || 'XXXXXXXXXX',
+                      consignerGst: lrConsignerGst || 'N/A',
+                      consigneeGst: lrConsigneeGst || 'N/A',
+                      vehicleNo: lrVehicleNo || 'JH-XX-XX-XXXX',
+                      origin: lrOrigin || 'Pickup Address...',
+                      destination: lrDest || 'Delivery Address...',
+                      goodsDesc: lrGoodsDesc || 'Household Goods as per Packing List',
+                      weight: lrWeight || 'N/A',
+                      volume: lrVolume || 'N/A',
+                      hsn: lrHsn || '9965',
+                      freight: parseFloat(lrFreight) || 0,
+                      packing: parseFloat(lrPacking) || 0,
+                      labour: parseFloat(lrLabour) || 0,
+                      insurance: parseFloat(lrInsurance) || 0,
+                      grandTotal: (parseFloat(lrFreight)||0)+(parseFloat(lrPacking)||0)+(parseFloat(lrLabour)||0)+(parseFloat(lrInsurance)||0),
+                    })}
+                  </div>
+                </div>
+              </div>
+              <div className={styles.tablePane}>
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>📋 Lorry Receipt Registry ({bmsLorryReceipts.length})</h2>
+                  {bmsLorryReceipts.length === 0 ? (
+                    <p style={{ color: 'var(--gray-400)', fontSize: '0.9rem' }}>No lorry receipts generated yet.</p>
+                  ) : (
+                    <div className={styles.tableWrapper}>
+                      <table className={styles.table}>
+                        <thead>
+                          <tr>
+                            <th>L.R. No.</th>
+                            <th>Party / Vehicle</th>
+                            <th>Grand Total</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {bmsLorryReceipts.map(lr => (
+                            <tr key={lr.id}>
+                              <td>
+                                <strong style={{ color: 'var(--gold)' }}>{lr.lrNo}</strong>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-400)' }}>{lr.date}</div>
+                              </td>
+                              <td>
+                                <div style={{ fontWeight: '600' }}>{lr.name}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--gray-300)' }}>🚛 {lr.vehicleNo}</div>
+                              </td>
+                              <td><strong style={{ color: 'var(--white)' }}>₹{(lr.grandTotal || 0).toLocaleString()}</strong></td>
+                              <td>
+                                <div className={styles.actionRow} style={{ display: 'flex', gap: '0.5rem' }}>
+                                  <button type="button" className={styles.editBtn}
+                                    onClick={() => { setActiveBmsItem(lr); setBmsPrintMode(true); }}>🖨️ Print</button>
+                                  <button type="button" className={styles.deleteBtn}
+                                    onClick={() => handleDeleteLorryReceipt(lr.id)}>🗑️ Delete</button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'settings' && (
           <div>
             <header className={styles.panelHeader}>
@@ -5133,6 +6778,334 @@ export default function AdminDashboard() {
                 >
                   Cancel
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* DOCUMENT PIPELINE MODAL */}
+        {pipelineOpen && pipelineLead && (
+          <div style={{ position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.88)',zIndex:9999,display:'flex',alignItems:'flex-start',justifyContent:'center',overflowY:'auto',padding:'1.5rem 1rem' }}>
+            <div style={{ background:'#0d1b2a',border:'1px solid rgba(247,183,49,0.25)',borderRadius:'14px',width:'100%',maxWidth:'1160px',boxShadow:'0 24px 80px rgba(0,0,0,0.6)' }}>
+              {/* Header */}
+              <div style={{ display:'flex',justifyContent:'space-between',alignItems:'flex-start',borderBottom:'1px solid rgba(247,183,49,0.2)',padding:'1.25rem 2rem' }}>
+                <div>
+                  <h2 style={{ margin:0,color:'var(--gold)',fontSize:'1.15rem',fontWeight:700 }}>📄 Document Pipeline — {pipelineLead.name}</h2>
+                  <p style={{ margin:'0.25rem 0 0',color:'var(--gray-400)',fontSize:'0.82rem' }}>{pipelineLead.from_city||'Origin'} ➔ {pipelineLead.to_city||'Destination'} &nbsp;|&nbsp; 📞 {pipelineLead.phone} &nbsp;|&nbsp; {pipelineLead.source}</p>
+                </div>
+                <button type="button" onClick={()=>setPipelineOpen(false)} style={{ background:'transparent',border:'1px solid rgba(255,255,255,0.15)',color:'var(--gray-300)',borderRadius:'6px',padding:'0.4rem 0.8rem',cursor:'pointer' }}>✖ Close</button>
+              </div>
+              {/* Stepper */}
+              <div style={{ display:'flex',alignItems:'center',justifyContent:'center',padding:'1.25rem 2rem',gap:0 }}>
+                {[{n:0,label:'Quotation'},{n:1,label:'Challan'},{n:2,label:'Packing List'},{n:3,label:'Invoice'},{n:4,label:'Lorry Receipt'}].map((step,idx)=>(
+                  <div key={step.n} style={{ display:'flex',alignItems:'center' }}>
+                    <div style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:'0.3rem' }}>
+                      <div onClick={()=>pipelineStep>step.n&&setPipelineStep(step.n)} style={{ width:'34px',height:'34px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:'700',fontSize:'0.82rem',cursor:pipelineStep>step.n?'pointer':'default',background:pipelineStep>step.n?'var(--gold)':pipelineStep===step.n?'rgba(247,183,49,0.18)':'rgba(255,255,255,0.04)',border:pipelineStep>=step.n?'2px solid var(--gold)':'2px solid rgba(255,255,255,0.1)',color:pipelineStep>step.n?'#000':pipelineStep===step.n?'var(--gold)':'var(--gray-500)' }}>
+                        {pipelineStep>step.n?'✓':step.n+1}
+                      </div>
+                      <span style={{ fontSize:'0.68rem',color:pipelineStep>=step.n?'var(--gold)':'var(--gray-500)',fontWeight:pipelineStep===step.n?700:400,textAlign:'center',maxWidth:'68px' }}>{step.label}</span>
+                    </div>
+                    {idx<4&&<div style={{ width:'48px',height:'2px',background:pipelineStep>step.n?'var(--gold)':'rgba(255,255,255,0.1)',margin:'0 0 18px',flexShrink:0 }}/>}
+                  </div>
+                ))}
+              </div>
+              {/* Step Forms */}
+              <div style={{ padding:'0 1.5rem 1.5rem' }}>
+
+                {/* STEP 0 — Quotation */}
+                {pipelineStep===0&&(
+                  <div style={{ display:'grid',gridTemplateColumns:'1.1fr 0.9fr',gap:'1.5rem' }}>
+                    <div className={styles.paneCard}>
+                      <h3 className={styles.paneTitle}>📋 Step 1 of 5 — Quotation</h3>
+                      <form id="pipelineForm" onSubmit={handlePipelineSave0} className={styles.form}>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Quotation Ref No.</label><input type="text" className={styles.input} value={qRefNo} onChange={e=>setQRefNo(e.target.value)} placeholder="Leave blank for auto-gen"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Date</label><input type="text" className={styles.input} value={qDate} onChange={e=>setQDate(e.target.value)} placeholder="e.g. 05/07/2026"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Party Name *</label><input type="text" className={styles.input} required value={qName} onChange={e=>setQName(e.target.value)} placeholder="Customer full name"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Phone</label><input type="text" className={styles.input} value={qPhone} onChange={e=>setQPhone(e.target.value)} placeholder="Contact number"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Pickup From (Origin) *</label><input type="text" className={styles.input} required value={qOrigin} onChange={e=>setQOrigin(e.target.value)} placeholder="Full address"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Deliver To (Destination) *</label><input type="text" className={styles.input} required value={qDest} onChange={e=>setQDest(e.target.value)} placeholder="Delivery address"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Approx Distance (km)</label><input type="text" className={styles.input} value={qDistance} onChange={e=>setQDistance(e.target.value)} placeholder="e.g. 180 km"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Type of Move</label>
+                            <select className={styles.select} style={{padding:'0.8rem 1rem'}} value={qMovingType} onChange={e=>setQMovingType(e.target.value)}>
+                              <option>Household Relocation</option><option>Corporate Relocation</option><option>Vehicle Transport</option><option>Industrial Shifting</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Transport Charges * (Taxable)</label><input type="number" className={styles.input} required value={qTransportRate} onChange={e=>setQTransportRate(e.target.value)} placeholder="e.g. 45000"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Packing &amp; Labour * (Taxable)</label><input type="number" className={styles.input} required value={qPackingRate} onChange={e=>setQPackingRate(e.target.value)} placeholder="e.g. 8000"/></div>
+                        </div>
+                      </form>
+                    </div>
+                    <div className={styles.livePreviewContainer}>
+                      <div className={styles.livePreviewTitle}>📄 Live A4 Preview</div>
+                      <div className={styles.a4Paper} style={{transform:'scale(0.65)',transformOrigin:'top center',marginBottom:'-220px'}}>
+                        {renderPrintQuotation({refNo:qRefNo||'NPM/26-27/101',date:qDate||new Date().toLocaleDateString('en-GB'),name:qName||'PARTY NAME',phone:qPhone||'XXXXXXXXXX',origin:qOrigin||'Origin Address',destination:qDest||'Destination Address',distance:qDistance||'N/A',movingType:qMovingType,transportRate:parseFloat(qTransportRate)||0,packingRate:parseFloat(qPackingRate)||0,transportGst:parseFloat(((parseFloat(qTransportRate)||0)*0.05).toFixed(2)),packingGst:parseFloat(((parseFloat(qPackingRate)||0)*0.18).toFixed(2)),total:parseFloat((((parseFloat(qTransportRate)||0)*1.05)+((parseFloat(qPackingRate)||0)*1.18)).toFixed(2)),inventory:''})}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 1 — Challan */}
+                {pipelineStep===1&&(
+                  <div style={{ display:'grid',gridTemplateColumns:'1.1fr 0.9fr',gap:'1.5rem' }}>
+                    <div className={styles.paneCard}>
+                      <h3 className={styles.paneTitle}>🚛 Step 2 of 5 — Challan</h3>
+                      <form id="pipelineForm" onSubmit={handlePipelineSave1} className={styles.form}>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Challan Number</label><input type="text" className={styles.input} value={chChallanNo} onChange={e=>setChChallanNo(e.target.value)} placeholder="Leave blank for auto-gen"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Date</label><input type="text" className={styles.input} value={chDate} onChange={e=>setChDate(e.target.value)} placeholder="e.g. 05/07/2026"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Party Name *</label><input type="text" className={styles.input} required value={chName} onChange={e=>setChName(e.target.value)} placeholder="Customer full name"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Phone</label><input type="text" className={styles.input} value={chPhone} onChange={e=>setChPhone(e.target.value)} placeholder="Contact number"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Loading From (Origin) *</label><input type="text" className={styles.input} required value={chOrigin} onChange={e=>setChOrigin(e.target.value)} placeholder="Full address"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Deliver To (Destination) *</label><input type="text" className={styles.input} required value={chDest} onChange={e=>setChDest(e.target.value)} placeholder="Delivery address"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Vehicle Reg. No. *</label><input type="text" className={styles.input} required value={chVehicleNo} onChange={e=>setChVehicleNo(e.target.value.toUpperCase())} placeholder="e.g. JH-10-AC-5401"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Driver Name *</label><input type="text" className={styles.input} required value={chDriverName} onChange={e=>setChDriverName(e.target.value)} placeholder="Driver full name"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Driver License No.</label><input type="text" className={styles.input} value={chDriverLicense} onChange={e=>setChDriverLicense(e.target.value)} placeholder="DL-XXXXXXXXXXXX"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Driver Mobile</label><input type="text" className={styles.input} value={chDriverPhone} onChange={e=>setChDriverPhone(e.target.value)} placeholder="10-digit"/></div>
+                        </div>
+                        <div className={styles.inputGroup}><label className={styles.label}>Loading Supervisor Name</label><input type="text" className={styles.input} value={chSupervisor} onChange={e=>setChSupervisor(e.target.value)} placeholder="Supervisor name"/></div>
+                      </form>
+                    </div>
+                    <div className={styles.livePreviewContainer}>
+                      <div className={styles.livePreviewTitle}>📄 Live A4 Preview</div>
+                      <div className={styles.a4Paper} style={{transform:'scale(0.65)',transformOrigin:'top center',marginBottom:'-220px'}}>
+                        {renderPrintChallan({challanNo:chChallanNo||'NPM/CH/26-27/001',date:chDate||new Date().toLocaleDateString('en-GB'),name:chName||'PARTY NAME',phone:chPhone||'XXXXXXXXXX',origin:chOrigin||'Loading Address',destination:chDest||'Delivery Address',vehicleNo:chVehicleNo||'JH-XX-XX-XXXX',driverName:chDriverName||'Driver Name',driverLicense:chDriverLicense||'N/A',driverPhone:chDriverPhone||'N/A',supervisor:chSupervisor||'N/A'})}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 2 — Packing List */}
+                {pipelineStep===2&&(
+                  <div style={{ display:'grid',gridTemplateColumns:'1.1fr 0.9fr',gap:'1.5rem' }}>
+                    <div className={styles.paneCard}>
+                      <h3 className={styles.paneTitle}>📦 Step 3 of 5 — Packing List</h3>
+                      <form id="pipelineForm" onSubmit={handlePipelineSave2} className={styles.form}>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Ref No.</label><input type="text" className={styles.input} value={plRefNo} onChange={e=>setPlRefNo(e.target.value)} placeholder="Leave blank for auto-gen"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Date</label><input type="text" className={styles.input} value={plDate} onChange={e=>setPlDate(e.target.value)} placeholder="e.g. 05/07/2026"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Party Name *</label><input type="text" className={styles.input} required value={plName} onChange={e=>setPlName(e.target.value)} placeholder="Customer full name"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Phone</label><input type="text" className={styles.input} value={plPhone} onChange={e=>setPlPhone(e.target.value)} placeholder="Contact number"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>From (Origin) *</label><input type="text" className={styles.input} required value={plOrigin} onChange={e=>setPlOrigin(e.target.value)} placeholder="Full address"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>To (Destination) *</label><input type="text" className={styles.input} required value={plDest} onChange={e=>setPlDest(e.target.value)} placeholder="Delivery address"/></div>
+                        </div>
+                        <div style={{marginTop:'0.75rem'}}>
+                          <div style={{display:'grid',gridTemplateColumns:'1fr 70px 110px 32px',gap:'0.4rem',marginBottom:'0.4rem'}}>
+                            <span style={{color:'var(--gray-400)',fontSize:'0.78rem',fontWeight:600}}>Item Description</span>
+                            <span style={{color:'var(--gray-400)',fontSize:'0.78rem',fontWeight:600}}>Qty</span>
+                            <span style={{color:'var(--gray-400)',fontSize:'0.78rem',fontWeight:600}}>Condition</span>
+                            <span/>
+                          </div>
+                          {plRows.map((row,idx)=>(
+                            <div key={idx} style={{display:'grid',gridTemplateColumns:'1fr 70px 110px 32px',gap:'0.4rem',marginBottom:'0.4rem'}}>
+                              <input className={styles.input} style={{padding:'0.45rem 0.7rem'}} value={row.item} onChange={e=>{const r=[...plRows];r[idx].item=e.target.value;setPlRows(r);}} placeholder="e.g. Sofa Set"/>
+                              <input className={styles.input} style={{padding:'0.45rem 0.7rem'}} value={row.qty} onChange={e=>{const r=[...plRows];r[idx].qty=e.target.value;setPlRows(r);}} placeholder="1"/>
+                              <select className={styles.select} style={{padding:'0.45rem 0.5rem'}} value={row.condition} onChange={e=>{const r=[...plRows];r[idx].condition=e.target.value;setPlRows(r);}}>
+                                <option value="">Condition</option><option>Good</option><option>Fair</option><option>Fragile</option><option>Packed</option>
+                              </select>
+                              <button type="button" onClick={()=>setPlRows(plRows.filter((_,i)=>i!==idx))} style={{background:'rgba(220,53,69,0.15)',border:'1px solid rgba(220,53,69,0.3)',color:'#dc3545',borderRadius:'4px',cursor:'pointer',fontSize:'0.8rem'}}>✕</button>
+                            </div>
+                          ))}
+                          <button type="button" onClick={()=>setPlRows([...plRows,{item:'',qty:'',condition:''}])} style={{marginTop:'0.4rem',background:'rgba(247,183,49,0.08)',border:'1px dashed rgba(247,183,49,0.3)',color:'var(--gold)',borderRadius:'6px',padding:'0.4rem 1rem',cursor:'pointer',fontSize:'0.82rem',width:'100%'}}>+ Add Row</button>
+                        </div>
+                      </form>
+                    </div>
+                    <div className={styles.livePreviewContainer}>
+                      <div className={styles.livePreviewTitle}>📄 Live A4 Preview</div>
+                      <div className={styles.a4Paper} style={{transform:'scale(0.65)',transformOrigin:'top center',marginBottom:'-220px'}}>
+                        {renderPrintPackingList({refNo:plRefNo||'NPM/PL/26-27/001',date:plDate||new Date().toLocaleDateString('en-GB'),name:plName||'PARTY NAME',phone:plPhone||'XXXXXXXXXX',origin:plOrigin||'Origin',destination:plDest||'Destination',rows:plRows.filter(r=>r.item.trim())})}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 3 — GST Invoice */}
+                {pipelineStep===3&&(
+                  <div style={{ display:'grid',gridTemplateColumns:'1.1fr 0.9fr',gap:'1.5rem' }}>
+                    <div className={styles.paneCard}>
+                      <h3 className={styles.paneTitle}>💰 Step 4 of 5 — GST Invoice / Bill</h3>
+                      <form id="pipelineForm" onSubmit={handlePipelineSave3} className={styles.form}>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Bill Number</label><input type="text" className={styles.input} value={iBillNo} onChange={e=>setIBillNo(e.target.value)} placeholder="Leave blank for auto-gen"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Date</label><input type="text" className={styles.input} value={iDate} onChange={e=>setIDate(e.target.value)} placeholder="e.g. 05/07/2026"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Party Name *</label><input type="text" className={styles.input} required value={iName} onChange={e=>setIName(e.target.value)} placeholder="Customer full name"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Customer GST No.</label><input type="text" className={styles.input} value={iGst} onChange={e=>setIGst(e.target.value)} placeholder="Optional"/></div>
+                        </div>
+                        <div className={styles.inputGroup}><label className={styles.label}>Pickup From (Origin) *</label><input type="text" className={styles.input} required value={iOrigin} onChange={e=>setIOrigin(e.target.value)} placeholder="Full pickup address"/></div>
+                        <div className={styles.inputGroup}><label className={styles.label}>Deliver At (Destination) *</label><input type="text" className={styles.input} required value={iDest} onChange={e=>setIDest(e.target.value)} placeholder="Destination address details"/></div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>LR / Challan No.</label><input type="text" className={styles.input} value={iLrNo} onChange={e=>setILrNo(e.target.value)} placeholder="e.g. NPM/CH/26-27/001"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Vehicle No.</label><input type="text" className={styles.input} value={iVehicleNo} onChange={e=>setIVehicleNo(e.target.value)} placeholder="e.g. JH-10-AC-5401"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Transport Charges * (Taxable)</label><input type="number" className={styles.input} required value={iTransportRate} onChange={e=>setITransportRate(e.target.value)} placeholder="e.g. 72500"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Packing &amp; Labour * (Taxable)</label><input type="number" className={styles.input} required value={iPackingRate} onChange={e=>setIPackingRate(e.target.value)} placeholder="e.g. 0"/></div>
+                        </div>
+                        <div className={styles.inputGroup}><label className={styles.label}>Advance Paid Amount</label><input type="number" className={styles.input} value={iAdvancePaid} onChange={e=>setIAdvancePaid(e.target.value)} placeholder="e.g. 10000"/></div>
+                        {(iTransportRate||iPackingRate)&&<div style={{marginTop:'0.5rem',padding:'0.6rem 1rem',background:'rgba(247,183,49,0.06)',borderRadius:'6px',border:'1px solid rgba(247,183,49,0.15)',fontSize:'0.83rem',color:'var(--gray-300)'}}>Taxable: ₹{((parseFloat(iTransportRate)||0)+(parseFloat(iPackingRate)||0)).toLocaleString('en-IN')} | GST @18%: ₹{(((parseFloat(iTransportRate)||0)+(parseFloat(iPackingRate)||0))*0.18).toFixed(2)} | <strong style={{color:'var(--gold)'}}>Total: ₹{(((parseFloat(iTransportRate)||0)+(parseFloat(iPackingRate)||0))*1.18).toFixed(2)}</strong></div>}
+                      </form>
+                    </div>
+                    <div className={styles.livePreviewContainer}>
+                      <div className={styles.livePreviewTitle}>📄 Live A4 Preview</div>
+                      <div className={styles.a4Paper} style={{transform:'scale(0.65)',transformOrigin:'top center',marginBottom:'-220px'}}>
+                        {renderPrintInvoice({billNo:iBillNo||'NPM/26-27/101',date:iDate||new Date().toLocaleDateString('en-GB'),name:iName||'PARTY NAME',gst:iGst||'N/A',origin:iOrigin||'Origin',destination:iDest||'Destination',lrNo:iLrNo||'NPM/CH/26-27/001',vehicleNo:iVehicleNo||'N/A',transportRate:parseFloat(iTransportRate)||0,packingRate:parseFloat(iPackingRate)||0,taxableValue:(parseFloat(iTransportRate)||0)+(parseFloat(iPackingRate)||0),gstAmount:parseFloat((((parseFloat(iTransportRate)||0)+(parseFloat(iPackingRate)||0))*0.18).toFixed(2)),total:parseFloat((((parseFloat(iTransportRate)||0)+(parseFloat(iPackingRate)||0))*1.18).toFixed(2)),advance:parseFloat(iAdvancePaid)||0,balance:parseFloat((((parseFloat(iTransportRate)||0)+(parseFloat(iPackingRate)||0))*1.18-(parseFloat(iAdvancePaid)||0)).toFixed(2))})}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 4 — Lorry Receipt */}
+                {pipelineStep===4&&(
+                  <div style={{ display:'grid',gridTemplateColumns:'1.1fr 0.9fr',gap:'1.5rem' }}>
+                    <div className={styles.paneCard}>
+                      <h3 className={styles.paneTitle}>📋 Step 5 of 5 — Lorry Receipt / Bilty</h3>
+                      <form id="pipelineForm" onSubmit={handlePipelineSave4} className={styles.form}>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>LR Number</label><input type="text" className={styles.input} value={lrNumber} onChange={e=>setLrNumber(e.target.value)} placeholder="Leave blank for auto-gen"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Date</label><input type="text" className={styles.input} value={lrDate} onChange={e=>setLrDate(e.target.value)} placeholder="e.g. 05/07/2026"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Consigner Name *</label><input type="text" className={styles.input} required value={lrName} onChange={e=>setLrName(e.target.value)} placeholder="Sender full name"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Consigner Phone *</label><input type="text" className={styles.input} value={lrPhone} onChange={e=>setLrPhone(e.target.value)} placeholder="10-digit mobile"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Consigner GST No.</label><input type="text" className={styles.input} value={lrConsignerGst} onChange={e=>setLrConsignerGst(e.target.value)} placeholder="Optional"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Consignee GST No.</label><input type="text" className={styles.input} value={lrConsigneeGst} onChange={e=>setLrConsigneeGst(e.target.value)} placeholder="Optional"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Vehicle No. *</label><input type="text" className={styles.input} required value={lrVehicleNo} onChange={e=>setLrVehicleNo(e.target.value.toUpperCase())} placeholder="e.g. JH-10-AC-5401"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>HSN Code</label><input type="text" className={styles.input} value={lrHsn} onChange={e=>setLrHsn(e.target.value)} placeholder="e.g. 9965"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>From (Origin) *</label><input type="text" className={styles.input} required value={lrOrigin} onChange={e=>setLrOrigin(e.target.value)} placeholder="Loading city/address"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>To (Destination) *</label><input type="text" className={styles.input} required value={lrDest} onChange={e=>setLrDest(e.target.value)} placeholder="Delivery city/address"/></div>
+                        </div>
+                        <div className={styles.inputGroup}><label className={styles.label}>Goods Description</label><input type="text" className={styles.input} value={lrGoodsDesc} onChange={e=>setLrGoodsDesc(e.target.value)} placeholder="e.g. Household Goods as per Packing List"/></div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Total Weight (kg)</label><input type="text" className={styles.input} value={lrWeight} onChange={e=>setLrWeight(e.target.value)} placeholder="Approx kg"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Volume (CFT)</label><input type="text" className={styles.input} value={lrVolume} onChange={e=>setLrVolume(e.target.value)} placeholder="Cubic feet"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Freight Charges (Rs.)</label><input type="number" className={styles.input} value={lrFreight} onChange={e=>setLrFreight(e.target.value)} placeholder="e.g. 45000"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Packing Charges (Rs.)</label><input type="number" className={styles.input} value={lrPacking} onChange={e=>setLrPacking(e.target.value)} placeholder="e.g. 5000"/></div>
+                        </div>
+                        <div className={styles.formGrid}>
+                          <div className={styles.inputGroup}><label className={styles.label}>Labour Charges (Rs.)</label><input type="number" className={styles.input} value={lrLabour} onChange={e=>setLrLabour(e.target.value)} placeholder="e.g. 2000"/></div>
+                          <div className={styles.inputGroup}><label className={styles.label}>Insurance (Rs.)</label><input type="number" className={styles.input} value={lrInsurance} onChange={e=>setLrInsurance(e.target.value)} placeholder="e.g. 500"/></div>
+                        </div>
+                        <div style={{textAlign:'right',padding:'0.6rem 1rem',background:'rgba(247,183,49,0.06)',borderRadius:'6px',border:'1px solid rgba(247,183,49,0.15)',fontSize:'0.95rem',fontWeight:700,color:'var(--gold)',marginTop:'0.25rem'}}>Grand Total: Rs.{((parseFloat(lrFreight)||0)+(parseFloat(lrPacking)||0)+(parseFloat(lrLabour)||0)+(parseFloat(lrInsurance)||0)).toLocaleString('en-IN',{minimumFractionDigits:2})}</div>
+                      </form>
+                    </div>
+                    <div className={styles.livePreviewContainer}>
+                      <div className={styles.livePreviewTitle}>📄 Live A4 Preview</div>
+                      <div className={styles.a4Paper} style={{transform:'scale(0.65)',transformOrigin:'top center',marginBottom:'-220px'}}>
+                        {renderPrintBilty({lrNo:lrNumber||'NPM/LR/26-27/001',date:lrDate||new Date().toLocaleDateString('en-GB'),name:lrName||'PARTY NAME',phone:lrPhone||'XXXXXXXXXX',consignerGst:lrConsignerGst||'N/A',consigneeGst:lrConsigneeGst||'N/A',vehicleNo:lrVehicleNo||'JH-XX-XX-XXXX',origin:lrOrigin||'Origin',destination:lrDest||'Destination',goodsDesc:lrGoodsDesc,weight:lrWeight||'N/A',volume:lrVolume||'N/A',hsn:lrHsn||'9965',freight:parseFloat(lrFreight)||0,packing:parseFloat(lrPacking)||0,labour:parseFloat(lrLabour)||0,insurance:parseFloat(lrInsurance)||0,grandTotal:(parseFloat(lrFreight)||0)+(parseFloat(lrPacking)||0)+(parseFloat(lrLabour)||0)+(parseFloat(lrInsurance)||0)})}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+              {/* Footer */}
+              <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',borderTop:'1px solid rgba(255,255,255,0.06)',padding:'1.1rem 2rem',gap:'1rem',flexWrap:'wrap' }}>
+                <div style={{ display:'flex',gap:'0.75rem' }}>
+                  {pipelineStep>0&&<button type="button" onClick={()=>setPipelineStep(s=>s-1)} style={{ background:'transparent',border:'1px solid rgba(255,255,255,0.15)',color:'var(--gray-300)',padding:'0.55rem 1.2rem',borderRadius:'6px',cursor:'pointer',fontSize:'0.9rem' }}>&#8592; Back</button>}
+                  <button type="button" onClick={()=>advancePipeline({},pipelineStep)} style={{ background:'transparent',border:'1px solid rgba(255,255,255,0.1)',color:'var(--gray-500)',padding:'0.55rem 1.2rem',borderRadius:'6px',cursor:'pointer',fontSize:'0.85rem' }}>Skip This Step &#8594;</button>
+                </div>
+                <button type="submit" form="pipelineForm" style={{ background:'var(--gold)',color:'#000',border:'none',padding:'0.65rem 2rem',borderRadius:'8px',fontWeight:700,fontSize:'0.95rem',cursor:'pointer' }}>
+                  {pipelineStep<4?'Save & Continue \u2192':'\u2705 Save & Finish'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* LEAD VIEW PANEL */}
+        {viewLeadOpen && viewingLead && (
+          <div style={{ position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.85)',zIndex:9998,display:'flex',alignItems:'flex-start',justifyContent:'center',overflowY:'auto',padding:'2rem 1rem' }}>
+            <div style={{ background:'#0d1b2a',border:'1px solid rgba(96,165,250,0.2)',borderRadius:'14px',width:'100%',maxWidth:'860px',boxShadow:'0 24px 80px rgba(0,0,0,0.6)' }}>
+              {/* Header */}
+              <div style={{ display:'flex',justifyContent:'space-between',alignItems:'flex-start',borderBottom:'1px solid rgba(96,165,250,0.15)',padding:'1.5rem 2rem' }}>
+                <div>
+                  <h2 style={{ margin:0,color:'#60a5fa',fontSize:'1.15rem',fontWeight:700 }}>&#128065;&#65039; Lead Details &#8212; {viewingLead.name}</h2>
+                  <p style={{ margin:'0.25rem 0 0',color:'var(--gray-400)',fontSize:'0.82rem' }}>Source: {viewingLead.source} &nbsp;|&nbsp; Status: {viewingLead.status} &nbsp;|&nbsp; {new Date(viewingLead.created_at).toLocaleDateString('en-IN')}</p>
+                </div>
+                <button type="button" onClick={()=>setViewLeadOpen(false)} style={{ background:'transparent',border:'1px solid rgba(255,255,255,0.15)',color:'var(--gray-300)',borderRadius:'6px',padding:'0.4rem 0.8rem',cursor:'pointer' }}>&#10006; Close</button>
+              </div>
+              {/* Lead Info */}
+              <div style={{ padding:'1.5rem 2rem',display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:'1rem',borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+                {[
+                  {label:'Phone',value:<a href={'tel:'+viewingLead.phone} style={{color:'var(--gold)'}}>{viewingLead.phone}</a>},
+                  {label:'Email',value:viewingLead.email||'N/A'},
+                  {label:'From',value:viewingLead.from_city||'N/A'},
+                  {label:'To',value:viewingLead.to_city||'N/A'},
+                  {label:'Moving Date',value:viewingLead.moving_date||'N/A'},
+                  {label:'WhatsApp',value:<a href={'https://wa.me/91'+(viewingLead.phone||'').replace(/\D/g,'')} target="_blank" rel="noopener noreferrer" style={{color:'#25d366'}}>Open Chat</a>},
+                ].map((f,i)=>(
+                  <div key={i} style={{ background:'rgba(255,255,255,0.03)',borderRadius:'8px',padding:'0.75rem 1rem',border:'1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ fontSize:'0.72rem',color:'var(--gray-500)',fontWeight:600,marginBottom:'0.3rem',textTransform:'uppercase' }}>{f.label}</div>
+                    <div style={{ fontSize:'0.88rem',color:'var(--white)',fontWeight:500 }}>{f.value}</div>
+                  </div>
+                ))}
+                {viewingLead.notes&&(<div style={{ gridColumn:'1 / -1',background:'rgba(255,255,255,0.03)',borderRadius:'8px',padding:'0.75rem 1rem',border:'1px solid rgba(255,255,255,0.05)' }}><div style={{ fontSize:'0.72rem',color:'var(--gray-500)',fontWeight:600,marginBottom:'0.3rem',textTransform:'uppercase' }}>Notes</div><div style={{ fontSize:'0.85rem',color:'var(--gray-300)',fontStyle:'italic' }}>{viewingLead.notes}</div></div>)}
+              </div>
+              {/* Documents */}
+              <div style={{ padding:'1.5rem 2rem' }}>
+                <h3 style={{ margin:'0 0 1rem',color:'var(--white)',fontSize:'0.95rem',fontWeight:700 }}>Documents Generated for this Lead</h3>
+                {(()=>{
+                  const lid=viewingLead.id;
+                  const docs=[
+                    ...bmsQuotes.filter(d=>d.leadId===lid).map(d=>({...d,docType:'Quotation',icon:'Quotation',ref:d.refNo,summary:'Total: Rs.'+d.total?.toLocaleString?.()})),
+                    ...bmsChallans.filter(d=>d.leadId===lid).map(d=>({...d,docType:'Challan',icon:'Challan',ref:d.challanNo,summary:'Vehicle: '+d.vehicleNo})),
+                    ...bmsItems.filter(d=>d.leadId===lid).map(d=>({...d,docType:'Packing List',icon:'Packing List',ref:d.refNo,summary:(d.rows?.length||0)+' items'})),
+                    ...bmsInvoices.filter(d=>d.leadId===lid).map(d=>({...d,docType:'GST Invoice',icon:'GST Invoice',ref:d.billNo,summary:'Total: Rs.'+d.total?.toLocaleString?.()})),
+                    ...bmsLorryReceipts.filter(d=>d.leadId===lid).map(d=>({...d,docType:'Lorry Receipt',icon:'Lorry Receipt',ref:d.lrNo,summary:'Grand Total: Rs.'+d.grandTotal?.toLocaleString?.()})),
+                  ];
+                  if(docs.length===0)return(<div style={{ textAlign:'center',padding:'2rem',color:'var(--gray-500)',fontSize:'0.9rem',lineHeight:1.6 }}>No documents generated yet for this lead.<br/><span style={{ fontSize:'0.8rem' }}>Click the Generate Document button to start the pipeline.</span></div>);
+                  return docs.map((doc,i)=>(
+                    <div key={i} style={{ background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:'8px',padding:'0.9rem 1.25rem',marginBottom:'0.75rem' }}>
+                      <div style={{ display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:'0.75rem' }}>
+                        <div>
+                          <div style={{ fontWeight:700,color:'var(--white)',fontSize:'0.9rem' }}>{doc.icon}</div>
+                          <div style={{ fontSize:'0.78rem',color:'var(--gold)',marginTop:'0.2rem' }}>{doc.ref}</div>
+                          <div style={{ fontSize:'0.78rem',color:'var(--gray-400)',marginTop:'0.1rem' }}>{doc.date} &nbsp;|&nbsp; {doc.summary}</div>
+                        </div>
+                        <div style={{ display:'flex',gap:'0.5rem',flexWrap:'wrap' }}>
+                          <button type="button" onClick={()=>handleViewDocEdit(doc)} style={{ background:'rgba(59,130,246,0.15)',border:'1px solid rgba(59,130,246,0.35)',color:'#60a5fa',padding:'0.45rem 1rem',borderRadius:'6px',fontWeight:600,fontSize:'0.8rem',cursor:'pointer',whiteSpace:'nowrap' }}>
+                            ✏️ Edit
+                          </button>
+                          <button type="button" onClick={()=>handleViewDocDelete(doc)} style={{ background:'rgba(220,53,69,0.12)',border:'1px solid rgba(220,53,69,0.3)',color:'#f87171',padding:'0.45rem 1rem',borderRadius:'6px',fontWeight:600,fontSize:'0.8rem',cursor:'pointer',whiteSpace:'nowrap' }}>
+                            🗑️ Delete
+                          </button>
+                          <button type="button" onClick={()=>{ setActiveBmsItem(doc); setBmsPrintMode(true); }} style={{ background:'var(--gold)',color:'#000',border:'none',padding:'0.45rem 1rem',borderRadius:'6px',fontWeight:700,fontSize:'0.8rem',cursor:'pointer',whiteSpace:'nowrap' }}>
+                            🖨️ Print / Download
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ));
+                })()}
               </div>
             </div>
           </div>
