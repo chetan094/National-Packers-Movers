@@ -22,7 +22,7 @@ const STATE_CITIES = {
   ],
   'west-bengal': [
     'kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur', 
-    'haldia', 'bardhaman', 'burdwan', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 
+    'haldia', 'bardhaman', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 
     'bankura', 'midnapore', 'medinipur', 'krishnanagar', 'barasat', 'barrackpore', 
     'serampore', 'chinsurah', 'shantiniketan', 'bolpur', 'raniganj', 'burnpur', 'salt-lake', 'newtown', 'rajarhat'
   ],
