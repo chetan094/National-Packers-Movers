@@ -1,7 +1,44 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { routesData } from '@/data/routesData';
 import styles from './page.module.css';
 import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
+
+const STATE_CITIES = {
+  'jharkhand': [
+    'dhanbad', 'ranchi', 'bokaro', 'deoghar', 'jamshedpur', 'hazaribagh', 'giridih', 
+    'ramgarh', 'medininagar', 'daltonganj', 'chas', 'adityapur', 'dumka', 'chatra', 
+    'gumla', 'kodarma', 'koderma', 'pakur', 'sahibganj', 'sahebganj', 'simdega', 
+    'latehar', 'khunti', 'saraikela', 'garhwa', 'lohardaga', 'ghatsila', 'phusro', 
+    'katras', 'jharia', 'govindpur', 'dhansar', 'chirkunda', 'sindri', 'jasidih', 'madhupur'
+  ],
+  'west-bengal': [
+    'kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur', 
+    'haldia', 'bardhaman', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 
+    'bankura', 'midnapore', 'medinipur', 'krishnanagar', 'barasat', 'barrackpore', 
+    'serampore', 'chinsurah', 'shantiniketan', 'bolpur', 'raniganj', 'burnpur', 'salt-lake', 'newtown', 'rajarhat'
+  ],
+  'bihar': [
+    'patna', 'bhagalpur', 'gaya', 'muzaffarpur', 'purnia', 'darbhanga', 'bihar-sharif', 
+    'ara', 'arrah', 'begusarai', 'katihar', 'munger', 'chhapra', 'danapur', 'bettiah', 
+    'saharsa', 'hajipur', 'sasaram', 'motihari', 'siwan', 'madhubani', 'buxar', 'jehanabad', 
+    'aurangabad', 'nawada', 'jamui', 'kishanganj', 'samastipur', 'lakhisarai', 'gopalganj'
+  ],
+  'madhya-pradesh': [
+    'singrauli', 'waidhan', 'bhopal', 'indore', 'jabalpur', 'gwalior', 'ujjain', 'sagar', 
+    'dewas', 'satna', 'ratlam', 'rewa', 'katni', 'morwa', 'vindhyanagar', 'jayant', 'dudhichua'
+  ],
+  'odisha': [
+    'bhubaneswar', 'cuttack', 'rourkela', 'brahmapur', 'berhampur', 'sambalpur', 'puri', 
+    'balasore', 'bhadrak', 'baripada', 'jharsuguda', 'jeypore', 'rayagada', 'angul', 'balangir'
+  ],
+  'uttar-pradesh': [
+    'lucknow', 'kanpur', 'ghaziabad', 'agra', 'meerut', 'varanasi', 'prayagraj', 'allahabad', 
+    'bareilly', 'aligarh', 'moradabad', 'saharanpur', 'gorakhpur', 'noida', 'greater-noida', 
+    'jhansi', 'muzaffarnagar', 'mathura', 'ayodhya', 'faizabad', 'firozabad', 'mirzapur', 
+    'jaunpur', 'hapur', 'loni', 'pilkhuwa', 'coming-soon'
+  ]
+};
 
 const RELOCATION_SERVICES = [
   { slug: 'household-relocation', name: 'Household Relocation', icon: '🏠', desc: 'Secure home shifting with multi-layer packing.', color: '#F7B731' },
@@ -49,6 +86,20 @@ function getRouteData(routeParam) {
 // Generate dynamic metadata for search engines
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
+  const routeParam = resolvedParams.route || '';
+  const parts = routeParam.split('-to-');
+  const origin = parts[0]?.toLowerCase() || '';
+  const allCities = Object.values(STATE_CITIES).flat();
+  const isValidOrigin = allCities.includes(origin);
+
+  if (!isValidOrigin) {
+    return {
+      title: 'Route Not Found | National Packers & Movers',
+      description: 'The requested interstate transit corridor route could not be found.',
+      robots: { index: false, follow: false }
+    };
+  }
+
   const route = getRouteData(resolvedParams.route);
   return {
     title: `Packers and Movers from ${route.originName} to ${route.destinationName} | National Packers & Movers`,
@@ -59,6 +110,16 @@ export async function generateMetadata({ params }) {
 
 export default async function RoutePage({ params }) {
   const resolvedParams = await params;
+  const routeParam = resolvedParams.route || '';
+  const parts = routeParam.split('-to-');
+  const origin = parts[0]?.toLowerCase() || '';
+  const allCities = Object.values(STATE_CITIES).flat();
+  const isValidOrigin = allCities.includes(origin);
+
+  if (!isValidOrigin) {
+    notFound();
+  }
+
   const route = getRouteData(resolvedParams.route);
 
   // Structured data schemas

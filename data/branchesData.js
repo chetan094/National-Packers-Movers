@@ -122,13 +122,14 @@ export const branchesData = {
       title: 'Packers and Movers in Dhanbad (HQ) | National Packers & Movers',
       description: 'HQ of National Packers & Movers. 38+ years of trusted home shifting, office relocation, and vehicle transport in Dhanbad. Call 9835168368 for free quote.',
       keywords: 'packers and movers dhanbad, best packers movers dhanbad, house shifting dhanbad, office relocation dhanbad, trusted packers 1987',
-      address: 'Kasturba Nagar, Near Dhanbad Thana, Dhanbad, Jharkhand — 826001',
+      address: 'Shop No. 1, Building Campus, Kutchery Road, beside Green View Petrol Pump, Kasturba Nagar, Dhanbad, Jharkhand — 826001',
       phone: '9835168368 / 9934166164',
+      justdial: 'https://jsdl.in/DT-99I3Q9LVTWT',
       mapEmbed: 'https://maps.google.com/maps?q=National%20Packers%20%26%20Movers%2C%20Beside%20Green%20View%20Petrol%20Pump%2C%20Kasturba%20Nagar%2C%20Dhanbad%2C%20Jharkhand%20826001&t=&z=15&ie=UTF8&iwloc=&output=embed',
       tagline: 'Our Headquarters — The Core of Our Operations',
       introText: 'As our central headquarters, our Dhanbad branch represents the pinnacle of National Packers & Movers. Since 1987, we have been the undisputed leaders in home shifting, office relocation, and industrial transport in Dhanbad, Katras, Jharia, and surrounding coalfields. With our fully owned fleet, background-verified packing crew, and direct supervisor monitoring, your move is in safe, professional hands.',
       faqs: [
-        { q: 'Where is your main office located in Dhanbad?', a: 'Our central headquarters is located at Kasturba Nagar, Near Dhanbad Thana, Dhanbad, Jharkhand - 826001. You are welcome to visit us, or call us at 9835168368 to schedule a free pre-move survey.' },
+        { q: 'Where is your main office located in Dhanbad?', a: 'Our central headquarters is located at Shop No. 1, Building Campus, Kutchery Road, beside Green View Petrol Pump, Kasturba Nagar, Dhanbad, Jharkhand - 826001. You are welcome to visit us, or call us at 9835168368 to schedule a free pre-move survey.' },
         { q: 'Do you offer local packing and shifting within Dhanbad city?', a: 'Yes, we handle local home and office shifting within Dhanbad (Jharia, Katras, Govindpur, Saraidhela) as well as long-distance moves from Dhanbad to any city across India.' },
         { q: 'Are your packing charges transparent?', a: 'Absolutely. We stand by our motto: "Honesty is not our policy, but our Principle." The quote we give you after assessing your goods is final. There are zero hidden costs or surprise surcharges.' }
       ],

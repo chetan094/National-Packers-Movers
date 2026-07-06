@@ -718,6 +718,30 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                     </div>
                   </div>
 
+                  {/* Justdial Verified Rating Badge */}
+                  {isCity && data.justdial && (
+                    <div className={styles.sidebarCard} style={{ marginTop: '1.5rem', background: 'linear-gradient(135deg, #1C2B40 0%, #0F1A2A 100%)', borderColor: 'rgba(247, 183, 49, 0.25)' }} data-reveal="up" data-delay="210">
+                      <h3 className={styles.sidebarTitle} style={{ color: 'var(--gold)' }}>🌟 Justdial Verified</h3>
+                      <div className={styles.sidebarDivider} />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '1rem' }}>
+                        <span style={{ fontSize: '2.2rem', color: '#F7B731', fontWeight: 'bold', fontFamily: 'var(--font-heading)' }}>4.7</span>
+                        <div>
+                          <div style={{ color: '#F7B731', fontSize: '1.1rem', letterSpacing: '1px' }}>★★★★★</div>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--gray-300)', margin: 0 }}>490+ Customer Ratings</p>
+                        </div>
+                      </div>
+                      <a 
+                        href={data.justdial}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-secondary btn-sm"
+                        style={{ width: '100%', justifyContent: 'center', marginTop: '1.25rem', borderColor: '#F7B731', color: 'var(--white)' }}
+                      >
+                        View Justdial Profile ➔
+                      </a>
+                    </div>
+                  )}
+
                   {/* Areas Served Card (City Pages Only) */}
                   {isCity && localitiesList.length > 0 && (
                     <div className={styles.localitiesCard} data-reveal="up" data-delay="250">
