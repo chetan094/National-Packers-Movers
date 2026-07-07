@@ -199,7 +199,8 @@ const COORDINATES_MAP = {
   lucknow: { lat: 26.8467, lon: 80.9462 },
   kanpur: { lat: 26.4499, lon: 80.3319 },
   ghaziabad: { lat: 28.6692, lon: 77.4538 },
-  noida: { lat: 28.5355, lon: 77.3910 }
+  noida: { lat: 28.5355, lon: 77.3910 },
+  hazaribagh: { lat: 24.006557, lon: 85.348945 }
 };
 
 export default async function BranchPage({ data, isCity = false, stateData = null }) {
@@ -432,7 +433,8 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
     'sameAs': [
       'https://www.facebook.com/thenationalpackersmovers/',
       'https://twitter.com/natpackers',
-      'https://www.youtube.com/@nationalpackersmovers'
+      'https://www.youtube.com/@nationalpackersmovers',
+      ...(data.justdial ? [data.justdial] : [])
     ],
     'parentOrganization': {
       '@type': 'MovingCompany',
@@ -449,10 +451,10 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
     },
     'aggregateRating': {
       '@type': 'AggregateRating',
-      'ratingValue': '4.9',
+      'ratingValue': data.justdialRating ? String(data.justdialRating) : '4.9',
       'bestRating': '5',
       'worstRating': '1',
-      'reviewCount': String(displayTestimonials.length)
+      'reviewCount': data.justdialReviewCount ? String(data.justdialReviewCount) : String(displayTestimonials.length)
     },
     'review': displayTestimonials.map(t => ({
       '@type': 'Review',
@@ -547,11 +549,6 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
             <a href="tel:9835168368" className="btn btn-secondary btn-lg">
               📞 Call HQ — 9835168368
             </a>
-          </div>
-          <div className={styles.heroContacts}>
-            <span>📞 9835168368</span>
-            <span className={styles.heroDivider}>|</span>
-            <span>📞 9934166164</span>
           </div>
         </div>
         <div className={styles.heroImageSide}>
@@ -724,10 +721,16 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                       <h3 className={styles.sidebarTitle} style={{ color: 'var(--gold)' }}>🌟 Justdial Verified</h3>
                       <div className={styles.sidebarDivider} />
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '1rem' }}>
-                        <span style={{ fontSize: '2.2rem', color: '#F7B731', fontWeight: 'bold', fontFamily: 'var(--font-heading)' }}>4.7</span>
+                        <span style={{ fontSize: '2.2rem', color: '#F7B731', fontWeight: 'bold', fontFamily: 'var(--font-heading)' }}>
+                          {data.justdialRating ? Number(data.justdialRating).toFixed(1) : '4.7'}
+                        </span>
                         <div>
-                          <div style={{ color: '#F7B731', fontSize: '1.1rem', letterSpacing: '1px' }}>★★★★★</div>
-                          <p style={{ fontSize: '0.8rem', color: 'var(--gray-300)', margin: 0 }}>490+ Customer Ratings</p>
+                          <div style={{ color: '#F7B731', fontSize: '1.1rem', letterSpacing: '1px' }}>
+                            {"★".repeat(Math.round(data.justdialRating || 4.7)) + "☆".repeat(5 - Math.round(data.justdialRating || 4.7))}
+                          </div>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--gray-300)', margin: 0 }}>
+                            {data.justdialReviewCount ? `${data.justdialReviewCount}+` : '490+'} Customer Ratings
+                          </p>
                         </div>
                       </div>
                       <a 

@@ -140,6 +140,7 @@ export default function Footer() {
               <li><Link href="/track-shipment" className={styles.footerLink}>→ Track Shipment</Link></li>
               <li><Link href="/gallery" className={styles.footerLink}>→ Gallery</Link></li>
               <li><Link href="/testimonials" className={styles.footerLink}>→ Testimonials</Link></li>
+              <li><Link href="/faqs" className={styles.footerLink}>→ FAQs</Link></li>
               <li><Link href="/blog" className={styles.footerLink}>→ Blog</Link></li>
               <li><Link href="/contact" className={styles.footerLink}>→ Contact</Link></li>
               <li><Link href="/billing-claim-kit" className={styles.footerLink}>→ Relocation Claim Kit</Link></li>

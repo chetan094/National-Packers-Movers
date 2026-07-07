@@ -6,13 +6,7 @@ import { trackEvent } from '@/lib/analytics';
 
 export default function WhatsAppButton() {
   const pathname = usePathname();
-  if (pathname?.startsWith('/admin')) {
-    return null;
-  }
   const [showScroll, setShowScroll] = useState(false);
-  const phoneNumber = '919835168368';
-  const message = encodeURIComponent('Hello! I would like to get a free quote for relocation services from National Packers & Movers.');
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,6 +15,14 @@ export default function WhatsAppButton() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
+  const phoneNumber = '919835168368';
+  const message = encodeURIComponent('Hello! I would like to get a free quote for relocation services from National Packers & Movers.');
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -7,7 +7,7 @@ export const branchesData = {
       keywords: 'packers and movers jharkhand, home shifting services jharkhand, packers movers dhanbad, relocation ranchi, bokaro steel city transport',
       introTitle: 'Moving Jharkhand Safely Since 1987',
       introText: 'With over 38 years of logistics excellence, National Packers & Movers is the premier brand for shifting in Jharkhand. Founded by Debabrata Jhampaty, we started our journey here and have expanded to cover the entire state. From household shifting in Ranchi to heavy industrial transport in Dhanbad and Bokaro, we handle every relocation with our principle of absolute honesty.',
-      cities: ['dhanbad', 'ranchi', 'bokaro', 'deoghar'],
+      cities: ['dhanbad', 'ranchi', 'bokaro', 'deoghar', 'hazaribagh'],
       stats: [
         { number: 45000, suffix: '+', label: 'Moves in Jharkhand' },
         { number: 38, suffix: '', label: 'Years Trusted Legacy' },
@@ -125,6 +125,8 @@ export const branchesData = {
       address: 'Shop No. 1, Building Campus, Kutchery Road, beside Green View Petrol Pump, Kasturba Nagar, Dhanbad, Jharkhand — 826001',
       phone: '9835168368 / 9934166164',
       justdial: 'https://jsdl.in/DT-99I3Q9LVTWT',
+      justdialRating: 4.7,
+      justdialReviewCount: 490,
       mapEmbed: 'https://maps.google.com/maps?q=National%20Packers%20%26%20Movers%2C%20Beside%20Green%20View%20Petrol%20Pump%2C%20Kasturba%20Nagar%2C%20Dhanbad%2C%20Jharkhand%20826001&t=&z=15&ie=UTF8&iwloc=&output=embed',
       tagline: 'Our Headquarters — The Core of Our Operations',
       introText: 'As our central headquarters, our Dhanbad branch represents the pinnacle of National Packers & Movers. Since 1987, we have been the undisputed leaders in home shifting, office relocation, and industrial transport in Dhanbad, Katras, Jharia, and surrounding coalfields. With our fully owned fleet, background-verified packing crew, and direct supervisor monitoring, your move is in safe, professional hands.',
@@ -165,13 +167,17 @@ export const branchesData = {
       name: 'Bokaro',
       stateSlug: 'jharkhand',
       stateName: 'Jharkhand',
-      latitude: 23.6693,
-      longitude: 86.1511,
+      latitude: 23.659194,
+      longitude: 86.152283,
       title: 'Packers and Movers in Bokaro Steel City | Employee Relocations',
       description: 'Reliable shifting services in Bokaro Steel City. Dedicated packing & moving services for BSL employees, fully insured transit. Get a free quote.',
       keywords: 'packers and movers bokaro, packers movers bokaro steel city, home shifting bokaro, bsl employee relocation',
-      address: 'Bokaro Steel City Branch Office (Bookings coordinated through HQ)',
+      address: 'Indira Gandhi Marg, Sector 3/C, Near Bokaro Mall, Bokaro Steel City, Sector 3, Bokaro-827003, Jharkhand',
       phone: '9835168368 / 9934166164',
+      justdial: 'https://jsdl.in/DT-99RKM1VIUJ9',
+      justdialRating: 5.0,
+      justdialReviewCount: 160,
+      mapEmbed: 'https://maps.google.com/maps?q=23.659194,86.152283(National%20Packers%20%26%20Movers%20-%20Bokaro)&t=&z=15&ie=UTF8&iwloc=&output=embed',
       tagline: 'Reliable Moving Partners for the Steel City',
       introText: 'Bokaro Steel City is a major hub of public sector employees. We specialize in handling employee relocations for Bokaro Steel Plant (BSL) and other corporate entities. We understand the reimbursement requirements of PSU employees and provide complete, verified billing documents, itemized packing lists, and IBA-aligned transport receipts.',
       faqs: [
@@ -180,27 +186,70 @@ export const branchesData = {
       ],
       testimonials: [
         { name: 'Kirpal Kumar', text: 'I recently used National Packers & Movers for my relocation from Bokaro to Kolkata. They provided a systematic approach to moving, ensuring everything was organized and efficient. Highly professional packers and movers in Bokaro Steel City.', rating: 5, initials: 'KK' },
-        { name: 'Amit Dayal', text: 'They are very professional and shifted my household goods from Bokaro Steel City to Ranchi safely. High-quality bubble wraps and heavy-duty box packing were used. Commendable home shifting Bokaro.', rating: 5, initials: 'AD' }
+        { name: 'Amit Dayal', text: 'They are very professional and shifted my household goods from Bokaro Steel City to Ranchi safely. High-quality bubble wraps and heavy-duty box packing were used. Commendable home shifting Bokaro.', rating: 5, initials: 'AD' },
+        { name: 'Harman', text: 'I had a good experience with National Packers and Movers. Their prices are reasonable and the instructions they gave me were clear and helpful. I felt supported during the moving process. Overall, I am happy with their service.', rating: 5, source: 'justdial' },
+        { name: 'Ankit kumar', text: 'National Packers and Movers is excellent! The location is central, making it simple for everyone to reach. The staff is friendly and helpful. They make moving fun and stress-free. I had a great experience using their services.', rating: 5, source: 'justdial' },
+        { name: 'Aman kumar', text: 'I recently used National Packers and Movers for my relocation, and I couldn\'t be more satisfied! From packing to unloading, they handled my belongings with utmost care. Highly recommend their services for a stress-free move!', rating: 5, source: 'justdial' },
+        { name: 'Aniket kumar', text: 'I recently used National Packers and Movers, and I am very impressed! Their quick assistance was excellent. The team was friendly and worked efficiently, making my experience stress-free. I highly recommend them!', rating: 5, source: 'justdial' },
+        { name: 'Mohit Sheladiya', text: 'National Packers and Movers is great! When I needed to move, they came quickly and were very friendly. They packed my things safely and took care of everything. Excellent job, recommend them!', rating: 5, source: 'justdial' }
       ]
     },
     'deoghar': {
       name: 'Deoghar',
       stateSlug: 'jharkhand',
       stateName: 'Jharkhand',
-      latitude: 24.4820,
-      longitude: 86.7001,
+      latitude: 24.491825,
+      longitude: 86.694692,
       title: 'Packers and Movers in Deoghar | Safe Home Shifting',
       description: 'Secure household relocation, luggage shifting & bike transport in Deoghar. 100% safe packing, verified staff. Contact us today.',
       keywords: 'packers and movers deoghar, house shifting deoghar, luggage transport deoghar',
-      address: 'Deoghar Branch Office (Bookings coordinated through HQ)',
+      address: 'Tower Chowk, Branch Office Dhanbad, Main Road, Deoghar, Deoghar-Jharkhand-814112, Jharkhand',
       phone: '9835168368 / 9934166164',
+      justdial: 'https://jsdl.in/DT-997GWBZ7QFB',
+      justdialRating: 5.0,
+      justdialReviewCount: 290,
+      mapEmbed: 'https://maps.google.com/maps?q=24.491825,86.694692(National%20Packers%20%26%20Movers%20-%20Deoghar)&t=&z=15&ie=UTF8&iwloc=&output=embed',
       tagline: 'Serving the Holy City with Devotion and Care',
       introText: 'We bring our professional moving standards to Deoghar, ensuring that your households, luggage, and commercial goods are relocated with the highest standards of safety, care, and honesty. Whether you are moving to/from Jasidih, Madhupur, or Deoghar town, our packers handle your belongings with reverence and care.',
       faqs: [
         { q: 'Can I book bike transportation from Deoghar?', a: 'Yes, we pack bikes with multiple layers of bubble wrap, corrugated sheets, and stretch film to prevent any scratches during transit.' }
       ],
       testimonials: [
-        { name: 'S. R. Verma', text: 'Very genuine service. All my goods are well transported from Deoghar to Noida. I will proudly recommend National Packers and Movers as the best movers and packers in Deoghar. Thanks!', rating: 5, initials: 'SRV' }
+        { name: 'S. R. Verma', text: 'Very genuine service. All my goods are well transported from Deoghar to Noida. I will proudly recommend National Packers and Movers as the best movers and packers in Deoghar. Thanks!', rating: 5, initials: 'SRV' },
+        { name: 'Rakesh Kumar Rathore', text: 'I had an excellent experience with National Packers And Movers. They offer safe packaging, which made me feel confident about my items. The prices are reasonable and their service is great. Highly recommend!', rating: 5, source: 'justdial' },
+        { name: 'SHORYA PRATAP', text: 'I recently used National Packers And Movers, and I am very happy with their service! They gave clear instructions throughout, which made everything easy. My items were carefully handled and packed safely.', rating: 5, source: 'justdial' },
+        { name: 'Raviraj', text: 'I recently used National Packers And Movers for my move, and I was really impressed! Their service was very systematic, making the whole process smooth. Their prices were reasonable and affordable.', rating: 5, source: 'justdial' },
+        { name: 'arun', text: 'I had a good experience with National Packers And Movers. Their prices are reasonable. The team was careful with my things. They handled all my items gently and made sure nothing got damaged.', rating: 5, source: 'justdial' },
+        { name: 'Vaibhav Sharma', text: 'I had a great experience with National Packers and Movers! They helped me quickly when I needed to move. The team gave clear instructions, so I knew what to do. My things arrived safely and on time.', rating: 5, source: 'justdial' }
+      ]
+    },
+    'hazaribagh': {
+      name: 'Hazaribagh',
+      stateSlug: 'jharkhand',
+      stateName: 'Jharkhand',
+      latitude: 24.006557,
+      longitude: 85.348945,
+      title: 'Packers and Movers in Hazaribagh | Safe Relocation Services',
+      description: 'Reliable Packers and Movers in Hazaribagh. 38+ years of trust, local & domestic shifting, IBA-aligned billing, 100% safety insured. Call 9835168368.',
+      keywords: 'packers and movers hazaribagh, home shifting hazaribagh, transport hazaribagh',
+      address: 'Matwari Chowk, Main Road, Hazaribagh Katkamsandi Road, Hazaribagh-825301, Jharkhand',
+      phone: '9835168368 / 9934166164',
+      justdial: 'https://jsdl.in/DT-992JMRKVWI1',
+      justdialRating: 5.0,
+      justdialReviewCount: 120,
+      mapEmbed: 'https://maps.google.com/maps?q=24.006557,85.348945(National%20Packers%20%26%20Movers%20-%20Hazaribagh)&t=&z=15&ie=UTF8&iwloc=&output=embed',
+      tagline: 'Trusted Moving Experts in Hazaribagh',
+      introText: 'Our Hazaribagh branch brings professional packers and movers services to the residents of Hazaribagh. With multiple layers of safe packaging, verified loaders, and dedicated container trucks, we coordinate home shifting, office relocation, and bike transportation with complete transparency and zero hidden costs.',
+      faqs: [
+        { q: 'Where is your Hazaribagh office located?', a: 'Our office is located at Matwari Chowk, Hazaribagh Katkamsandi Road, Hazaribagh-825301, Jharkhand. You can reach us at 9835168368.' },
+        { q: 'Do you offer transit insurance for shifting from Hazaribagh?', a: 'Yes, we provide full transit insurance for all moves originating from Hazaribagh to ensure your peace of mind.' }
+      ],
+      testimonials: [
+        { name: 'Raviraj', text: 'I had a great experience with National Packers and Movers! They were very easy to reach, making the whole process smooth. The team was friendly and professional. I also found their prices to be reasonable.', rating: 5, source: 'justdial' },
+        { name: 'Kirpal Kumar', text: 'My experience with National Packers and Movers was exceptional. Their easily accessible services made scheduling a breeze. The safety of my belongings was clearly a priority, as they used high-quality packaging.', rating: 5, source: 'justdial' },
+        { name: 'Ankit kumar', text: 'I recently used National Packers and Movers for my relocation, and I couldn\'t be happier! Their customer service team was exceptional—responsive, friendly, and always willing to assist.', rating: 5, source: 'justdial' },
+        { name: 'Aman kumar', text: 'My experience with National Packers and Movers was excellent! They handled my belongings with utmost care and professionalism. Every item was meticulously wrapped and secured.', rating: 5, source: 'justdial' },
+        { name: 'Aniket kumar', text: 'My experience with National Packers and Movers was exceptional! They handled my belongings with utmost care, ensuring everything arrived in perfect condition. Highly recommend!', rating: 5, source: 'justdial' }
       ]
     },
     'kolkata': {

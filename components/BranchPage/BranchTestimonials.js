@@ -37,22 +37,34 @@ export default function BranchTestimonials({ testimonials, cityName }) {
         </button>
 
         <div className={styles.testimonialsCarousel}>
-          {testimonials.map((t, i) => (
-            <div
-              key={i}
-              className={`${styles.testimonialCard} ${i === activeTestimonial ? styles.testimonialActive : ''}`}
-            >
-              <div className={styles.stars}>⭐⭐⭐⭐⭐</div>
-              <p className={styles.testimonialText}>&ldquo;{t.text}&rdquo;</p>
-              <div className={styles.authorRow}>
-                <div className={styles.avatar}>{t.initials}</div>
-                <div>
-                  <strong className={styles.authorName}>{t.name}</strong>
-                  <p className={styles.authorMeta}>{cityName} Branch Client</p>
+          {testimonials.map((t, i) => {
+            const initials = t.initials || t.name.split(' ').filter(Boolean).map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            return (
+              <div
+                key={i}
+                className={`${styles.testimonialCard} ${i === activeTestimonial ? styles.testimonialActive : ''}`}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                  <div className={styles.stars}>{"⭐".repeat(t.rating || 5)}</div>
+                  {t.source === 'justdial' && (
+                    <span style={{ fontSize: '0.7rem', background: '#F7B731', color: '#111', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Justdial Verified
+                    </span>
+                  )}
+                </div>
+                <p className={styles.testimonialText}>&ldquo;{t.text}&rdquo;</p>
+                <div className={styles.authorRow}>
+                  <div className={styles.avatar}>{initials}</div>
+                  <div>
+                    <strong className={styles.authorName}>{t.name}</strong>
+                    <p className={styles.authorMeta}>
+                      {t.source === 'justdial' ? 'Justdial Verified Reviewer' : `${cityName} Branch Client`}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <button 
