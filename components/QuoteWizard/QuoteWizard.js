@@ -59,7 +59,7 @@ const INVENTORY_ITEMS = [
 const getCityState = (city) => {
   const c = (city || '').toLowerCase().trim();
   if (['dhanbad', 'ranchi', 'bokaro', 'deoghar', 'jamshedpur', 'hazaribagh', 'giridih', 'ramgarh', 'medininagar', 'daltonganj', 'chas', 'adityapur', 'dumka', 'jharia', 'katras', 'sindri'].includes(c)) return 'Jharkhand';
-  if (['kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur', 'haldia', 'bardhaman', 'burdwan', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 'bankura', 'midnapore', 'medinipur'].includes(c)) return 'West Bengal';
+  if (['kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur', 'haldia', 'bardhaman', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 'bankura', 'midnapore', 'medinipur'].includes(c)) return 'West Bengal';
   if (['patna', 'bhagalpur', 'gaya', 'muzaffarpur', 'purnia', 'darbhanga', 'bihar-sharif', 'begusarai', 'katihar', 'munger', 'chhapra'].includes(c)) return 'Bihar';
   if (['singrauli', 'waidhan', 'bhopal', 'indore', 'jabalpur', 'gwalior', 'ujjain', 'sagar', 'dewas', 'satna'].includes(c)) return 'Madhya Pradesh';
   if (['bhubaneswar', 'cuttack', 'rourkela', 'puri', 'sambalpur'].includes(c)) return 'Odisha';

@@ -77,7 +77,7 @@ export default function BranchesIndexPage() {
                           // Format city slug nicely
                           const cityName = citySlug === 'dhanbad' 
                             ? 'Dhanbad (HQ)' 
-                            : citySlug.charAt(0).toUpperCase() + citySlug.slice(1);
+                            : citySlug.split('-').map(w => w === 'hq' ? '(HQ)' : w === 'bsl' ? 'BSL' : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                             
                           return (
                             <Link 

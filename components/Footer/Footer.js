@@ -5,12 +5,12 @@ import styles from './Footer.module.css';
 import { trackEvent } from '@/lib/analytics';
 
 const branches = [
-  { state: 'Jharkhand', slug: 'jharkhand', cities: ['Dhanbad','Ranchi','Bokaro','Deoghar'] },
-  { state: 'West Bengal', slug: 'west-bengal', cities: ['Kolkata','Durgapur','Asansol'] },
-  { state: 'Bihar', slug: 'bihar', cities: ['Patna','Bhagalpur'] },
-  { state: 'Madhya Pradesh', slug: 'madhya-pradesh', cities: ['Singrauli'] },
-  { state: 'Odisha', slug: 'odisha', cities: [] },
-  { state: 'Uttar Pradesh', slug: 'uttar-pradesh', cities: [] },
+  { state: 'Jharkhand', slug: 'jharkhand', cities: ['Dhanbad', 'Ranchi', 'Bokaro', 'Jamshedpur', 'Deoghar', 'Hazaribagh'] },
+  { state: 'West Bengal', slug: 'west-bengal', cities: ['Kolkata', 'Durgapur', 'Asansol', 'Siliguri', 'Howrah', 'Kharagpur'] },
+  { state: 'Bihar', slug: 'bihar', cities: ['Patna', 'Bhagalpur', 'Gaya', 'Muzaffarpur', 'Purnia'] },
+  { state: 'Madhya Pradesh', slug: 'madhya-pradesh', cities: ['Singrauli', 'Indore', 'Bhopal', 'Ujjain'] },
+  { state: 'Odisha', slug: 'odisha', cities: ['Bhubaneswar', 'Rourkela', 'Sambalpur', 'Puri'] },
+  { state: 'Uttar Pradesh', slug: 'uttar-pradesh', cities: ['Lucknow', 'Noida', 'Kanpur', 'Ghaziabad', 'Prayagraj'] },
 ];
 
 const services = [

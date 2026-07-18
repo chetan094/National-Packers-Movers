@@ -15,6 +15,20 @@ const branches = [
       { name: 'Ranchi', slug: 'ranchi' },
       { name: 'Bokaro', slug: 'bokaro' },
       { name: 'Deoghar', slug: 'deoghar' },
+      { name: 'Hazaribagh', slug: 'hazaribagh' },
+      { name: 'Jamshedpur', slug: 'jamshedpur' },
+      { name: 'Giridih', slug: 'giridih' },
+      { name: 'Chas', slug: 'chas' },
+      { name: 'Dumka', slug: 'dumka' },
+      { name: 'Koderma', slug: 'koderma' },
+      { name: 'Sahibganj', slug: 'sahibganj' },
+      { name: 'Katras', slug: 'katras' },
+      { name: 'Jharia', slug: 'jharia' },
+      { name: 'Govindpur', slug: 'govindpur' },
+      { name: 'Dhansar', slug: 'dhansar' },
+      { name: 'Chirkunda', slug: 'chirkunda' },
+      { name: 'Sindri', slug: 'sindri' },
+      { name: 'Jasidih', slug: 'jasidih' }
     ],
   },
   {
@@ -24,6 +38,19 @@ const branches = [
       { name: 'Kolkata', slug: 'kolkata' },
       { name: 'Durgapur', slug: 'durgapur' },
       { name: 'Asansol', slug: 'asansol' },
+      { name: 'Siliguri', slug: 'siliguri' },
+      { name: 'Howrah', slug: 'howrah' },
+      { name: 'Kharagpur', slug: 'kharagpur' },
+      { name: 'Haldia', slug: 'haldia' },
+      { name: 'Bardhaman', slug: 'bardhaman' },
+      { name: 'Malda', slug: 'malda' },
+      { name: 'Bankura', slug: 'bankura' },
+      { name: 'Barasat', slug: 'barasat' },
+      { name: 'Barrackpore', slug: 'barrackpore' },
+      { name: 'Raniganj', slug: 'raniganj' },
+      { name: 'Salt Lake', slug: 'salt-lake' },
+      { name: 'Newtown', slug: 'newtown' },
+      { name: 'Rajarhat', slug: 'rajarhat' }
     ],
   },
   {
@@ -32,22 +59,53 @@ const branches = [
     cities: [
       { name: 'Patna', slug: 'patna' },
       { name: 'Bhagalpur', slug: 'bhagalpur' },
+      { name: 'Gaya', slug: 'gaya' },
+      { name: 'Muzaffarpur', slug: 'muzaffarpur' },
+      { name: 'Purnia', slug: 'purnia' },
+      { name: 'Darbhanga', slug: 'darbhanga' },
+      { name: 'Ara', slug: 'ara' },
+      { name: 'Begusarai', slug: 'begusarai' },
+      { name: 'Katihar', slug: 'katihar' },
+      { name: 'Chhapra', slug: 'chhapra' },
+      { name: 'Sasaram', slug: 'sasaram' },
+      { name: 'Motihari', slug: 'motihari' },
+      { name: 'Gopalganj', slug: 'gopalganj' }
     ],
   },
   {
     state: 'Madhya Pradesh',
     slug: 'madhya-pradesh',
-    cities: [{ name: 'Singrauli', slug: 'singrauli' }],
+    cities: [
+      { name: 'Singrauli', slug: 'singrauli' },
+      { name: 'Indore', slug: 'indore' },
+      { name: 'Bhopal', slug: 'bhopal' },
+      { name: 'Ujjain', slug: 'ujjain' }
+    ],
   },
   {
     state: 'Odisha',
     slug: 'odisha',
-    cities: [],
+    cities: [
+      { name: 'Bhubaneswar', slug: 'bhubaneswar' },
+      { name: 'Rourkela', slug: 'rourkela' },
+      { name: 'Sambalpur', slug: 'sambalpur' },
+      { name: 'Puri', slug: 'puri' }
+    ],
   },
   {
     state: 'Uttar Pradesh',
     slug: 'uttar-pradesh',
-    cities: [],
+    cities: [
+      { name: 'Lucknow', slug: 'lucknow' },
+      { name: 'Kanpur', slug: 'kanpur' },
+      { name: 'Ghaziabad', slug: 'ghaziabad' },
+      { name: 'Prayagraj', slug: 'prayagraj' },
+      { name: 'Moradabad', slug: 'moradabad' },
+      { name: 'Gorakhpur', slug: 'gorakhpur' },
+      { name: 'Noida', slug: 'noida' },
+      { name: 'Greater Noida', slug: 'greater-noida' },
+      { name: 'Faizabad', slug: 'faizabad' }
+    ],
   },
 ];
 

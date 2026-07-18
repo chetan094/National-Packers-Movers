@@ -36,7 +36,7 @@ const STATE_CITIES = {
     'lucknow', 'kanpur', 'ghaziabad', 'agra', 'meerut', 'varanasi', 'prayagraj', 'allahabad', 
     'bareilly', 'aligarh', 'moradabad', 'saharanpur', 'gorakhpur', 'noida', 'greater-noida', 
     'jhansi', 'muzaffarnagar', 'mathura', 'ayodhya', 'faizabad', 'firozabad', 'mirzapur', 
-    'jaunpur', 'hapur', 'loni', 'pilkhuwa', 'coming-soon'
+    'jaunpur', 'hapur', 'loni', 'pilkhuwa'
   ]
 };
 

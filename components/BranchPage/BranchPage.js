@@ -168,7 +168,7 @@ const STATE_CITIES = {
     'lucknow', 'kanpur', 'ghaziabad', 'agra', 'meerut', 'varanasi', 'prayagraj', 'allahabad', 
     'bareilly', 'aligarh', 'moradabad', 'saharanpur', 'gorakhpur', 'noida', 'greater-noida', 
     'jhansi', 'muzaffarnagar', 'mathura', 'ayodhya', 'faizabad', 'firozabad', 'mirzapur', 
-    'jaunpur', 'hapur', 'loni', 'pilkhuwa', 'coming-soon'
+    'jaunpur', 'hapur', 'loni', 'pilkhuwa'
   ]
 };
 
@@ -200,7 +200,51 @@ const COORDINATES_MAP = {
   kanpur: { lat: 26.4499, lon: 80.3319 },
   ghaziabad: { lat: 28.6692, lon: 77.4538 },
   noida: { lat: 28.5355, lon: 77.3910 },
-  hazaribagh: { lat: 24.006557, lon: 85.348945 }
+  hazaribagh: { lat: 24.006557, lon: 85.348945 },
+  giridih: { lat: 24.1916, lon: 86.3028 },
+  chas: { lat: 23.6337, lon: 86.1770 },
+  dumka: { lat: 24.2690, lon: 87.2505 },
+  koderma: { lat: 24.4692, lon: 85.5947 },
+  sahibganj: { lat: 25.2442, lon: 87.6436 },
+  katras: { lat: 23.8043, lon: 86.2818 },
+  jharia: { lat: 23.7431, lon: 86.4116 },
+  govindpur: { lat: 23.8378, lon: 86.5186 },
+  dhansar: { lat: 23.7845, lon: 86.4172 },
+  chirkunda: { lat: 23.7381, lon: 86.7972 },
+  sindri: { lat: 23.6496, lon: 86.5050 },
+  jasidih: { lat: 24.5204, lon: 86.6430 },
+  howrah: { lat: 22.5958, lon: 88.2636 },
+  kharagpur: { lat: 22.3460, lon: 87.2300 },
+  haldia: { lat: 22.0250, lon: 88.0583 },
+  bardhaman: { lat: 23.2324, lon: 87.8630 },
+  malda: { lat: 25.0108, lon: 88.1411 },
+  bankura: { lat: 23.2324, lon: 87.0785 },
+  barasat: { lat: 22.7230, lon: 88.4873 },
+  barrackpore: { lat: 22.7597, lon: 88.3703 },
+  raniganj: { lat: 23.6133, lon: 87.1235 },
+  'salt-lake': { lat: 22.5804, lon: 88.4378 },
+  newtown: { lat: 22.5878, lon: 88.4682 },
+  rajarhat: { lat: 22.6178, lon: 88.5028 },
+  purnia: { lat: 25.7771, lon: 87.4753 },
+  darbhanga: { lat: 26.1542, lon: 85.8918 },
+  ara: { lat: 25.5564, lon: 84.6603 },
+  begusarai: { lat: 25.4182, lon: 86.1272 },
+  katihar: { lat: 25.5459, lon: 87.5686 },
+  chhapra: { lat: 25.7811, lon: 84.7277 },
+  sasaram: { lat: 24.9490, lon: 84.0089 },
+  motihari: { lat: 26.6522, lon: 84.9082 },
+  gopalganj: { lat: 26.4687, lon: 84.4398 },
+  indore: { lat: 22.7196, lon: 75.8577 },
+  bhopal: { lat: 23.2599, lon: 77.4126 },
+  ujjain: { lat: 23.1760, lon: 75.7885 },
+  rourkela: { lat: 22.2604, lon: 84.8536 },
+  sambalpur: { lat: 21.4669, lon: 83.9812 },
+  puri: { lat: 19.8134, lon: 85.8312 },
+  prayagraj: { lat: 25.4358, lon: 81.8463 },
+  moradabad: { lat: 28.8386, lon: 78.7733 },
+  gorakhpur: { lat: 26.7606, lon: 83.3731 },
+  'greater-noida': { lat: 28.4744, lon: 77.5030 },
+  faizabad: { lat: 26.7797, lon: 82.1400 }
 };
 
 export default async function BranchPage({ data, isCity = false, stateData = null }) {

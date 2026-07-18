@@ -296,6 +296,7 @@
   color: var(--gold);
   padding: 0.85rem 1rem 0.4rem;
   opacity: 0.8;
+  grid-column: span 2;
 }
 
 .statesList {
@@ -353,8 +354,11 @@
 
 .citiesList {
   padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: start;
+  max-height: 420px;
+  overflow-y: auto;
 }
 
 .cityItem {
@@ -384,16 +388,18 @@
   font-size: 0.85rem;
   text-align: center;
   padding: 1rem;
+  grid-column: span 2;
 }
 
 .viewAllState {
-  margin-top: auto;
+  margin-top: 1rem;
   padding: 0.6rem 0.75rem;
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--gold);
   border-top: 1px solid rgba(247,183,49,0.1);
   transition: var(--transition);
+  grid-column: span 2;
 }
 
 .viewAllState:hover { opacity: 0.8; }

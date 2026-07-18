@@ -14,7 +14,7 @@ const STATE_CITIES_SEO = {
   ],
   'west-bengal': [
     'kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur', 
-    'haldia', 'bardhaman', 'burdwan', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 
+    'haldia', 'bardhaman', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 
     'bankura', 'midnapore', 'medinipur', 'krishnanagar', 'barasat', 'barrackpore', 
     'serampore', 'chinsurah', 'shantiniketan', 'bolpur', 'raniganj', 'burnpur', 'salt-lake', 'newtown', 'rajarhat'
   ],
@@ -36,7 +36,7 @@ const STATE_CITIES_SEO = {
     'lucknow', 'kanpur', 'ghaziabad', 'agra', 'meerut', 'varanasi', 'prayagraj', 'allahabad', 
     'bareilly', 'aligarh', 'moradabad', 'saharanpur', 'gorakhpur', 'noida', 'greater-noida', 
     'jhansi', 'muzaffarnagar', 'mathura', 'ayodhya', 'faizabad', 'firozabad', 'mirzapur', 
-    'jaunpur', 'hapur', 'loni', 'pilkhuwa', 'coming-soon'
+    'jaunpur', 'hapur', 'loni', 'pilkhuwa'
   ]
 };
 
