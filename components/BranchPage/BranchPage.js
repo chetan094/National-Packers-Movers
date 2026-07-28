@@ -12,6 +12,7 @@ import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
 import LocalOperationsShowcase from './LocalOperationsShowcase';
 import { getGalleryImages } from '@/lib/supabase';
 import PsuCalloutCard from '@/components/PsuCalloutCard/PsuCalloutCard';
+import { getCityLocalData } from '@/data/cityLocalData';
 
 
 
@@ -254,10 +255,11 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
   const cityKey = isCity ? data.name.toLowerCase().replace(/ \(hq\)/i, '').replace(/ /g, '-') : null;
   const cleanCityName = data.name.replace(/ \(hq\)/i, '').replace(/ \(virtual office\)/i, '').replace(/ \(coming soon\)/i, '');
   const activeRoutes = isCity && cityKey ? getRoutesForCity(cityKey, data.name.replace(/ \(hq\)/i, '').replace(/ \(virtual office\)/i, '').replace(/ \(coming soon\)/i, '')) : [];
+  const localData = isCity && cityKey ? getCityLocalData(cityKey) : null;
 
   const geoCoords = isCity
-    ? (COORDINATES_MAP[cityKey] || COORDINATES_MAP[stateSlug])
-    : COORDINATES_MAP[stateSlug];
+    ? (COORDINATES_MAP[cityKey] || COORDINATES_MAP[stateSlug] || { lat: 23.7957, lon: 86.4304 })
+    : (COORDINATES_MAP[stateSlug] || { lat: 23.7957, lon: 86.4304 });
 
   // Cover image with fallback system
   const initialImage = isCity 
@@ -342,6 +344,9 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
 
   const localitiesList = (() => {
     if (isCity) {
+      if (localData && localData.neighborhoods) {
+        return localData.neighborhoods;
+      }
       if (cityKey && LOCALITY_MAP[cityKey]) {
         return LOCALITY_MAP[cityKey];
       }
@@ -442,24 +447,35 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
     'description': data.introText || data.tagline || `Professional home and office shifting services in ${data.name} by National Packers & Movers.`,
     'telephone': isCity ? (data.phone ? data.phone.split('/')[0].trim() : '9835168368') : '9835168368',
     'priceRange': '$$',
-    'image': 'https://www.thenationalpackersmovers.com/photos/packed-goods.jpg',
+    'image': 'https://www.thenationalpackersmovers.com/photos/safe-container-vehicle-loading.jpg',
     'url': `https://www.thenationalpackersmovers.com/branches/${stateSlug}${isCity ? '/' + cityKey : ''}`,
     'logo': 'https://www.thenationalpackersmovers.com/logo.png',
     'address': {
       '@type': 'PostalAddress',
       'streetAddress': isCity ? (data.address || 'Central HQ Address') : `Serving ${data.name} Statewide`,
-      'addressLocality': isCity ? data.name.replace(/ \(hq\)/i, '') : data.name,
+      'addressLocality': isCity ? cleanCityName : data.name,
       'addressRegion': stateName,
+      'postalCode': localData && localData.pinCodes && localData.pinCodes.length > 0 ? localData.pinCodes[0] : '826001',
       'addressCountry': 'IN'
     },
-    'geo': geoCoords ? {
+    'geo': {
       '@type': 'GeoCoordinates',
       'latitude': geoCoords.lat,
       'longitude': geoCoords.lon
-    } : undefined,
+    },
     'areaServed': isCity 
-      ? (localitiesList.length > 0 ? localitiesList : undefined)
-      : (citiesList.length > 0 ? citiesList.map(c => c.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')) : undefined),
+      ? (localData ? localData.neighborhoods.concat(localData.pinCodes || []) : localitiesList)
+      : (STATE_CITIES[stateSlug] || []),
+    'hasOfferCatalog': {
+      '@type': 'OfferCatalog',
+      'name': `Relocation Services in ${data.name}`,
+      'itemListElement': [
+        { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': 'Household Relocation' } },
+        { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': 'Corporate Office Shifting' } },
+        { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': 'Industrial Transport' } },
+        { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': 'Vehicle Carrier Shifting' } }
+      ]
+    },
     'openingHoursSpecification': {
       '@type': 'OpeningHoursSpecification',
       'dayOfWeek': [
@@ -807,27 +823,61 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                     </div>
                   )}
 
-                  {/* Popular Routes Card (City Pages Only) */}
-                  {isCity && activeRoutes.length > 0 && (
+                  {/* ⏱️ TRANSIT DISTANCE & DURATION Card (when localData.transitMatrix exists) */}
+                  {isCity && localData && localData.transitMatrix ? (
                     <div className={styles.sidebarCard} data-reveal="up" data-delay="260">
-                      <h3 className={styles.sidebarTitle}>🚚 Popular Transit Lanes</h3>
+                      <h3 className={styles.sidebarTitle}>⏱️ TRANSIT DISTANCE & DURATION</h3>
                       <div className={styles.sidebarDivider} />
                       <p className={styles.localitiesIntro}>
-                        Direct container transport and packers services connecting {data.name.replace(/ \(hq\)/i, '')} to major national destinations:
+                        Direct container shipping timelines from {cleanCityName} to major hubs:
                       </p>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
-                        {activeRoutes.map((r, idx) => (
-                          <Link 
-                            key={idx} 
-                            href={`/routes/${r.origin}-to-${r.destination}`} 
-                            className={styles.routeLink}
-                          >
-                            <span>📍 {r.originName} to {r.destinationName}</span>
-                            <span className={styles.routeLinkArrow}>View Rates ➔</span>
-                          </Link>
-                        ))}
+                        {localData.transitMatrix.map((tm, idx) => {
+                          const destSlug = tm.to.toLowerCase().includes('delhi') ? 'delhi' : tm.to.toLowerCase().includes('bengaluru') ? 'bangalore' : tm.to.toLowerCase().replace(/ /g, '-');
+                          return (
+                            <Link 
+                              key={idx} 
+                              href={`/routes/${cityKey}-to-${destSlug}`} 
+                              className={styles.routeLink}
+                            >
+                              <div>
+                                <strong style={{ color: '#ffffff', display: 'block', marginBottom: '2px' }}>{cleanCityName} to {tm.to}</strong>
+                                <span style={{ fontSize: '0.78rem', color: 'var(--gray-300, #94a3b8)', fontWeight: '400' }}>{tm.mode} • {tm.distance}</span>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontWeight: '700', color: '#F7B731', background: 'rgba(247, 183, 49, 0.12)', border: '1px solid rgba(247, 183, 49, 0.25)', padding: '3px 9px', borderRadius: '12px', fontSize: '0.78rem', flexShrink: 0 }}>
+                                  {tm.time}
+                                </span>
+                                <span className={styles.routeLinkArrow}>View Rates ➔</span>
+                              </div>
+                            </Link>
+                          );
+                        })}
                       </div>
                     </div>
+                  ) : (
+                    /* 🚚 POPULAR TRANSIT LANES Card (Fallback for cities without transitMatrix) */
+                    isCity && activeRoutes.length > 0 && (
+                      <div className={styles.sidebarCard} data-reveal="up" data-delay="260">
+                        <h3 className={styles.sidebarTitle}>🚚 POPULAR TRANSIT LANES</h3>
+                        <div className={styles.sidebarDivider} />
+                        <p className={styles.localitiesIntro}>
+                          Direct container transport and packers services connecting {data.name.replace(/ \(hq\)/i, '')} to major national destinations:
+                        </p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
+                          {activeRoutes.map((r, idx) => (
+                            <Link 
+                              key={idx} 
+                              href={`/routes/${r.origin}-to-${r.destination}`} 
+                              className={styles.routeLink}
+                            >
+                              <span>📍 {r.originName} to {r.destinationName}</span>
+                              <span className={styles.routeLinkArrow}>View Rates ➔</span>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )
                   )}
                 </>
               ) : (

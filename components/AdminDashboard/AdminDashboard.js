@@ -1658,8 +1658,8 @@ export default function AdminDashboard() {
     }
   }, [activeTab, authorized]);
 
-  // Client-Side Canvas Image Auto-Compression helper
-  const compressImageClient = (file, maxWidth = 1200, quality = 0.85) => {
+  // Client-Side Canvas Image Auto-Compression helper (.webp preferred for Google speed ranking)
+  const compressImageClient = (file, maxWidth = 1200, quality = 0.82) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -1683,26 +1683,54 @@ export default function AdminDashboard() {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          canvas.toBlob(
-            (blob) => {
-              if (blob) {
-                let filename = file.name;
-                const lastDot = filename.lastIndexOf('.');
-                if (lastDot !== -1) {
-                  filename = filename.substring(0, lastDot);
+          // Try WebP first for optimal Google performance, fallback to JPEG if needed
+          const exportWebP = () => {
+            canvas.toBlob(
+              (blob) => {
+                if (blob) {
+                  let filename = file.name;
+                  const lastDot = filename.lastIndexOf('.');
+                  if (lastDot !== -1) {
+                    filename = filename.substring(0, lastDot);
+                  }
+                  const compressedFile = new File([blob], filename + ".webp", {
+                    type: 'image/webp',
+                    lastModified: Date.now()
+                  });
+                  resolve(compressedFile);
+                } else {
+                  exportJPEG();
                 }
-                const compressedFile = new File([blob], filename + ".jpg", {
-                  type: 'image/jpeg',
-                  lastModified: Date.now()
-                });
-                resolve(compressedFile);
-              } else {
-                reject(new Error('Canvas compression failed'));
-              }
-            },
-            'image/jpeg',
-            quality
-          );
+              },
+              'image/webp',
+              quality
+            );
+          };
+
+          const exportJPEG = () => {
+            canvas.toBlob(
+              (blob) => {
+                if (blob) {
+                  let filename = file.name;
+                  const lastDot = filename.lastIndexOf('.');
+                  if (lastDot !== -1) {
+                    filename = filename.substring(0, lastDot);
+                  }
+                  const compressedFile = new File([blob], filename + ".jpg", {
+                    type: 'image/jpeg',
+                    lastModified: Date.now()
+                  });
+                  resolve(compressedFile);
+                } else {
+                  reject(new Error('Canvas compression failed'));
+                }
+              },
+              'image/jpeg',
+              quality
+            );
+          };
+
+          exportWebP();
         };
         img.onerror = (err) => reject(err);
       };
@@ -1759,6 +1787,9 @@ export default function AdminDashboard() {
 
       const formData = new FormData();
       formData.append('file', compressedFile);
+      if (imageTitle && imageTitle.trim()) {
+        formData.append('title', imageTitle);
+      }
 
       const res = await fetch('/api/admin/upload', {
         method: 'POST',
@@ -2321,6 +2352,9 @@ export default function AdminDashboard() {
 
       const formData = new FormData();
       formData.append('file', compressedFile);
+      if (title && title.trim()) {
+        formData.append('title', title);
+      }
 
       const res = await fetch('/api/admin/upload', {
         method: 'POST',

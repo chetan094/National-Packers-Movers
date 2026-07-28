@@ -7,6 +7,31 @@ import HeroSlideshow from '@/components/HeroSlideshow/HeroSlideshow';
 import TestimonialsSlider from '@/components/TestimonialsSlider/TestimonialsSlider';
 import { getCustomMetadata, getGalleryImages } from '@/lib/supabase';
 import PsuCalloutCard from '@/components/PsuCalloutCard/PsuCalloutCard';
+import CityDirectory from '@/components/CityDirectory/CityDirectory';
+import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
+
+const HOMEPAGE_FAQS = [
+  {
+    q: 'Are National Packers & Movers IBA-approved for corporate and PSU claim reimbursements?',
+    a: 'Yes! National Packers & Movers provides 100% genuine GST tax invoices, consignment notes (LR), itemized packing lists, and official money receipts accepted by Coal India, SAIL, NTPC, SBI, Railways, and all central/state government departments.'
+  },
+  {
+    q: 'How are house shifting charges calculated by National Packers & Movers?',
+    a: 'Relocation rates depend on cargo volume (BHK size), total transit distance, packing material grade, and vehicle type. Local shifts start from ₹4,000 for 1BHK, while inter-state shifting starts from ₹12,000. Contact us for a free, transparent pre-move survey.'
+  },
+  {
+    q: 'Do you provide full transit insurance for household items and vehicles?',
+    a: 'Yes! We offer 100% transit insurance protection covering all your furniture, electronics, kitchenware, cars, and bikes against highway damage during inter-state or local transport.'
+  },
+  {
+    q: 'What makes National Packers & Movers different from local transport brokers?',
+    a: 'Established in 1987 by Debabrata Jhampaty, we operate our own company-owned lockable container fleet with background-verified permanent packing staff—zero transshipment, zero hidden fees, and zero third-party brokers.'
+  },
+  {
+    q: 'How many days before moving should I book my relocation?',
+    a: 'We recommend booking 2 to 4 days in advance for inter-state moves to secure direct container allocation. Same-day emergency bookings are also accommodated based on fleet availability.'
+  }
+];
 
 
 export async function generateMetadata() {
@@ -74,7 +99,7 @@ const whyUs = [
   { icon: '🛡️', title: 'Fully Insured Moves', desc: 'Every shipment is covered. Zero compromise on the safety of your belongings.' },
   { icon: '⏱️', title: 'On-Time Delivery', desc: 'We commit to timelines and deliver. No delays, no excuses.' },
   { icon: '👨‍🔧', title: 'Trained Professionals', desc: 'Expert packing crew trained to handle fragile, delicate, and heavy items.' },
-  { icon: '🗺️', title: 'All-India Network', desc: '6 states, 15+ cities, tie-ups across India for seamless end-to-end service.' },
+  { icon: '🗺️', title: 'All-India Network', desc: '6 states, 1200+ cities, tie-ups across India for seamless end-to-end service.' },
   { icon: '🤝', title: 'PSU & Corporate Trusted', desc: 'Serving leading public sector companies and corporate organizations.' },
 ];
 
@@ -90,8 +115,8 @@ const branches = [
   { state: 'West Bengal', cities: ['Kolkata', 'Durgapur', 'Asansol'], slug: 'west-bengal' },
   { state: 'Bihar', cities: ['Patna', 'Bhagalpur'], slug: 'bihar' },
   { state: 'Madhya Pradesh', cities: ['Singrauli'], slug: 'madhya-pradesh' },
-  { state: 'Odisha', cities: ['Virtual Office'], slug: 'odisha' },
-  { state: 'Uttar Pradesh', cities: ['Coming Soon'], slug: 'uttar-pradesh' },
+  { state: 'Odisha', cities: ['Bhubaneswar', 'Rourkela', 'Cuttack'], slug: 'odisha' },
+  { state: 'Uttar Pradesh', cities: ['Lucknow', 'Noida', 'Kanpur'], slug: 'uttar-pradesh' },
 ];
 
 export default async function HomePage() {
@@ -137,15 +162,15 @@ export default async function HomePage() {
           </div>
           <div className={styles.heroContacts}>
             <a href="tel:9835168368" className={styles.heroPhone}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" width="13" height="13" style={{display:'inline-block',verticalAlign:'middle',marginRight:'6px',color:'var(--gold)'}}>
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" width="13" height="13" style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '6px', color: 'var(--gold)' }}>
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
               </svg>
               9835168368
             </a>
             <span className={styles.heroDivider} />
             <a href="tel:9934166164" className={styles.heroPhone}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" width="13" height="13" style={{display:'inline-block',verticalAlign:'middle',marginRight:'6px',color:'var(--gold)'}}>
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" width="13" height="13" style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '6px', color: 'var(--gold)' }}>
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
               </svg>
               9934166164
             </a>
@@ -285,7 +310,7 @@ export default async function HomePage() {
             <span className="section-tag">Our Network</span>
             <h2 className="section-title">Offices Across <span>India</span></h2>
             <div className="divider" />
-            <p className="section-subtitle">6 states, 15+ cities — and growing. National presence, local expertise.</p>
+            <p className="section-subtitle">6 states, 1200+ cities — and growing. National presence, local expertise.</p>
           </div>
           <div className={styles.branchGrid}>
             {branches.map((branch, i) => (
@@ -327,6 +352,31 @@ export default async function HomePage() {
           <div style={{ textAlign: 'center', marginTop: '2rem' }}>
             <Link href="/testimonials" className="btn btn-secondary">View All Reviews</Link>
           </div>
+        </div>
+      </section>
+
+      {/* ── FREQUENTLY ASKED QUESTIONS ──────────────────────── */}
+      <section className="section bg-section-dark" id="faqs">
+        <div className="container">
+          <div className="section-header">
+            <span className="section-tag">Got Questions?</span>
+            <h2 className="section-title">Frequently Asked <span>Questions</span></h2>
+            <div className="divider" />
+            <p className="section-subtitle">Clear answers about our relocation pricing, IBA claim documentation, and safety guarantees.</p>
+          </div>
+          <div style={{ maxWidth: '840px', margin: '2.5rem auto 0' }}>
+            <FaqAccordion faqs={HOMEPAGE_FAQS} />
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <Link href="/faqs" className="btn btn-secondary">View All FAQs →</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CITY & STATE LOGISTICS DIRECTORY ──────────────── */}
+      <section className="section" style={{ background: 'linear-gradient(180deg, #091729 0%, #050d18 100%)', borderTop: '1px solid rgba(255, 255, 255, 0.08)', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }} id="directory">
+        <div className="container">
+          <CityDirectory />
         </div>
       </section>
 

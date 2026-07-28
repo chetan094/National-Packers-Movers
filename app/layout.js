@@ -8,8 +8,8 @@ import GlobalAnimations from '@/components/animations/GlobalAnimations';
 import AnalyticsTracker from '@/components/AnalyticsTracker/AnalyticsTracker';
 
 const inter = Inter({ subsets: ['latin'], variable: '--inter', display: 'swap' });
-const rajdhani = Rajdhani({ subsets: ['latin'], weight: ['400','500','600','700'], variable: '--rajdhani', display: 'swap' });
-const barlowCondensed = Barlow_Condensed({ subsets: ['latin'], weight: ['400','600','700','800'], variable: '--barlow', display: 'swap' });
+const rajdhani = Rajdhani({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--rajdhani', display: 'swap' });
+const barlowCondensed = Barlow_Condensed({ subsets: ['latin'], weight: ['400', '600', '700', '800'], variable: '--barlow', display: 'swap' });
 
 export const viewport = {
   width: 'device-width',
@@ -26,7 +26,7 @@ export const metadata = {
   },
   openGraph: {
     title: 'National Packers & Movers — Trusted Since 1987',
-    description: 'Professional relocation services across India. Serving 6 states, 15+ cities since 1987.',
+    description: 'Professional relocation services across India. Serving 6 states, 1200+ cities since 1987.',
     url: 'https://www.thenationalpackersmovers.com',
     siteName: 'National Packers & Movers',
     type: 'website',

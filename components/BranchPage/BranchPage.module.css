@@ -2349,11 +2349,69 @@
     gap: 0.5rem;
   }
 
-  .detailedHighlightTag {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.5rem;
-  }
+/* ── Sidebar Cards & Glowing Gold Transit Route Links ── */
+.sidebarCard {
+  background: var(--grad-card, linear-gradient(145deg, rgba(13, 27, 42, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%));
+  border: 1px solid rgba(247, 183, 49, 0.18);
+  border-radius: var(--radius-lg, 16px);
+  padding: 1.75rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  margin-top: 1.5rem;
 }
+
+.sidebarTitle {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--white, #ffffff);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebarDivider {
+  height: 2px;
+  width: 40px;
+  background: var(--grad-cta, linear-gradient(90deg, #F7B731, #C1121F));
+  margin-bottom: 1rem;
+  border-radius: 2px;
+}
+
+.routeLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md, 10px);
+  color: var(--white, #ffffff);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.routeLink:hover {
+  background: rgba(247, 183, 49, 0.1);
+  border-color: #F7B731 !important;
+  box-shadow: 0 6px 20px rgba(247, 183, 49, 0.3) !important;
+  transform: translateY(-2px);
+  color: #F7B731 !important;
+}
+
+.routeLinkArrow {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #F7B731 !important;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.routeLink:hover .routeLinkArrow {
+  color: #F59E0B !important;
+  transform: translateX(4px);
+}
+
 
 
 

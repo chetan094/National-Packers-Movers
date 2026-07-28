@@ -5,12 +5,48 @@ import styles from './Footer.module.css';
 import { trackEvent } from '@/lib/analytics';
 
 const branches = [
-  { state: 'Jharkhand', slug: 'jharkhand', cities: ['Dhanbad', 'Ranchi', 'Bokaro', 'Jamshedpur', 'Deoghar', 'Hazaribagh'] },
-  { state: 'West Bengal', slug: 'west-bengal', cities: ['Kolkata', 'Durgapur', 'Asansol', 'Siliguri', 'Howrah', 'Kharagpur'] },
-  { state: 'Bihar', slug: 'bihar', cities: ['Patna', 'Bhagalpur', 'Gaya', 'Muzaffarpur', 'Purnia'] },
-  { state: 'Madhya Pradesh', slug: 'madhya-pradesh', cities: ['Singrauli', 'Indore', 'Bhopal', 'Ujjain'] },
-  { state: 'Odisha', slug: 'odisha', cities: ['Bhubaneswar', 'Rourkela', 'Sambalpur', 'Puri'] },
-  { state: 'Uttar Pradesh', slug: 'uttar-pradesh', cities: ['Lucknow', 'Noida', 'Kanpur', 'Ghaziabad', 'Prayagraj'] },
+  { state: 'Jharkhand', slug: 'jharkhand', cities: [
+    { name: 'Dhanbad (HQ)', slug: 'dhanbad' },
+    { name: 'Ranchi', slug: 'ranchi' },
+    { name: 'Bokaro', slug: 'bokaro' },
+    { name: 'Jamshedpur', slug: 'jamshedpur' },
+    { name: 'Deoghar', slug: 'deoghar' },
+    { name: 'Hazaribagh', slug: 'hazaribagh' }
+  ]},
+  { state: 'West Bengal', slug: 'west-bengal', cities: [
+    { name: 'Kolkata', slug: 'kolkata' },
+    { name: 'Siliguri', slug: 'siliguri' },
+    { name: 'Durgapur', slug: 'durgapur' },
+    { name: 'Asansol', slug: 'asansol' },
+    { name: 'Howrah', slug: 'howrah' },
+    { name: 'Kharagpur', slug: 'kharagpur' }
+  ]},
+  { state: 'Bihar', slug: 'bihar', cities: [
+    { name: 'Patna', slug: 'patna' },
+    { name: 'Muzaffarpur', slug: 'muzaffarpur' },
+    { name: 'Bhagalpur', slug: 'bhagalpur' },
+    { name: 'Gaya', slug: 'gaya' },
+    { name: 'Purnia', slug: 'purnia' }
+  ]},
+  { state: 'Madhya Pradesh', slug: 'madhya-pradesh', cities: [
+    { name: 'Singrauli', slug: 'singrauli' },
+    { name: 'Indore', slug: 'indore' },
+    { name: 'Bhopal', slug: 'bhopal' },
+    { name: 'Ujjain', slug: 'ujjain' }
+  ]},
+  { state: 'Odisha', slug: 'odisha', cities: [
+    { name: 'Bhubaneswar', slug: 'bhubaneswar' },
+    { name: 'Cuttack', slug: 'cuttack' },
+    { name: 'Rourkela', slug: 'rourkela' },
+    { name: 'Sambalpur', slug: 'sambalpur' }
+  ]},
+  { state: 'Uttar Pradesh', slug: 'uttar-pradesh', cities: [
+    { name: 'Lucknow', slug: 'lucknow' },
+    { name: 'Noida', slug: 'noida' },
+    { name: 'Kanpur', slug: 'kanpur' },
+    { name: 'Ghaziabad', slug: 'ghaziabad' },
+    { name: 'Prayagraj', slug: 'prayagraj' }
+  ]},
 ];
 
 const services = [
@@ -113,13 +149,13 @@ export default function Footer() {
                   {b.state}
                 </Link>
                 <div className={styles.cityLinks}>
-                  {b.cities.map(city => (
+                  {b.cities.map(c => (
                     <Link
-                      key={city}
-                      href={`/branches/${b.slug}/${city.toLowerCase().replace(/ /g,'-')}`}
+                      key={c.slug}
+                      href={`/branches/${b.slug}/${c.slug}`}
                       className={styles.cityLink}
                     >
-                      {city}
+                      {c.name}
                     </Link>
                   ))}
                   {b.cities.length === 0 && (

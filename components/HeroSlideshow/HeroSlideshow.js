@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import styles from '@/app/page.module.css';
 
 const heroSlides = [
@@ -22,19 +23,17 @@ export default function HeroSlideshow() {
     <div className={styles.heroImageSide}>
       <div className={styles.heroPhotoWrapper}>
         {heroSlides.map((slide, idx) => (
-          <img
+          <Image
             key={idx}
             src={slide.src}
             alt={slide.alt}
-            className={styles.heroPhoto}
+            fill
+            priority={idx === 0}
+            sizes="(max-width: 768px) 100vw, 50vw"
             style={{
+              objectFit: 'cover',
               opacity: idx === activeSlide ? 1 : 0,
               transition: 'opacity 1s ease-in-out',
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover'
             }}
           />
         ))}
@@ -47,3 +46,4 @@ export default function HeroSlideshow() {
     </div>
   );
 }
+
