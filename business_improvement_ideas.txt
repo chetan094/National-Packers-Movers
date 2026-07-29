@@ -300,19 +300,19 @@ Cons:
 - Requires integration of WebRTC video APIs (e.g. Daily.co, Twilio Video) inside the portal.
 
 --------------------------------------------------------------------------------
-18. PREMIUM "ZERO-HASSLE" CLAIMS PROTECTION UP-SELL
+19. DYNAMIC CDN & WEBP/AVIF AUTO-OPTIMIZATION PIPELINE FOR IMAGE SEO & GOOGLE DISCOVER
 --------------------------------------------------------------------------------
 Suggestion:
-Introduce a "Premium Claims Protection Guarantee" up-sell package (for an extra 1-2% of the total shifting value). Under this package, if any item is damaged during transit, you credit their bank account directly within 2 hours of claim photo upload, bypass the slow traditional insurance claim processing bottleneck.
+Deploy a multi-format image optimization middleware (supporting WebP & AVIF conversion with dynamic sizing) served via global CDN (e.g. Cloudflare / Vercel Edge). When users search for relocation services or browse the image sitemap, Google Images & Google Discover require sub-100KB ultra-fast loading photos with high-resolution metadata.
 
 Reasoning:
-Breakage anxiety is a massive barrier for customers. Traditional cargo transit insurance only covers major road accidents, and claim processing takes months. Offering an instant-reimbursement protection plan directly from the brand provides unmatched peace of mind. Since professional crews rarely break items (breakage rates average under 2%), this up-sell generates pure high-margin profit while building exceptional brand loyalty and glowing public reviews.
+Now that image renaming and dynamic image sitemaps are active, Google Images will begin crawling and indexing NPM's 50+ operational photos. Serving these photos in next-gen formats (AVIF/WebP) with responsive `srcset` ensures instant 100ms image loads on mobile devices. Fast image load speeds boost ranking in Google Image Search results, opening a direct organic lead generation channel.
 
 Pros:
-- Generates high-margin, zero-cost up-sell revenue.
-- Creates an incredible trust factor that sets NPM apart from budget operators.
-- Turns rare damage events into positive public reviews through instant payouts.
+- Accelerates mobile LCP (Largest Contentful Paint) and Core Web Vitals.
+- Increases rank eligibility for Google Image Search and Google Discover cards.
+- Saves bandwidth costs while preserving crisp visual quality for clients.
 
 Cons:
-- Requires a simple claim approval dashboard for coordinators to prevent fraudulent claims.
+- Requires standard CDN configuration and Next.js Image component optimization tuning.
 ================================================================================

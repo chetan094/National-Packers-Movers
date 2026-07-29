@@ -8,10 +8,10 @@ import { getCustomMetadata } from '@/lib/supabase';
 
 // Collage Images
 const COLLAGE_IMAGES = [
-  { src: '/photos/shifting-packing-sofa.jpg', alt: 'Premium Sofa Packing' },
-  { src: '/photos/shifting-truck-loading.jpg', alt: 'Secure Closed Truck Loading' },
-  { src: '/photos/shifting-safe-transport.jpg', alt: 'Direct Highway Transit Container' },
-  { src: '/photos/shifting-doorstep-delivery.jpg', alt: 'Safe Destination Unloading & Delivery' }
+  { src: '/photos/premium-cushion-sofa-wrapping.jpg', alt: 'Premium Sofa Packing' },
+  { src: '/photos/safe-container-vehicle-loading.jpg', alt: 'Secure Closed Truck Loading' },
+  { src: '/photos/secure-cargo-stacking-layout.jpg', alt: 'Direct Highway Transit Container' },
+  { src: '/photos/doorstep-unloading-setup.jpg', alt: 'Safe Destination Unloading & Delivery' }
 ];
 
 // YouTube Testimonials
@@ -114,7 +114,7 @@ export default function TestimonialsPage() {
     'description': 'Real reviews and ratings from our home shifting, office relocation, and industrial transport clients since 1987.',
     'telephone': '9835168368',
     'priceRange': '$$',
-    'image': 'https://www.thenationalpackersmovers.com/photos/packed-goods.jpg',
+    'image': 'https://www.thenationalpackersmovers.com/photos/relocation-packing-standards.jpg',
     'url': 'https://www.thenationalpackersmovers.com/testimonials',
     'logo': 'https://www.thenationalpackersmovers.com/logo.png',
     'address': {

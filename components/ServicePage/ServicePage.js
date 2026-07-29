@@ -112,7 +112,7 @@ export default function ServicePage({ service }) {
       'name': 'National Packers & Movers',
       'telephone': '9835168368',
       'priceRange': '$$',
-      'image': 'https://www.thenationalpackersmovers.com/photos/packed-goods.jpg',
+      'image': 'https://www.thenationalpackersmovers.com/photos/relocation-packing-standards.jpg',
       'logo': 'https://www.thenationalpackersmovers.com/logo.png',
       'url': 'https://www.thenationalpackersmovers.com'
     },

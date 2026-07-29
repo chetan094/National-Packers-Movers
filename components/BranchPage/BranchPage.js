@@ -139,36 +139,36 @@ const LOCALITY_MAP = {
 
 const STATE_CITIES = {
   'jharkhand': [
-    'dhanbad', 'ranchi', 'bokaro', 'deoghar', 'jamshedpur', 'hazaribagh', 'giridih', 
-    'ramgarh', 'medininagar', 'daltonganj', 'chas', 'adityapur', 'dumka', 'chatra', 
-    'gumla', 'kodarma', 'koderma', 'pakur', 'sahibganj', 'sahebganj', 'simdega', 
-    'latehar', 'khunti', 'saraikela', 'garhwa', 'lohardaga', 'ghatsila', 'phusro', 
+    'dhanbad', 'ranchi', 'bokaro', 'deoghar', 'jamshedpur', 'hazaribagh', 'giridih',
+    'ramgarh', 'medininagar', 'daltonganj', 'chas', 'adityapur', 'dumka', 'chatra',
+    'gumla', 'kodarma', 'koderma', 'pakur', 'sahibganj', 'sahebganj', 'simdega',
+    'latehar', 'khunti', 'saraikela', 'garhwa', 'lohardaga', 'ghatsila', 'phusro',
     'katras', 'jharia', 'govindpur', 'dhansar', 'chirkunda', 'sindri', 'jasidih', 'madhupur'
   ],
   'west-bengal': [
-    'kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur', 
-    'haldia', 'bardhaman', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 
-    'bankura', 'midnapore', 'medinipur', 'krishnanagar', 'barasat', 'barrackpore', 
+    'kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur',
+    'haldia', 'bardhaman', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia',
+    'bankura', 'midnapore', 'medinipur', 'krishnanagar', 'barasat', 'barrackpore',
     'serampore', 'chinsurah', 'shantiniketan', 'bolpur', 'raniganj', 'burnpur', 'salt-lake', 'newtown', 'rajarhat'
   ],
   'bihar': [
-    'patna', 'bhagalpur', 'gaya', 'muzaffarpur', 'purnia', 'darbhanga', 'bihar-sharif', 
-    'ara', 'arrah', 'begusarai', 'katihar', 'munger', 'chhapra', 'danapur', 'bettiah', 
-    'saharsa', 'hajipur', 'sasaram', 'motihari', 'siwan', 'madhubani', 'buxar', 'jehanabad', 
+    'patna', 'bhagalpur', 'gaya', 'muzaffarpur', 'purnia', 'darbhanga', 'bihar-sharif',
+    'ara', 'arrah', 'begusarai', 'katihar', 'munger', 'chhapra', 'danapur', 'bettiah',
+    'saharsa', 'hajipur', 'sasaram', 'motihari', 'siwan', 'madhubani', 'buxar', 'jehanabad',
     'aurangabad', 'nawada', 'jamui', 'kishanganj', 'samastipur', 'lakhisarai', 'gopalganj'
   ],
   'madhya-pradesh': [
-    'singrauli', 'waidhan', 'bhopal', 'indore', 'jabalpur', 'gwalior', 'ujjain', 'sagar', 
+    'singrauli', 'waidhan', 'bhopal', 'indore', 'jabalpur', 'gwalior', 'ujjain', 'sagar',
     'dewas', 'satna', 'ratlam', 'rewa', 'katni', 'morwa', 'vindhyanagar', 'jayant', 'dudhichua'
   ],
   'odisha': [
-    'bhubaneswar', 'cuttack', 'rourkela', 'brahmapur', 'berhampur', 'sambalpur', 'puri', 
+    'bhubaneswar', 'cuttack', 'rourkela', 'brahmapur', 'berhampur', 'sambalpur', 'puri',
     'balasore', 'bhadrak', 'baripada', 'jharsuguda', 'jeypore', 'rayagada', 'angul', 'balangir'
   ],
   'uttar-pradesh': [
-    'lucknow', 'kanpur', 'ghaziabad', 'agra', 'meerut', 'varanasi', 'prayagraj', 'allahabad', 
-    'bareilly', 'aligarh', 'moradabad', 'saharanpur', 'gorakhpur', 'noida', 'greater-noida', 
-    'jhansi', 'muzaffarnagar', 'mathura', 'ayodhya', 'faizabad', 'firozabad', 'mirzapur', 
+    'lucknow', 'kanpur', 'ghaziabad', 'agra', 'meerut', 'varanasi', 'prayagraj', 'allahabad',
+    'bareilly', 'aligarh', 'moradabad', 'saharanpur', 'gorakhpur', 'noida', 'greater-noida',
+    'jhansi', 'muzaffarnagar', 'mathura', 'ayodhya', 'faizabad', 'firozabad', 'mirzapur',
     'jaunpur', 'hapur', 'loni', 'pilkhuwa'
   ]
 };
@@ -270,7 +270,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
   const displayTestimonials = (() => {
     let list = [...(data.testimonials || [])];
     const targetCount = 5; // Aim for 5 reviews for visual layout balance
-    
+
     if (list.length < targetCount) {
       const addedNames = new Set(list.map(t => t.name));
       if (isCity && stateData && stateData.testimonials) {
@@ -333,7 +333,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
       if (t.text && shouldFilterDhanbad) {
         // Global case-insensitive replacement of "Dhanbad"
         t.text = t.text.replace(/Dhanbad/gi, cleanCityName);
-        
+
         if (t.city) {
           t.city = t.city.replace(/Dhanbad/gi, cleanCityName);
         }
@@ -379,7 +379,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
     const processedGlobalFaqs = GLOBAL_BRANCH_FAQS.map(faq => {
       let resolvedQ = faq.q.replace(/\[Location\]/g, data.name);
       let resolvedA = faq.a;
-      
+
       if (faq.a === 'cover-query') {
         if (!isCity) {
           const stateCities = data.cities || [];
@@ -402,7 +402,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
               if (c === 'dhanbad') return 'Dhanbad (HQ)';
               return c.charAt(0).toUpperCase() + c.slice(1);
             });
-          const otherCitiesText = otherCities.length > 0 
+          const otherCitiesText = otherCities.length > 0
             ? ` (including ${otherCities.join(', ')})`
             : '';
           resolvedA = `Our team coordinates shifting services locally in and around ${data.name}, connects transit routes to other key hubs in ${stateName}${otherCitiesText}. As a premier national brand, we cater to all of India, handling relocations from ${data.name} to any city, state, or destination nationwide with door-to-door coverage.`;
@@ -412,7 +412,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
       } else {
         resolvedA = resolvedA.replace(/\[Location\]/g, data.name);
       }
-      
+
       return { q: resolvedQ, a: resolvedA };
     });
 
@@ -463,7 +463,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
       'latitude': geoCoords.lat,
       'longitude': geoCoords.lon
     },
-    'areaServed': isCity 
+    'areaServed': isCity
       ? (localData ? localData.neighborhoods.concat(localData.pinCodes || []) : localitiesList)
       : (STATE_CITIES[stateSlug] || []),
     'hasOfferCatalog': {
@@ -579,7 +579,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      
+
       {/* ── HERO SECTION ──────────────────────────────────── */}
       <section className={styles.hero}>
         <div className={styles.heroBg}>
@@ -597,7 +597,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
             <span className={styles.heroRed}>Trusted Since 1987</span>
           </h1>
           <p className={styles.heroSubtitle}>
-            {isCity 
+            {isCity
               ? `Professional home, office, and vehicle relocation services in ${data.name}, ${stateName}. 100% insured, secure packing, and direct transit.`
               : `Leading packers and movers across ${stateName}. Direct transit lines, own container fleet, and IBA-compliant corporate relocation.`
             }
@@ -623,7 +623,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
             <div className={styles.heroPhotoOverlay} />
             <div className={styles.heroBadgeFloat}>
               <span className={styles.heroBadgeNum}>38+</span>
-              <span className={styles.heroBadgeTxt}>Years of<br/>Trust</span>
+              <span className={styles.heroBadgeTxt}>Years of<br />Trust</span>
             </div>
           </div>
         </div>
@@ -652,7 +652,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
       <section className={`section ${styles.detailsSection}`}>
         <div className="container">
           <div className={styles.detailsGrid}>
-            
+
             {/* Left Content Column */}
             <div className={styles.detailsContent} data-reveal="up" data-delay="100">
               <span className="section-tag" style={{ textAlign: 'left', paddingLeft: 0 }}>Company Legacy</span>
@@ -661,7 +661,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
               </h2>
               <div className="divider divider-left" />
               <p className={styles.introParagraph}>{data.introText}</p>
-              
+
               <div className={styles.uspPoints}>
                 <div className={styles.uspPoint}>
                   <span className={styles.uspIcon}>🏆</span>
@@ -734,20 +734,20 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                     <h3 className={styles.sidebarTitle}>📍 Branch Address</h3>
                     <div className={styles.sidebarDivider} />
                     <p className={styles.branchAddress}>{data.address}</p>
-                    
+
                     <div className={styles.mapEmbedContainer}>
-                      <iframe 
+                      <iframe
                         src={data.mapEmbed || `https://maps.google.com/maps?q=${encodeURIComponent(data.name.includes('Coming Soon') ? data.stateName : `${data.name.replace(/ \(hq\)/i, '')}, ${data.stateName}`)}&t=&z=12&ie=UTF8&iwloc=&output=embed`}
-                        width="100%" 
-                        height="200" 
-                        style={{ border: 0, borderRadius: '6px', marginTop: '1rem', display: 'block' }} 
-                        allowFullScreen="" 
+                        width="100%"
+                        height="200"
+                        style={{ border: 0, borderRadius: '6px', marginTop: '1rem', display: 'block' }}
+                        allowFullScreen=""
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
                         title={`${data.name} Location Map`}
                       />
                     </div>
-                    
+
                     <h3 className={styles.sidebarTitle} style={{ marginTop: '1.5rem' }}>📞 Phone Numbers</h3>
                     <div className={styles.sidebarDivider} />
                     <div className={styles.sidebarPhones}>
@@ -760,7 +760,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                         </a>
                       )}
                     </div>
-                    
+
                     <h3 className={styles.sidebarTitle} style={{ marginTop: '1.5rem' }}>✉️ Corporate Email</h3>
                     <div className={styles.sidebarDivider} />
                     <a href="mailto:npmdhanbad11@gmail.com" className={styles.emailLink}>
@@ -793,7 +793,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                           </p>
                         </div>
                       </div>
-                      <a 
+                      <a
                         href={data.justdial}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -835,9 +835,9 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                         {localData.transitMatrix.map((tm, idx) => {
                           const destSlug = tm.to.toLowerCase().includes('delhi') ? 'delhi' : tm.to.toLowerCase().includes('bengaluru') ? 'bangalore' : tm.to.toLowerCase().replace(/ /g, '-');
                           return (
-                            <Link 
-                              key={idx} 
-                              href={`/routes/${cityKey}-to-${destSlug}`} 
+                            <Link
+                              key={idx}
+                              href={`/routes/${cityKey}-to-${destSlug}`}
                               className={styles.routeLink}
                             >
                               <div>
@@ -866,9 +866,9 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                         </p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
                           {activeRoutes.map((r, idx) => (
-                            <Link 
-                              key={idx} 
-                              href={`/routes/${r.origin}-to-${r.destination}`} 
+                            <Link
+                              key={idx}
+                              href={`/routes/${r.origin}-to-${r.destination}`}
                               className={styles.routeLink}
                             >
                               <span>📍 {r.originName} to {r.destinationName}</span>
@@ -906,7 +906,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                         })
                       ) : (
                         <p className={styles.sidebarNotice}>
-                          {citiesList[0] === 'virtual-office' 
+                          {citiesList[0] === 'virtual-office'
                             ? 'We offer virtual logistics coordination in Odisha. All operations are run from our main HQ.'
                             : 'Physical branches are coming soon to major cities. Inter-state trucks are active daily.'
                           }
@@ -920,12 +920,12 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                     <h3 className={styles.sidebarTitle}>🗺️ {data.name} Territory Map</h3>
                     <div className={styles.sidebarDivider} />
                     <div className={styles.mapEmbedContainer}>
-                      <iframe 
+                      <iframe
                         src={data.mapEmbed || `https://maps.google.com/maps?q=${encodeURIComponent(data.name)}&t=&z=8&ie=UTF8&iwloc=&output=embed`}
-                        width="100%" 
-                        height="200" 
-                        style={{ border: 0, borderRadius: '6px', marginTop: '1rem', display: 'block' }} 
-                        allowFullScreen="" 
+                        width="100%"
+                        height="200"
+                        style={{ border: 0, borderRadius: '6px', marginTop: '1rem', display: 'block' }}
+                        allowFullScreen=""
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
                         title={`${data.name} Service Map`}
@@ -943,9 +943,9 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                       </p>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
                         {getRoutesForState(stateSlug, citiesList).map((r, idx) => (
-                          <Link 
-                            key={idx} 
-                            href={`/routes/${r.origin}-to-${r.destination}`} 
+                          <Link
+                            key={idx}
+                            href={`/routes/${r.origin}-to-${r.destination}`}
                             className={styles.routeLink}
                           >
                             <span>📍 {r.originName} to {r.destinationName}</span>
@@ -1078,15 +1078,15 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                     <th>Domestic Shifting (Inter-State)</th>
                   </tr>
                 </thead>
-            <tbody>
-              {ratesData.map((row, idx) => (
-                <tr key={idx}>
-                  <td><strong>{row.service}</strong></td>
-                  <td>{row.local}</td>
-                  <td>{row.domestic}</td>
-                </tr>
-              ))}
-            </tbody>
+                <tbody>
+                  {ratesData.map((row, idx) => (
+                    <tr key={idx}>
+                      <td><strong>{row.service}</strong></td>
+                      <td>{row.local}</td>
+                      <td>{row.domestic}</td>
+                    </tr>
+                  ))}
+                </tbody>
               </table>
             </div>
             <p className={styles.ratesDisclaimer}>
@@ -1155,12 +1155,12 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
           </div>
           <div className={styles.servicesGrid}>
             {RELOCATION_SERVICES.map((service, i) => (
-              <Link 
-                key={service.slug} 
-                href={`/services/${service.slug}`} 
-                className={styles.serviceCard} 
+              <Link
+                key={service.slug}
+                href={`/services/${service.slug}`}
+                className={styles.serviceCard}
                 style={{ '--accent': service.color }}
-                data-reveal="up" 
+                data-reveal="up"
                 data-delay={i * 80}
               >
                 <div className={styles.serviceIconWrap}>
@@ -1246,10 +1246,10 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
         <a href="tel:9835168368" className={styles.stickyBtn}>
           <span>📞</span> Call HQ
         </a>
-        <a 
-          href="https://wa.me/919835168368" 
-          target="_blank" 
-          rel="noopener noreferrer" 
+        <a
+          href="https://wa.me/919835168368"
+          target="_blank"
+          rel="noopener noreferrer"
           className={`${styles.stickyBtn} ${styles.stickyBtnWhatsapp}`}
         >
           <span>💬</span> WhatsApp
