@@ -1,8 +1,37 @@
 # Conversation Log
 
-**Date:** 2026-07-28
-**Project:** National Packers & Movers Next.js Website
-**Status:** Local SEO Dominance, Image Sitemap, GSC Audit & UI Theme Standardization Completed
+**Date:** 2026-08-10  
+**Project:** National Packers & Movers Next.js Website  
+**Status:** Deep Security Audit, React 19 Bug Fixes, Root MovingCompany Schema & Clean Production Build Verification  
+
+---
+
+## Today's Accomplishments (2026-08-10)
+
+1. **Security & Authentication Hardening:**
+   - Removed `raw_password` plain-text database field writes in [lib/auth.js](file:///d:/NPM-Website/npm-website/lib/auth.js).
+   - Removed legacy `token === 'authenticated'` backdoor check in `checkPermission` ([lib/auth.js](file:///d:/NPM-Website/npm-website/lib/auth.js)).
+
+2. **React 19 Components & Runtime Bug Fixes:**
+   - Resolved hook order, conditional effects, and synchronous `setState` in `useEffect` across `TrackerWidget.js`, `PsuClaimModal.js`, `VideoShowcase.js`, `PageCurtain.js`, `SlotCounter.js`, `BranchTestimonials.js`, and `BranchImage.js`.
+   - Resolved `Date.now()` purity error in `TrackerWidget.js` and `AnalyticsTracker.js`.
+   - Escaped all unescaped quotes/apostrophes in `QuoteWizard.js`, `TestimonialsSlider.js`, `Footer.js`, `PsuCalloutCard.js`, `BillingClaimForm.js`, and `AdminDashboard.js`.
+   - Replaced raw `<a>` navigation tag with Next.js `<Link>` in `AdminLogin.js`.
+
+3. **Global SEO & Indexing Infrastructure:**
+   - Injected root `@type: 'MovingCompany'` JSON-LD schema into [app/layout.js](file:///d:/NPM-Website/npm-website/app/layout.js).
+   - Added OpenGraph & Twitter Card metadata tags.
+   - Configured explicit `robots: { index: true, follow: true, 'max-image-preview': 'large' }` directives.
+
+4. **Production Build & Double Verification:**
+   - Verified local development server (`http://localhost:3000`).
+   - Ran `npm run build` compiling **115 static pages in 7.6s with 0 compilation errors**.
+
+5. **Real-Time Dual Lead Notification Engine (Telegram + Resend Email Push Alerts):**
+   - Built [lib/notifications.js](file:///d:/NPM-Website/npm-website/lib/notifications.js) featuring `sendTelegramNotification` and `sendEmailNotification`.
+   - Wired `sendLeadNotifications` directly into `createLead` in [lib/supabase.js](file:///d:/NPM-Website/npm-website/lib/supabase.js#L145).
+   - Configured `TELEGRAM_BOT_TOKEN` (`@NPM_Lead_Bot`), `TELEGRAM_CHAT_ID` (`5947430429`), and `RESEND_API_KEY` (`re_aDcAmxHS...`) in [.env.local](file:///d:/NPM-Website/npm-website/.env.local).
+   - Tested & verified live transmission of Telegram alert (`ok: true`, msg ID 2) and Resend HTML Email alert (`id: c032f7cb...`).
 
 ---
 

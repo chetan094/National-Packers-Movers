@@ -129,21 +129,6 @@ export default function Header() {
   const headerRef = useRef(null);
   const closeTimer = useRef(null);
 
-  if (pathname?.startsWith('/admin')) {
-    return null;
-  }
-
-  const cancelClose = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-  };
-
-  const startClose = (extraFn) => {
-    closeTimer.current = setTimeout(() => {
-      setActiveDropdown(null);
-      if (extraFn) extraFn();
-    }, 200);
-  };
-
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
@@ -161,6 +146,21 @@ export default function Header() {
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
+  const cancelClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  };
+
+  const startClose = (extraFn) => {
+    closeTimer.current = setTimeout(() => {
+      setActiveDropdown(null);
+      if (extraFn) extraFn();
+    }, 200);
+  };
 
   const toggleMobile = (key) => {
     setMobileExpanded(prev => prev === key ? null : key);

@@ -109,7 +109,7 @@ const stats = [
   { number: 125000, suffix: '+', label: 'Successful Relocations' },
   { number: 6, suffix: '', label: 'States Covered' },
   { number: 15, suffix: '+', label: 'Branch Offices' },
-  { number: 500, suffix: '+', label: 'Corporate Moves' },
+  { number: 5000, suffix: '+', label: 'Corporate Moves' },
   { number: 100, suffix: '%', label: 'Commitment to Quality' },
 ];
 
@@ -155,7 +155,7 @@ export default function AboutPage() {
               </p>
               <p className={styles.storyText}>
                 What started as a small, local operation has grown into a <strong>multi-state logistics network
-                spanning 6 states and 15+ cities</strong> across India. Through nearly four decades, one thing has
+                  spanning 6 states and 1200+ cities</strong> across India. Through nearly four decades, one thing has
                 remained constant — our unwavering commitment to honesty, safety, and customer satisfaction.
               </p>
               <p className={styles.storyText}>
@@ -182,11 +182,12 @@ export default function AboutPage() {
               <div className={styles.storyCard}>
                 <div className={styles.storyCardIcon}>🗺️</div>
                 <div className={styles.storyCardNum}>6</div>
+
                 <div className={styles.storyCardLabel}>States Covered</div>
               </div>
               <div className={styles.storyCard}>
                 <div className={styles.storyCardIcon}>🚛</div>
-                <div className={styles.storyCardNum}>30K+</div>
+                <div className={styles.storyCardNum}>125000+</div>
                 <div className={styles.storyCardLabel}>Moves Completed</div>
               </div>
             </div>

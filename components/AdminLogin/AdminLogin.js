@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import styles from '@/app/admin/page.module.css';
 
 export default function AdminLogin() {
@@ -96,7 +97,7 @@ export default function AdminLogin() {
         </form>
 
         <div className={styles.cardFooter}>
-          <a href="/" className={styles.backLink}>← Return to Homepage</a>
+          <Link href="/" className={styles.backLink}>← Return to Homepage</Link>
         </div>
       </div>
     </div>

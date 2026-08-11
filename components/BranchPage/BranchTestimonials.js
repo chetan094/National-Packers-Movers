@@ -15,7 +15,6 @@ export default function BranchTestimonials({ testimonials, cityName }) {
 
   useEffect(() => {
     if (!testimonials || testimonials.length <= 1) return;
-    setActiveTestimonial(0);
     const timer = setInterval(() => {
       setActiveTestimonial(prev => (prev + 1) % testimonials.length);
     }, 4500);

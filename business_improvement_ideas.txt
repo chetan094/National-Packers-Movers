@@ -314,5 +314,20 @@ Pros:
 - Saves bandwidth costs while preserving crisp visual quality for clients.
 
 Cons:
-- Requires standard CDN configuration and Next.js Image component optimization tuning.
+--------------------------------------------------------------------------------
+20. INSTANT REAL-TIME LEAD NOTIFICATION SYSTEM (TELEGRAM / EMAIL / WHATSAPP WEBHOOK)
+--------------------------------------------------------------------------------
+Suggestion:
+Integrate a serverless real-time notification trigger in `lib/supabase.js` (`createLead`) and `app/api/enquiry/route.js`. Whenever a customer submits a shifting quote form or chat inquiry, the system immediately fires an automated instant push notification to Chetan's phone (via Telegram Bot / Resend Email / WhatsApp Webhook) containing customer name, phone number, origin, destination, and cargo size.
+
+Reasoning:
+In logistics, lead response time determines win rates. A customer looking to move usually submits forms on 2-3 packer websites simultaneously. The business that calls the customer within 60 seconds captures the deal 80% of the time. Requiring admin portal login creates latency and missed opportunities. Automated push alerts turn the website into a 24/7 instant lead dispatch system.
+
+Pros:
+- 0-second latency: You get a ringing notification on your phone the instant a form is clicked.
+- 1-Click "Tap to Call": Push messages include clickable `tel:number` links to call leads instantly.
+- Eliminates manual admin portal monitoring.
+
+Cons:
+- Requires setting up a free Telegram Bot API key or Resend Email API key in `.env.local`.
 ================================================================================

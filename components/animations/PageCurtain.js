@@ -11,12 +11,5 @@ import styles from './PageCurtain.module.css';
  */
 export default function PageCurtain() {
   const pathname = usePathname();
-  const [animKey, setAnimKey] = useState(0);
-
-  useEffect(() => {
-    // Re-mount the curtain on every route change by changing the key
-    setAnimKey(k => k + 1);
-  }, [pathname]);
-
-  return <div key={animKey} className={styles.curtain} aria-hidden="true" />;
+  return <div key={pathname} className={styles.curtain} aria-hidden="true" />;
 }

@@ -7,7 +7,7 @@ import { trackEvent, trackTimeSpent } from '@/lib/analytics';
 export default function AnalyticsTracker() {
   const pathname = usePathname();
   const prevPathRef = useRef('');
-  const entryTimeRef = useRef(Date.now());
+  const entryTimeRef = useRef(0);
 
   useEffect(() => {
     const currentUrl = pathname + (typeof window !== 'undefined' ? window.location.search : '');

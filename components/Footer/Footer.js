@@ -80,7 +80,7 @@ export default function Footer() {
               </div>
             </Link>
             <p className={styles.footerTagline}>
-              "Honesty is not our policy, but our Principle."
+              &quot;Honesty is not our policy, but our Principle.&quot;
             </p>
             <div className={styles.footerContact}>
               <a href="tel:9835168368" className={styles.footerPhone} onClick={() => trackEvent('click', 'call_click')}>

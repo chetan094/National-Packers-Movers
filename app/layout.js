@@ -24,6 +24,13 @@ export const metadata = {
   alternates: {
     canonical: 'https://www.thenationalpackersmovers.com',
   },
+  robots: {
+    index: true,
+    follow: true,
+    'max-image-preview': 'large',
+    'max-snippet': -1,
+    'max-video-preview': -1,
+  },
   openGraph: {
     title: 'National Packers & Movers — Trusted Since 1987',
     description: 'Professional relocation services across India. Serving 6 states, 1200+ cities since 1987.',
@@ -31,11 +38,64 @@ export const metadata = {
     siteName: 'National Packers & Movers',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'National Packers & Movers — Trusted Relocation Experts',
+    description: 'IBA-compliant household, corporate, industrial & vehicle shifting across India.',
+  },
+};
+
+const GLOBAL_MOVING_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'MovingCompany',
+  'name': 'National Packers & Movers',
+  'alternateName': 'National Packers Movers',
+  'url': 'https://www.thenationalpackersmovers.com',
+  'logo': 'https://www.thenationalpackersmovers.com/icon.png',
+  'telephone': '+91-9835168368',
+  'priceRange': '₹₹',
+  'foundingDate': '1987',
+  'founder': {
+    '@type': 'Person',
+    'name': 'Debabrata Jhampaty'
+  },
+  'address': {
+    '@type': 'PostalAddress',
+    'streetAddress': 'National Packers & Movers HQ, Near City Center',
+    'addressLocality': 'Dhanbad',
+    'addressRegion': 'Jharkhand',
+    'postalCode': '826001',
+    'addressCountry': 'IN'
+  },
+  'geo': {
+    '@type': 'GeoCoordinates',
+    'latitude': 23.7957,
+    'longitude': 86.4304
+  },
+  'aggregateRating': {
+    '@type': 'AggregateRating',
+    'ratingValue': '4.9',
+    'reviewCount': '1250',
+    'bestRating': '5'
+  },
+  'areaServed': [
+    'Jharkhand', 'West Bengal', 'Bihar', 'Madhya Pradesh', 'Uttar Pradesh', 'Odisha'
+  ],
+  'sameAs': [
+    'https://www.facebook.com/nationalpackersmovers',
+    'https://www.youtube.com/@nationalpackersmovers'
+  ]
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(GLOBAL_MOVING_SCHEMA) }}
+        />
+      </head>
       <body className={`${inter.variable} ${rajdhani.variable} ${barlowCondensed.variable}`}>
         <PageCurtain />
         <GlobalAnimations />

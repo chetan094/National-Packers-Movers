@@ -21,7 +21,7 @@ export default function PsuCalloutCard({ cityName = '', isBranchPage = false }) 
           </div>
           <div className={styles.cardBody}>
             <p className={styles.branchText}>
-              Don't risk audit rejections on your relocation allowance. We provide 100% genuine, IBA-aligned invoices, loading sheets, and money receipts accepted by <strong>Coal India, SAIL, NTPC, DVC, CMPDI, and national banks</strong>.
+              Don&apos;t risk audit rejections on your relocation allowance. We provide 100% genuine, IBA-aligned invoices, loading sheets, and money receipts accepted by <strong>Coal India, SAIL, NTPC, DVC, CMPDI, and national banks</strong>.
             </p>
             <button 
               type="button" 
@@ -53,7 +53,7 @@ export default function PsuCalloutCard({ cityName = '', isBranchPage = false }) 
               PSU Relocation Reimbursement &amp; <span>Corporate Billing Specialists</span>
             </h2>
             <p className={styles.homeText}>
-              We are India's premier movers trusted by officers of <strong>Coal India (BCCL, CCL, ECL, NCL), CMPDI, SAIL, NTPC, IOCL, DVC, Indian Railways, State Bank of India,</strong> and other major public sector undertakings. We handle 100% of your claim paperwork, providing fully compliant billings to guarantee hassle-free reimbursement.
+              We are India&apos;s premier movers trusted by officers of <strong>Coal India (BCCL, CCL, ECL, NCL), CMPDI, SAIL, NTPC, IOCL, DVC, Indian Railways, State Bank of India,</strong> and other major public sector undertakings. We handle 100% of your claim paperwork, providing fully compliant billings to guarantee hassle-free reimbursement.
             </p>
             <div className={styles.psuGrid}>
               <span>• Coal India</span>

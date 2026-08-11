@@ -134,7 +134,7 @@ export default function BillingClaimForm() {
             The PDF file has been downloaded to your device. Please check your downloads folder.
           </p>
           <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '6px', padding: '1rem', marginBottom: '1.25rem', fontSize: '0.85rem', color: 'var(--gray-300)', textAlign: 'left', lineHeight: '1.5' }}>
-            <strong>Need booking help?</strong> Our coordinators are online to format custom invoices matching your department's exact audit rules.
+            <strong>Need booking help?</strong> Our coordinators are online to format custom invoices matching your department&apos;s exact audit rules.
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <a 

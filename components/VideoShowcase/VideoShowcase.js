@@ -1,6 +1,9 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import styles from '@/app/gallery/page.module.css';
+
+const emptySubscribe = () => () => {};
+const useIsMounted = () => useSyncExternalStore(emptySubscribe, () => true, () => false);
 import YouTubePlayer from '@/components/YouTubePlayer/YouTubePlayer';
 
 const ALL_VIDEOS = [
@@ -91,8 +94,8 @@ const ALL_VIDEOS = [
 ];
 
 export default function VideoShowcase() {
-  const [shuffledVideos, setShuffledVideos] = useState([]);
-  const [isMounted, setIsMounted] = useState(false);
+  const [shuffledVideos, setShuffledVideos] = useState(() => ALL_VIDEOS.slice(0, 4));
+  const isMounted = useIsMounted();
 
   const handleShuffle = () => {
     const shuffleArray = (array) => {
@@ -105,11 +108,6 @@ export default function VideoShowcase() {
     };
     setShuffledVideos(shuffleArray(ALL_VIDEOS).slice(0, 4));
   };
-
-  useEffect(() => {
-    setIsMounted(true);
-    handleShuffle();
-  }, []);
 
   return (
     <>

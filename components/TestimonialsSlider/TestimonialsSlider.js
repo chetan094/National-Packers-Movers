@@ -68,7 +68,7 @@ export default function TestimonialsSlider() {
               <div className={styles.testimonialStars}>
                 {'⭐'.repeat(t.rating)}
               </div>
-              <p className={styles.testimonialText}>"{t.text}"</p>
+              <p className={styles.testimonialText}>&quot;{t.text}&quot;</p>
               <div className={styles.testimonialAuthor}>
                 <div className={styles.testimonialAvatar}>{t.initials}</div>
                 <div>

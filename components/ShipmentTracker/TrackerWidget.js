@@ -11,31 +11,15 @@ const STEP_MILESTONES = [
 ];
 
 export default function TrackerWidget() {
-  const [cnInput, setCnInput] = useState('');
+  const [cnInput, setCnInput] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return new URLSearchParams(window.location.search).get('cn') || '';
+    }
+    return '';
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [shipment, setShipment] = useState(null);
-
-  // Auto-fetch if CN number is in URL query parameter
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const queryCn = params.get('cn');
-      if (queryCn) {
-        setCnInput(queryCn);
-        performTrack(queryCn);
-      }
-    }
-  }, []);
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (!cnInput.trim()) {
-      setError('Please enter a valid consignment number.');
-      return;
-    }
-    performTrack(cnInput.trim());
-  };
 
   const performTrack = async (cnNumber) => {
     setLoading(true);
@@ -56,6 +40,27 @@ export default function TrackerWidget() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Auto-fetch if CN number is in URL query parameter
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const queryCn = params.get('cn');
+      if (queryCn) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        performTrack(queryCn);
+      }
+    }
+  }, []);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (!cnInput.trim()) {
+      setError('Please enter a valid consignment number.');
+      return;
+    }
+    performTrack(cnInput.trim());
   };
 
   const getActiveProgressPercentage = (status) => {
@@ -145,7 +150,7 @@ export default function TrackerWidget() {
                 {shipment.current_status}
               </span>
               <p className={styles.updateStamp}>
-                Updated: {new Date(shipment.created_at || Date.now()).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                Updated: {new Date(shipment.created_at || shipment.updated_at || '2026-01-01').toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
               </p>
             </div>
           </div>

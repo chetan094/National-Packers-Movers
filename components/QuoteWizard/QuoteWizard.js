@@ -175,7 +175,7 @@ function CityInput({ label, value, onChange, placeholder, id }) {
               className={`${styles.suggestionItem} ${styles.suggestionCustom}`}
               onMouseDown={() => select(query)}
             >
-              ✏️ Use "{query}" as city name
+              ✏️ Use &quot;{query}&quot; as city name
             </button>
           )}
         </div>
@@ -384,7 +384,7 @@ export default function QuoteWizard() {
             <Link href="/" className="btn btn-secondary">← Back to Home</Link>
           </div>
           <p className={styles.successNote}>
-            Didn't see WhatsApp open?{' '}
+            Didn&apos;t see WhatsApp open?{' '}
             <a
               href={`https://wa.me/919835168368?text=${buildWhatsAppMessage()}`}
               target="_blank" rel="noopener noreferrer"
@@ -597,7 +597,7 @@ export default function QuoteWizard() {
         {((form.moveType !== 'household' && step === 2) || (form.moveType === 'household' && step === 3)) && (
           <div className={styles.formStep}>
             <h2 className={styles.stepTitle}>When & how to reach you?</h2>
-            <p className={styles.stepHint}>We'll call you at this number within 2 hours.</p>
+            <p className={styles.stepHint}>We&apos;ll call you at this number within 2 hours.</p>
             <div className={styles.formGrid}>
               <div className="form-group">
                 <label className="form-label" htmlFor="moving-date">Preferred Moving Date *</label>

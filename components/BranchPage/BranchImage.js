@@ -4,10 +4,12 @@ import styles from './BranchPage.module.css';
 
 export default function BranchImage({ stateSlug, cityKey, isCity, initialImage, alt }) {
   const [imageSrc, setImageSrc] = useState(initialImage);
+  const [prevInitial, setPrevInitial] = useState(initialImage);
 
-  useEffect(() => {
+  if (initialImage !== prevInitial) {
+    setPrevInitial(initialImage);
     setImageSrc(initialImage);
-  }, [initialImage]);
+  }
 
   const handleImageError = () => {
     if (imageSrc === `/images/branches/${stateSlug}-${cityKey}.jpg`) {

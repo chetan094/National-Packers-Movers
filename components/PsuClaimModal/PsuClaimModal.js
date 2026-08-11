@@ -35,16 +35,13 @@ export default function PsuClaimModal({ isOpen, onClose, defaultOrigin = '' }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      setFormData(prev => ({
-        ...prev,
-        from: defaultOrigin || prev.from
-      }));
-      setSuccess(false);
-      setError('');
+  const [prevDefaultOrigin, setPrevDefaultOrigin] = useState(defaultOrigin);
+  if (defaultOrigin !== prevDefaultOrigin) {
+    setPrevDefaultOrigin(defaultOrigin);
+    if (defaultOrigin) {
+      setFormData(prev => ({ ...prev, from: defaultOrigin }));
     }
-  }, [isOpen, defaultOrigin]);
+  }
 
   if (!isOpen) return null;
 

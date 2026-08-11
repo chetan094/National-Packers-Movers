@@ -5208,7 +5208,7 @@ export default function AdminDashboard() {
                             <div style={{ position: 'absolute', left: '-21px', top: '3px', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--gold)', boxShadow: '0 0 6px var(--gold)' }}></div>
                             <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--white)' }}>{item.status}</div>
                             <div style={{ fontSize: '0.8rem', color: 'var(--gold)', fontWeight: '600' }}>📍 {item.location}</div>
-                            {item.notes && <div style={{ fontSize: '0.78rem', color: 'var(--gray-400)', fontStyle: 'italic' }}>"{item.notes}"</div>}
+                            {item.notes && <div style={{ fontSize: '0.78rem', color: 'var(--gray-400)', fontStyle: 'italic' }}>&quot;{item.notes}&quot;</div>}
                           </div>
                         ))
                       ) : (
@@ -6630,7 +6630,7 @@ export default function AdminDashboard() {
               <div className={styles.modalIcon}>⚠️</div>
               <h3 className={styles.modalTitle}>Confirm Deletion</h3>
               <p className={styles.modalText}>
-                Are you sure you want to permanently delete the article <strong>"{blogToDelete.title}"</strong>? This action cannot be undone.
+                Are you sure you want to permanently delete the article <strong>&quot;{blogToDelete.title}&quot;</strong>? This action cannot be undone.
               </p>
               <div className={styles.modalActions}>
                 <button

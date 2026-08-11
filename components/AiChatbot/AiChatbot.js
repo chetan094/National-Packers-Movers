@@ -9,26 +9,30 @@ const QUICK_REPLIES = [
   '🚗 Vehicle Transportation'
 ];
 
+const DEFAULT_BOT_MESSAGE = {
+  sender: 'bot',
+  text: "Namaste! I'm Dev, your AI Shifting Coordinator. 🚚 Ask me anything about home shifting, packing charges, or PSU billing claim checklists!"
+};
+
 export default function AiChatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = sessionStorage.getItem('npm_chat_history');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {
+          // Fallback to default
+        }
+      }
+    }
+    return [DEFAULT_BOT_MESSAGE];
+  });
   const [inputVal, setInputVal] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
-
-  // Load chat history from sessionStorage on mount
-  useEffect(() => {
-    const saved = sessionStorage.getItem('npm_chat_history');
-    if (saved) {
-      try {
-        setMessages(JSON.parse(saved));
-      } catch (e) {
-        initializeDefaultChat();
-      }
-    } else {
-      initializeDefaultChat();
-    }
-  }, []);
 
   // Save chat history to sessionStorage on updates
   useEffect(() => {

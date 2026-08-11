@@ -99,7 +99,7 @@ export default function GalleryGrid({ photos = [] }) {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activePhoto]);
+  }, [activePhoto, photosToRender.length]);
 
   return (
     <>
