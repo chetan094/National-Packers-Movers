@@ -110,6 +110,7 @@ export async function GET() {
       <image:loc>${img.src}</image:loc>
       <image:title>${(img.title || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</image:title>
       <image:caption>${(img.caption || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</image:caption>
+      <image:license>${BASE_URL}/terms</image:license>
     </image:image>`).join('');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

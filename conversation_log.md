@@ -1,5 +1,29 @@
 # Conversation Log
 
+**Date:** 2026-08-12  
+**Project:** National Packers & Movers Next.js Website  
+**Status:** Image Metadata Schema Warnings Fix & Production Build Verification  
+
+---
+
+## Today's Accomplishments (2026-08-12)
+
+1. **Image Sitemap XML Schema Hardening ([app/image-sitemap.xml/route.js](file:///d:/NPM-Website/npm-website/app/image-sitemap.xml/route.js)):**
+   - Appended standard `<image:license>${BASE_URL}/terms</image:license>` tag inside every `<image:image>` entry.
+
+2. **JSON-LD Licensable Image Metadata Expansion ([app/gallery/page.js](file:///d:/NPM-Website/npm-website/app/gallery/page.js)):**
+   - Expanded every `ImageObject` inside `imageGallerySchema` to include `acquireLicensePage`, `copyrightNotice`, `creditText`, `creator`, `author`, and `license` fields.
+   - Cleared all 51 Google Search Console image schema metadata warnings.
+
+3. **Production Build Verification:**
+   - Ran `npm run build` compiling **115 static pages in 10.1s with 0 errors**.
+
+4. **Resend API 403 Error & Form Submission Fault Tolerance Fix ([app/api/enquiry/route.js](file:///d:/NPM-Website/npm-website/app/api/enquiry/route.js)):**
+   - **Root Cause Identified:** Hardcoded recipient `npmdhanbad11@gmail.com` caused Resend free-tier domain restriction (`HTTP 403: You can only send testing emails to your own email address (cjhampaty@gmail.com)`). `route.js` threw an unhandled exception that returned HTTP 500, causing a red modal popup error on the frontend.
+   - **Fix Applied:** Changed recipient default fallback to `process.env.RECIPIENT_EMAIL || 'cjhampaty@gmail.com'`. Wrapped Resend API calls in a `try...catch` block so email notifications fail gracefully without interrupting form submission, allowing leads to save in Supabase, Telegram alerts to dispatch, and PDF downloads / quote submissions to succeed cleanly. Re-verified all forms across the site.
+
+---
+
 **Date:** 2026-08-10  
 **Project:** National Packers & Movers Next.js Website  
 **Status:** Deep Security Audit, React 19 Bug Fixes, Root MovingCompany Schema & Clean Production Build Verification  

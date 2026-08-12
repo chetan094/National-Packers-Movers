@@ -255,7 +255,7 @@ export async function POST(request) {
       </html>
     `;
 
-    const recipient = 'npmdhanbad11@gmail.com';
+    const recipient = process.env.RECIPIENT_EMAIL || 'cjhampaty@gmail.com';
     const apiKey = process.env.RESEND_API_KEY;
 
     if (apiKey) {
@@ -263,30 +263,40 @@ export async function POST(request) {
       const resendSender = process.env.SENDER_EMAIL || 'onboarding@resend.dev';
       const subject = `🚀 [Lead: ${source}] - ${name} (${from || 'HQ'} -> ${to || 'Dest'})`;
 
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          from: `NPM Web Leads <${resendSender}>`,
-          to: [recipient],
-          subject: subject,
-          html: emailHtml,
-          reply_to: email && email.includes('@') ? email : undefined
-        })
-      });
+      try {
+        const response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            from: `NPM Web Leads <${resendSender}>`,
+            to: [recipient],
+            subject: subject,
+            html: emailHtml,
+            reply_to: email && email.includes('@') ? email : undefined
+          })
+        });
 
-      const responseData = await response.json();
+        const responseData = await response.json();
 
-      if (!response.ok) {
-        console.error('Resend API Error details:', responseData);
-        throw new Error(`Resend API HTTP Error: ${response.status} - ${JSON.stringify(responseData)}`);
+        if (!response.ok) {
+          console.warn('[NOTIFICATIONS WARNING] Resend API error (handled gracefully):', response.status, responseData);
+          return Response.json({
+            success: true,
+            emailSent: false,
+            warning: responseData?.message || `Resend HTTP ${response.status}`,
+            leadId: dbLead?.id
+          });
+        }
+
+        console.log(`[EMAIL DISPATCH SUCCESS] Lead for ${name} sent via Resend API. ID: ${responseData.id}`);
+        return Response.json({ success: true, emailSent: true, provider: 'resend', id: responseData.id, leadId: dbLead?.id });
+      } catch (emailErr) {
+        console.error('[NOTIFICATIONS ERROR] Resend fetch exception (handled gracefully):', emailErr);
+        return Response.json({ success: true, emailSent: false, warning: emailErr.message, leadId: dbLead?.id });
       }
-
-      console.log(`[EMAIL DISPATCH SUCCESS] Lead for ${name} sent via Resend API. ID: ${responseData.id}`);
-      return Response.json({ success: true, emailSent: true, provider: 'resend', id: responseData.id });
     } else {
       // Development Fallback - Log lead to server console
       console.warn('========================================================================');

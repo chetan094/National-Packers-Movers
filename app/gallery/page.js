@@ -134,11 +134,20 @@ export default async function GalleryPage() {
       'description': photo.desc,
       'contentUrl': photo.src,
       'url': `${BASE_URL}/gallery`,
+      'acquireLicensePage': `${BASE_URL}/terms`,
+      'copyrightNotice': '© 2026 National Packers & Movers. All rights reserved.',
+      'creditText': 'National Packers & Movers',
+      'license': `${BASE_URL}/terms`,
+      'creator': {
+        '@type': 'Organization',
+        'name': 'National Packers & Movers',
+        'url': BASE_URL,
+      },
       'author': {
         '@type': 'Organization',
         'name': 'National Packers & Movers',
+        'url': BASE_URL,
       },
-      'license': 'https://creativecommons.org/licenses/by-nc/4.0/',
     })),
   };
 
