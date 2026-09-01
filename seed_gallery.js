@@ -32,17 +32,14 @@ try {
   process.exit(1);
 }
 
-// 3. Setup PostgreSQL config
-const passwordsToTry = [
-  'Aidhee#Deep080404',
-  'Aishee#Deep080404',
-  'debabrata74618'
-];
+// 3. Setup PostgreSQL config using environment variable SUPABASE_DB_PASSWORD
+const dbPassword = process.env.SUPABASE_DB_PASSWORD || '';
 
 const config = {
   host: 'db.sgsaucmxuztrmtiojksa.supabase.co',
   port: 5432,
   user: 'postgres',
+  password: dbPassword,
   database: 'postgres',
   ssl: { rejectUnauthorized: false }
 };

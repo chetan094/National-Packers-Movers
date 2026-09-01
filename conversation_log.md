@@ -22,6 +22,15 @@
    - **Root Cause Identified:** Hardcoded recipient `npmdhanbad11@gmail.com` caused Resend free-tier domain restriction (`HTTP 403: You can only send testing emails to your own email address (cjhampaty@gmail.com)`). `route.js` threw an unhandled exception that returned HTTP 500, causing a red modal popup error on the frontend.
    - **Fix Applied:** Changed recipient default fallback to `process.env.RECIPIENT_EMAIL || 'cjhampaty@gmail.com'`. Wrapped Resend API calls in a `try...catch` block so email notifications fail gracefully without interrupting form submission, allowing leads to save in Supabase, Telegram alerts to dispatch, and PDF downloads / quote submissions to succeed cleanly. Re-verified all forms across the site.
 
+5. **Vercel Live Serverless Function Notification Lifecycle Fix ([lib/supabase.js](file:///d:/NPM-Website/npm-website/lib/supabase.js)):**
+   - **Root Cause Identified:** On Vercel live serverless containers, un-awaited async calls (`sendLeadNotifications(lead)` without `await`) were being prematurely frozen/terminated when the serverless response returned, preventing live Telegram/Email HTTP requests from executing.
+   - **Fix Applied:** Added `await sendLeadNotifications(lead)` inside `createLead` in [lib/supabase.js](file:///d:/NPM-Website/npm-website/lib/supabase.js#L153) to guarantee full serverless promise resolution. Documented Vercel Environment Variables setup.
+
+6. **Comprehensive Platform Keyword Audit & Google Live Search Intelligence:**
+   - Conducted an in-depth scan of all 6 state hub pages, 64 active branch pages, and 120+ programmatic city landing pages.
+   - Performed live Google SERP research on high-converting Indian logistics terms (`packers and movers near me`, `IBA approved`, `house shifting charges`).
+   - Saved the full keyword density matrix, locality mappings, and SERP findings in [keyword_analysis_and_seo_audit.md](file:///C:/Users/cjham/.gemini/antigravity-ide/brain/e557e387-fdef-49a3-bb1e-8280a9cdf6bc/keyword_analysis_and_seo_audit.md).
+
 ---
 
 **Date:** 2026-08-10  

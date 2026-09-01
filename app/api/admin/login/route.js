@@ -1,25 +1,42 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getAdminUser, hashPassword, signSession } from '@/lib/auth';
+import { getAdminUser, verifyPasswordHash, safeCompare, signSession } from '@/lib/auth';
+import { checkRateLimit, recordFailedAttempt, clearRateLimit } from '@/lib/rateLimit';
 
 export async function POST(request) {
   try {
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
+    const rateCheck = checkRateLimit(ip, 5, 15 * 60 * 1000); // 5 attempts per 15 mins
+
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Too many failed login attempts. Please wait 15 minutes before trying again.' },
+        { status: 429 }
+      );
+    }
+
     const { username, password } = await request.json();
     const cleanUsername = (username || 'admin').trim();
 
-    // 1. Try to fetch user from Supabase database admin_users table
+    if (!password) {
+      recordFailedAttempt(ip);
+      return NextResponse.json({ success: false, error: 'Password is required.' }, { status: 400 });
+    }
+
+    // 1. Fetch user from Supabase database admin_users table
     const dbUser = await getAdminUser(cleanUsername);
 
     if (dbUser) {
-      // User exists in database, verify hashed password
-      const calculatedHash = hashPassword(password, dbUser.salt);
-      if (calculatedHash === dbUser.password_hash) {
+      // User exists in database, verify salted PBKDF2 hash using timing-safe comparison
+      const isValid = verifyPasswordHash(password, dbUser.salt, dbUser.password_hash);
+      if (isValid) {
+        clearRateLimit(ip);
         const session = {
           id: dbUser.id,
           username: dbUser.username,
           role: dbUser.role,
           permissions: dbUser.permissions,
-          full_name: dbUser.full_name // Include full name in session cookie
+          full_name: dbUser.full_name
         };
         const token = signSession(session);
         const cookieStore = await cookies();
@@ -32,13 +49,14 @@ export async function POST(request) {
         });
         return NextResponse.json({ success: true });
       }
+      recordFailedAttempt(ip);
       return NextResponse.json({ success: false, error: 'Invalid username or password.' }, { status: 401 });
     }
 
-    // 2. If user not found in DB and identifier is 'admin', check env fallback (backward compatibility)
-    if (cleanUsername === 'admin') {
-      const adminPassword = process.env.ADMIN_PASSWORD || 'debabrata74618';
-      if (password === adminPassword) {
+    // 2. If user not found in DB and ADMIN_PASSWORD env is explicitly configured, check env secret (no hardcoded fallback)
+    if (cleanUsername === 'admin' && process.env.ADMIN_PASSWORD) {
+      if (safeCompare(password, process.env.ADMIN_PASSWORD)) {
+        clearRateLimit(ip);
         const session = {
           username: 'admin',
           role: 'admin',
@@ -58,7 +76,8 @@ export async function POST(request) {
       }
     }
 
-    return NextResponse.json({ success: false, error: 'User credentials not recognized.' }, { status: 401 });
+    recordFailedAttempt(ip);
+    return NextResponse.json({ success: false, error: 'Invalid username or password.' }, { status: 401 });
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });

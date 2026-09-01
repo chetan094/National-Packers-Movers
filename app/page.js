@@ -119,11 +119,112 @@ const branches = [
   { state: 'Uttar Pradesh', cities: ['Lucknow', 'Noida', 'Kanpur'], slug: 'uttar-pradesh' },
 ];
 
+const STATIC_HOMEPAGE_PHOTOS = [
+  { id: 'img-premium-cushion-sofa-wrapping',      src: '/photos/premium-cushion-sofa-wrapping.jpg',      title: 'Premium Cushion Sofa Wrapping',      desc: 'Expert packing crew wrapping high-value wooden and leather sofas using bubble wrap and robust outer cardboard sheets.' },
+  { id: 'img-safe-container-vehicle-loading',     src: '/photos/safe-container-vehicle-loading.jpg',     title: 'Safe Container Vehicle Loading',      desc: 'Stacking cartons and wrapped household items securely inside our lockable, weather-proof container vehicles.' },
+  { id: 'img-seamless-corporate-office-shifting', src: '/photos/seamless-corporate-office-shifting.jpg', title: 'Seamless Corporate Office Shifting',  desc: 'PSU and bank employee cabins, computer servers, and office desks carefully boxed and cataloged for transit.' },
+  { id: 'img-safe-car-carrier-shifting',          src: '/photos/safe-car-carrier-shifting.jpg',          title: 'Safe Car Carrier Shifting',           desc: 'Loading family cars and luxury vehicles onto specialized double-deck carrier trucks for damage-free highway transit.' },
+  { id: 'img-palletized-storage-warehousing',     src: '/photos/palletized-storage-warehousing.jpg',     title: 'Palletized Storage & Warehousing',    desc: 'Clean, insect-free storage facility at our headquarters with strict inventory tracking and 24/7 security watch.' },
+  { id: 'img-waterproof-cardboard-packaging',     src: '/photos/waterproof-cardboard-packaging.jpg',     title: 'Waterproof Cardboard Packaging',      desc: 'Heavy-duty shifting boxes wrapped in waterproof stretch wrap against highway dust and monsoon rains.' },
+  { id: 'img-fragile-kitchenware-wrapping',       src: '/photos/fragile-kitchenware-wrapping.jpg',       title: 'Fragile Kitchenware Wrapping',        desc: 'Delicate kitchen glass sets and bone china plates wrapped individually in foam sheets and double-wall boxes.' },
+  { id: 'img-destination-bed-reassembly',         src: '/photos/destination-bed-reassembly.jpg',         title: 'Destination Bed Reassembly',          desc: 'Unpacking and placing heavy items, including the safe reassembly of beds, tables, and cabinets.' },
+  { id: 'img-team-loading-operations',            src: '/photos/team-loading-operations.jpg',            title: 'Team Loading Operations',             desc: 'Professional loaders carefully handling heavy domestic appliances and furniture onto direct shipping carriers.' },
+  { id: 'img-uniform-packing-crew',               src: '/photos/uniform-packing-crew.jpg',               title: 'Uniform Packing Crew',                desc: 'Our staff dressed in official corporate uniforms, demonstrating organization and reliability.' },
+  { id: 'img-gps-tracked-container-fleet',        src: '/photos/gps-tracked-container-fleet.jpg',        title: 'GPS-Tracked Container Fleet',         desc: 'Our lockable, closed-container trucks driving direct routes across states with zero midway transfers.' },
+  { id: 'img-heavy-furniture-shifting',           src: '/photos/heavy-furniture-shifting.jpg',           title: 'Heavy Furniture Shifting',            desc: 'Experienced crews using specialized belts and corner guards to carry heavy wardrobes and double beds safely.' },
+  { id: 'img-secure-cargo-stacking-layout',       src: '/photos/secure-cargo-stacking-layout.jpg',       title: 'Secure Cargo Stacking Layout',        desc: 'Interlocking packing methods inside the truck container to eliminate item movements during highway transit.' },
+  { id: 'img-dual-layer-bubble-wrapping',         src: '/photos/dual-layer-bubble-wrapping.jpg',         title: 'Dual-Layer Bubble Wrapping',          desc: 'Wrapping fragile electronics, LED TVs, and mirrors using thick bubble wrap and high-density stretch wrapping.' },
+  { id: 'img-apartment-residential-relocation',   src: '/photos/apartment-residential-relocation.jpg',   title: 'Apartment Residential Relocation',    desc: 'Local shifting services for complete door-to-door residential relocations in Ranchi, Dhanbad, and Patna.' },
+  { id: 'img-doorstep-unloading-setup',           src: '/photos/doorstep-unloading-setup.jpg',           title: 'Doorstep Unloading & Setup',          desc: 'Supervisors cross-checking the item checklist during doorstep unloading and setting up large items.' },
+  { id: 'img-bike-relocation-packing',            src: '/photos/bike-relocation-packing.jpg',            title: 'Bike Relocation Packing',             desc: 'Professional two-wheeler packing using multi-layer bubble wrapping and customized cargo carrier transit.' },
+  { id: 'img-national-logistics-transit',         src: '/photos/national-logistics-transit.jpg',         title: 'National Logistics Transit',          desc: 'Our transport vehicles loaded and ready for safe highway dispatch from our branch office.' },
+  { id: 'img-national-packing-operations',        src: '/photos/national-packing-operations.jpg',        title: 'National Packing Operations',         desc: 'Experienced shifting crews wrapping domestic assets using heavy-duty stretch wraps and cartons.' },
+  { id: 'img-relocation-packing-standards',       src: '/photos/relocation-packing-standards.jpg',       title: 'Relocation Packing Standards',        desc: 'Standardized wrapping layouts for home furniture and delicate electronics before transit loading.' },
+  { id: 'img-cargo-loading-dispatch',             src: '/photos/cargo-loading-dispatch.jpg',             title: 'Cargo Loading & Dispatch',            desc: 'Carefully stacking boxes inside container trucks to ensure zero movement and damage-free transit.' },
+  { id: 'img-container-loading-process',          src: '/photos/container-loading-process.jpg',          title: 'Container Loading Process',           desc: 'Locked container loading at our transit terminal ensuring maximum safety for long-distance relocations.' },
+  { id: 'img-multi-layer-packing-process',        src: '/photos/multi-layer-packing-process.jpg',        title: 'Multi-Layer Packing Process',         desc: 'Wrapping fragile kitchenware, chinaware, and electronics in dynamic thick cushion rolls.' },
+  { id: 'img-goods-dispatch-transit',             src: '/photos/goods-dispatch-transit.jpg',             title: 'Goods Dispatch Transit',              desc: 'Supervising direct interstate vehicle transit dispatch matching high-end safety guidelines.' },
+  { id: 'img-national-shifting-crew',             src: '/photos/national-shifting-crew.jpg',             title: 'National Shifting Crew',              desc: 'Uniformed, trained logistics staff handling large domestic items safely down residential floors.' },
+  { id: 'img-secure-shifting-operations',         src: '/photos/secure-shifting-operations.jpg',         title: 'Secure Shifting Operations',          desc: 'Using high-strength tie-down straps inside closed truck containers to protect furniture corners.' },
+  { id: 'img-direct-container-loading',           src: '/photos/direct-container-loading.jpg',           title: 'Direct Container Loading',            desc: 'Stacking goods systematically with heavy items at the base and lighter boxes on top.' },
+  { id: 'img-household-goods-packing',            src: '/photos/household-goods-packing.jpg',            title: 'Household Goods Packing',             desc: 'Multi-layered bubble wrapping on electrical appliances for maximum protection during transit.' },
+  { id: 'img-direct-route-dispatch',              src: '/photos/direct-route-dispatch.jpg',              title: 'Direct Route Dispatch',               desc: 'National Packers container carrier fleet ready for immediate direct transport across states.' },
+  { id: 'img-doorstep-relocation-setup',          src: '/photos/doorstep-relocation-setup.jpg',          title: 'Doorstep Relocation Setup',           desc: 'Offloading household items and setting them up in the customer\'s new home.' },
+  { id: 'img-premium-wrapping-materials',         src: '/photos/premium-wrapping-materials.jpg',         title: 'Premium Wrapping Materials',          desc: 'Heavy-duty cardboard boxes, high-density bubble wrap, stretch films, and customized sealing tapes.' },
+  { id: 'img-safe-warehousing-facilities',        src: '/photos/safe-warehousing-facilities.jpg',        title: 'Safe Warehousing Facilities',         desc: 'Clean, secure, insect-free storage facility at our headquarters with strict inventory controls.' },
+  { id: 'img-gps-cargo-container-fleet',          src: '/photos/gps-cargo-container-fleet.jpg',          title: 'GPS Cargo Container Fleet',           desc: 'Our container trucks dispatching directly with no transshipment or intermediate handling.' },
+  { id: 'img-furniture-wrapping-process',         src: '/photos/furniture-wrapping-process.jpg',         title: 'Furniture Wrapping Process',          desc: 'Wrapping double beds, wardrobes, and cabinets with thick foam sheets and heavy outer cardboard.' },
+  { id: 'img-highway-transit-stacking',           src: '/photos/highway-transit-stacking.jpg',           title: 'Highway Transit Stacking',            desc: 'Securing household items in interlocking layouts to eliminate vibrations and road bumps damage.' },
+  { id: 'img-doorstep-offloading-crew',           src: '/photos/doorstep-offloading-crew.jpg',           title: 'Doorstep Offloading Crew',            desc: 'Our supervisors cross-checking items off the inventory list during unloading.' },
+  { id: 'img-heavy-duty-box-wrapping',            src: '/photos/heavy-duty-box-wrapping.jpg',            title: 'Heavy Duty Box Wrapping',             desc: 'Heavy-duty boxes wrapped with thick shrink wrap to prevent dust and water damage.' },
+  { id: 'img-palletized-storage-system',          src: '/photos/palletized-storage-system.jpg',          title: 'Palletized Storage System',           desc: 'Staging areas inside our clean warehouse designed to support temporary cargo holding.' },
+  { id: 'img-secure-warehouse-racking',           src: '/photos/secure-warehouse-racking.jpg',           title: 'Secure Warehouse Racking',            desc: 'Industrial heavy-duty racks holding locked inventory pallets under 24/7 security watch.' },
+  { id: 'img-national-cargo-operations',          src: '/photos/national-cargo-operations.jpg',          title: 'National Cargo Operations',           desc: 'Staging and organizing boxes inside our storage hub before direct route transit dispatch.' },
+  { id: 'img-highway-container-loading',          src: '/photos/highway-container-loading.jpg',          title: 'Highway Container Loading',           desc: 'Stacking cargo into our container fleets safely under supervisor verification.' },
+  { id: 'img-national-dispatch-teams',            src: '/photos/national-dispatch-teams.jpg',            title: 'National Dispatch Teams',             desc: 'Dispatch crews coordinating transits, checking transport documents, and tracking containers.' },
+  { id: 'img-interstate-cargo-relocation',        src: '/photos/interstate-cargo-relocation.jpg',        title: 'Interstate Cargo Relocation',         desc: 'Heavy cargo containers carrying household and corporate consignments across cities.' },
+  { id: 'img-gps-shifting-fleet',                 src: '/photos/gps-shifting-fleet.jpg',                 title: 'GPS Shifting Fleet',                  desc: 'Our company-owned fleet parked at our primary corporate shipping terminal.' },
+  { id: 'img-direct-interstate-shipping',         src: '/photos/direct-interstate-shipping.jpg',         title: 'Direct Interstate Shipping',          desc: 'National Packers closed container fleet on major highways for express deliveries.' },
+  { id: 'img-safe-packaging-process',             src: '/photos/safe-packaging-process.jpg',             title: 'Safe Packaging Process',              desc: 'Using double-wall cardboard sheets and heavy-duty tape wrapping for appliances.' },
+  { id: 'img-loading-cargo-operations',           src: '/photos/loading-cargo-operations.jpg',           title: 'Loading Cargo Operations',            desc: 'Systematically stacking household packages in container vehicles to prevent transit friction.' },
+  { id: 'img-secure-vehicle-carrier',             src: '/photos/secure-vehicle-carrier.jpg',             title: 'Secure Vehicle Carrier',              desc: 'Specialized vehicle carrier operations loading cars damage-free with secure wheel clamps.' },
+  { id: 'img-fragile-packing-standards',          src: '/photos/fragile-packing-standards.jpg',          title: 'Fragile Packing Standards',           desc: 'Using heavy-duty bubble wrap layers followed by secure tape seals on LED TVs and monitors.' },
+];
+
 export default async function HomePage() {
   const galleryPhotos = await getGalleryImages();
+  const BASE_URL = 'https://www.thenationalpackersmovers.com';
+
+  const photosForSEO = galleryPhotos && galleryPhotos.length > 0
+    ? galleryPhotos.map((p, idx) => ({
+        id: p.id || p.uuid || `img-dyn-${idx}`,
+        src: p.src.startsWith('http') ? p.src : `${BASE_URL}${p.src}`,
+        title: p.alt || p.title || 'National Packers & Movers Gallery',
+        desc: p.description || p.desc || 'Professional relocation services — National Packers & Movers',
+      }))
+    : STATIC_HOMEPAGE_PHOTOS.map(p => ({
+        id: p.id,
+        src: p.src.startsWith('http') ? p.src : `${BASE_URL}${p.src}`,
+        title: p.title,
+        desc: p.desc,
+      }));
+
+  const homeImageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ImageGallery',
+    'name': 'National Packers & Movers — Operations Photo Gallery',
+    'description': 'Operational photos of packing, container loading, and vehicle transport by National Packers & Movers.',
+    'url': BASE_URL,
+    'image': photosForSEO.map(photo => ({
+      '@type': 'ImageObject',
+      '@id': `${BASE_URL}/photos/${photo.id}`,
+      'name': photo.title,
+      'description': photo.desc,
+      'contentUrl': photo.src,
+      'url': BASE_URL,
+      'acquireLicensePage': `${BASE_URL}/contact`,
+      'copyrightNotice': '© 2026 National Packers & Movers. All rights reserved.',
+      'creditText': 'National Packers & Movers',
+      'license': `${BASE_URL}/terms`,
+      'creator': {
+        '@type': 'Organization',
+        'name': 'National Packers & Movers',
+        'url': BASE_URL,
+      },
+      'author': {
+        '@type': 'Organization',
+        'name': 'National Packers & Movers',
+        'url': BASE_URL,
+      },
+    })),
+  };
 
   return (
     <div className={styles.page}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeImageSchema) }}
+      />
 
       {/* ── HERO ──────────────────────────────────────────── */}
       <section className={styles.hero} id="hero">
