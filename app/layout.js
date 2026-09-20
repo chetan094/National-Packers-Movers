@@ -1,4 +1,5 @@
 import { Inter, Rajdhani, Barlow_Condensed } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
@@ -88,6 +89,8 @@ const GLOBAL_MOVING_SCHEMA = {
 };
 
 export default function RootLayout({ children }) {
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-VEWXPBBRFB';
+
   return (
     <html lang="en">
       <head>
@@ -97,6 +100,24 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={`${inter.variable} ${rajdhani.variable} ${barlowCondensed.variable}`}>
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
+        )}
         <PageCurtain />
         <GlobalAnimations />
         <AnalyticsTracker />

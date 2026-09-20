@@ -23,6 +23,16 @@ export default function AnalyticsTracker() {
     // Track the new page view event
     trackEvent('page_view');
     
+    // Update Google Analytics 4 page path on client-side navigation
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      try {
+        const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-VEWXPBBRFB';
+        window.gtag('config', gaId, {
+          page_path: currentUrl,
+        });
+      } catch (_) {}
+    }
+
     // Reset page metrics
     entryTimeRef.current = Date.now();
     prevPathRef.current = currentUrl;
