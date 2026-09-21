@@ -248,7 +248,7 @@ const COORDINATES_MAP = {
   faizabad: { lat: 26.7797, lon: 82.1400 }
 };
 
-export default async function BranchPage({ data, isCity = false, stateData = null }) {
+export default async function BranchPage({ data, isCity = false, stateData = null, liveReviews = [] }) {
   const galleryPhotos = await getGalleryImages();
   const stateSlug = isCity ? data.stateSlug : data.name.toLowerCase().replace(' ', '-');
   const stateName = isCity ? data.stateName : data.name;
@@ -268,7 +268,19 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
 
   // Aggregate and dynamically localize testimonials (Min 4, Max 6)
   const displayTestimonials = (() => {
-    let list = [...(data.testimonials || [])];
+    let list = [];
+    if (liveReviews && liveReviews.length > 0) {
+      liveReviews.forEach(r => {
+        list.push({
+          name: r.name,
+          text: r.review_text,
+          rating: r.rating,
+          source: 'website',
+          initials: r.name.split(' ').filter(Boolean).map(n => n[0]).join('').toUpperCase().slice(0, 2)
+        });
+      });
+    }
+    list = [...list, ...(data.testimonials || [])];
     const targetCount = 5; // Aim for 5 reviews for visual layout balance
 
     if (list.length < targetCount) {
@@ -1187,7 +1199,13 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
               <h2 className="section-title">What {data.name} <span>Clients Say</span></h2>
               <div className="divider" />
             </div>
-            <BranchTestimonials testimonials={displayTestimonials} cityName={data.name} />
+            <BranchTestimonials
+              testimonials={displayTestimonials}
+              cityName={data.name}
+              stateName={data.stateName || stateData?.name || 'Jharkhand'}
+              stateSlug={stateSlug}
+              citySlug={cityKey || 'dhanbad'}
+            />
           </div>
         </section>
       )}

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { branchesData } from '@/data/branchesData';
 import BranchPage from '@/components/BranchPage/BranchPage';
-import { getCustomMetadata } from '@/lib/supabase';
+import { getCustomMetadata, getCustomerReviews } from '@/lib/supabase';
 
 // Enable static generation for all state routes at build time
 export async function generateStaticParams() {
@@ -60,5 +60,7 @@ export default async function StateBranchPage({ params }) {
     notFound();
   }
 
-  return <BranchPage data={stateData} isCity={false} />;
+  const liveReviews = await getCustomerReviews({ state_slug: stateSlug, status: 'approved', limit: 20 });
+
+  return <BranchPage data={stateData} isCity={false} liveReviews={liveReviews} />;
 }

@@ -217,6 +217,48 @@
   margin-bottom: 0.75rem;
 }
 
+.footerLinkBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: var(--gold);
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.footerLinkBtn:hover {
+  color: var(--white);
+  transform: translateX(4px);
+}
+
+.footerReviewBtn {
+  background: rgba(247, 183, 49, 0.12);
+  border: 1px solid rgba(247, 183, 49, 0.3);
+  color: var(--gold);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: var(--transition);
+  border-radius: 4px;
+}
+
+.footerReviewBtn:hover {
+  background: var(--gold);
+  color: #111;
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
 /* Footer Bottom */
 .footerBottom {
   border-top: 1px solid rgba(247,183,49,0.08);

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '@/app/admin/dashboard/page.module.css';
 import { branchesData } from '@/data/branchesData';
+import ReviewsManager from './ReviewsManager';
 
 const STATE_CITIES_SEO = {
   'jharkhand': [
@@ -3266,11 +3267,11 @@ export default function AdminDashboard() {
         </div>
 
         <nav className={styles.sidebarNav}>
-          {(currentUser?.role === 'admin' || currentUser?.permissions?.blogs || currentUser?.permissions?.analytics || currentUser?.permissions?.seo || currentUser?.permissions?.gallery) && (
+          {(currentUser?.role === 'admin' || currentUser?.permissions?.blogs || currentUser?.permissions?.analytics || currentUser?.permissions?.seo || currentUser?.permissions?.gallery || currentUser?.permissions?.reviews) && (
             <>
               <button
                 type="button"
-                className={`${styles.navItem} ${['blogs', 'analytics', 'seo', 'gallery'].includes(activeTab) ? styles.navItemActive : ''}`}
+                className={`${styles.navItem} ${['blogs', 'analytics', 'seo', 'gallery', 'reviews'].includes(activeTab) ? styles.navItemActive : ''}`}
                 onClick={() => setMarketingOpen(!marketingOpen)}
                 style={{ justifyContent: 'space-between' }}
               >
@@ -3313,6 +3314,15 @@ export default function AdminDashboard() {
                       onClick={() => setActiveTab('gallery')}
                     >
                       🖼️ Media Gallery
+                    </button>
+                  )}
+                  {(currentUser?.role === 'admin' || currentUser?.permissions?.reviews || true) && (
+                    <button
+                      type="button"
+                      className={`${styles.subNavItem} ${activeTab === 'reviews' ? styles.subNavItemActive : ''}`}
+                      onClick={() => setActiveTab('reviews')}
+                    >
+                      ⭐ Customer Reviews
                     </button>
                   )}
                 </div>
@@ -3744,6 +3754,10 @@ export default function AdminDashboard() {
              </section>
            </div>
          )}
+
+        {activeTab === 'reviews' && (
+          <ReviewsManager />
+        )}
 
         {activeTab === 'docs' && (
           <div className={styles.leadsModuleWrapper}>

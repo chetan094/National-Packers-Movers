@@ -3,11 +3,107 @@ import { useState } from 'react';
 import styles from '@/app/testimonials/page.module.css';
 import { trackEvent } from '@/lib/analytics';
 
+const STATES_MAP = {
+  'jharkhand': {
+    name: 'Jharkhand',
+    cities: [
+      { slug: 'dhanbad', name: 'Dhanbad (HQ)' },
+      { slug: 'ranchi', name: 'Ranchi' },
+      { slug: 'bokaro', name: 'Bokaro' },
+      { slug: 'deoghar', name: 'Deoghar' },
+      { slug: 'jamshedpur', name: 'Jamshedpur' },
+      { slug: 'hazaribagh', name: 'Hazaribagh' },
+      { slug: 'giridih', name: 'Giridih' },
+      { slug: 'ramgarh', name: 'Ramgarh' },
+      { slug: 'chas', name: 'Chas' },
+      { slug: 'katras', name: 'Katras' },
+      { slug: 'jharia', name: 'Jharia' },
+      { slug: 'other', name: 'Other Jharkhand Area' }
+    ]
+  },
+  'west-bengal': {
+    name: 'West Bengal',
+    cities: [
+      { slug: 'kolkata', name: 'Kolkata' },
+      { slug: 'durgapur', name: 'Durgapur' },
+      { slug: 'asansol', name: 'Asansol' },
+      { slug: 'siliguri', name: 'Siliguri' },
+      { slug: 'howrah', name: 'Howrah' },
+      { slug: 'bardhaman', name: 'Bardhaman' },
+      { slug: 'kharagpur', name: 'Kharagpur' },
+      { slug: 'haldia', name: 'Haldia' },
+      { slug: 'malda', name: 'Malda' },
+      { slug: 'jalpaiguri', name: 'Jalpaiguri' },
+      { slug: 'other', name: 'Other West Bengal Area' }
+    ]
+  },
+  'bihar': {
+    name: 'Bihar',
+    cities: [
+      { slug: 'patna', name: 'Patna' },
+      { slug: 'gaya', name: 'Gaya' },
+      { slug: 'bhagalpur', name: 'Bhagalpur' },
+      { slug: 'muzaffarpur', name: 'Muzaffarpur' },
+      { slug: 'purnia', name: 'Purnia' },
+      { slug: 'darbhanga', name: 'Darbhanga' },
+      { slug: 'begusarai', name: 'Begusarai' },
+      { slug: 'other', name: 'Other Bihar Area' }
+    ]
+  },
+  'madhya-pradesh': {
+    name: 'Madhya Pradesh',
+    cities: [
+      { slug: 'singrauli', name: 'Singrauli' },
+      { slug: 'waidhan', name: 'Waidhan' },
+      { slug: 'bhopal', name: 'Bhopal' },
+      { slug: 'indore', name: 'Indore' },
+      { slug: 'jabalpur', name: 'Jabalpur' },
+      { slug: 'gwalior', name: 'Gwalior' },
+      { slug: 'other', name: 'Other MP Area' }
+    ]
+  },
+  'odisha': {
+    name: 'Odisha',
+    cities: [
+      { slug: 'bhubaneswar', name: 'Bhubaneswar' },
+      { slug: 'cuttack', name: 'Cuttack' },
+      { slug: 'rourkela', name: 'Rourkela' },
+      { slug: 'sambalpur', name: 'Sambalpur' },
+      { slug: 'puri', name: 'Puri' },
+      { slug: 'other', name: 'Other Odisha Area' }
+    ]
+  },
+  'uttar-pradesh': {
+    name: 'Uttar Pradesh',
+    cities: [
+      { slug: 'lucknow', name: 'Lucknow' },
+      { slug: 'kanpur', name: 'Kanpur' },
+      { slug: 'varanasi', name: 'Varanasi' },
+      { slug: 'prayagraj', name: 'Prayagraj' },
+      { slug: 'noida', name: 'Noida' },
+      { slug: 'ghaziabad', name: 'Ghaziabad' },
+      { slug: 'gorakhpur', name: 'Gorakhpur' },
+      { slug: 'other', name: 'Other UP Area' }
+    ]
+  }
+};
+
 export default function TestimonialsForms() {
   // Shifting Review Form state
-  const [formData, setFormData] = useState({ name: '', phone: '', rating: 5, text: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    rating: 5,
+    state_slug: 'jharkhand',
+    state_name: 'Jharkhand',
+    city_slug: 'dhanbad',
+    city_name: 'Dhanbad (HQ)',
+    text: ''
+  });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formError, setFormError] = useState('');
+  const [reviewSending, setReviewSending] = useState(false);
+  const [feedbackNotice, setFeedbackNotice] = useState('');
 
   // Quick Enquiry Form state
   const [enquiryData, setEnquiryData] = useState({ name: '', phone: '', email: '', message: '' });
@@ -15,7 +111,7 @@ export default function TestimonialsForms() {
   const [enquirySending, setEnquirySending] = useState(false);
 
   // Review Form Submit
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     trackEvent('click', 'review_submit');
     if (!formData.name.trim() || !formData.text.trim()) {
@@ -27,11 +123,73 @@ export default function TestimonialsForms() {
       return;
     }
     setFormError('');
-    setFormSubmitted(true);
+    setReviewSending(true);
+
+    try {
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          state_slug: formData.state_slug,
+          state_name: formData.state_name,
+          city_slug: formData.city_slug,
+          city_name: formData.city_name,
+          rating: formData.rating,
+          review_text: formData.text
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setFeedbackNotice(data.message || 'Thank you! Your review has been recorded.');
+        setFormSubmitted(true);
+      } else {
+        setFormError(data.error || 'Failed to submit review. Please try again.');
+      }
+    } catch (err) {
+      setFormError('Network error. Please try again or share on WhatsApp.');
+    } finally {
+      setReviewSending(false);
+    }
+  };
+
+  const handleStateChange = (e) => {
+    const sSlug = e.target.value;
+    const sObj = STATES_MAP[sSlug] || STATES_MAP['jharkhand'];
+    const firstCity = sObj.cities[0] || { slug: 'other', name: 'Other' };
+    setFormData(prev => ({
+      ...prev,
+      state_slug: sSlug,
+      state_name: sObj.name,
+      city_slug: firstCity.slug,
+      city_name: firstCity.name
+    }));
+  };
+
+  const handleCityChange = (e) => {
+    const cSlug = e.target.value;
+    const sObj = STATES_MAP[formData.state_slug] || STATES_MAP['jharkhand'];
+    const cObj = sObj.cities.find(c => c.slug === cSlug) || { slug: cSlug, name: cSlug };
+    setFormData(prev => ({
+      ...prev,
+      city_slug: cSlug,
+      city_name: cObj.name
+    }));
   };
 
   const resetForm = () => {
-    setFormData({ name: '', phone: '', rating: 5, text: '' });
+    setFormData({
+      name: '',
+      phone: '',
+      rating: 5,
+      state_slug: 'jharkhand',
+      state_name: 'Jharkhand',
+      city_slug: 'dhanbad',
+      city_name: 'Dhanbad (HQ)',
+      text: ''
+    });
     setFormSubmitted(false);
   };
 
@@ -217,17 +375,47 @@ export default function TestimonialsForms() {
       </div>
 
       {/* Right Column: Submission Form */}
-      <div className={styles.formCard} data-reveal="up" data-delay="200">
+      <div id="post-review" className={styles.formCard} data-reveal="up" data-delay="200">
         {!formSubmitted ? (
           <>
             <h3 className={styles.formTitle}>✍️ Submit Your Shifting Experience</h3>
             <p className={styles.formSubtitle}>
-              Relocated with us recently? Tell us how our crew performed.
+              Relocated with us recently? Tell us how our crew performed in your city.
             </p>
             
             {formError && <div className={styles.formAlert}>{formError}</div>}
 
             <form onSubmit={handleFormSubmit} className={styles.subForm}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="rev-state" className={styles.formLabel}>Shifting State *</label>
+                  <select
+                    id="rev-state"
+                    className={styles.formSelect}
+                    value={formData.state_slug}
+                    onChange={handleStateChange}
+                  >
+                    {Object.entries(STATES_MAP).map(([slug, sData]) => (
+                      <option key={slug} value={slug}>{sData.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label htmlFor="rev-city" className={styles.formLabel}>Shifting City *</label>
+                  <select
+                    id="rev-city"
+                    className={styles.formSelect}
+                    value={formData.city_slug}
+                    onChange={handleCityChange}
+                  >
+                    {(STATES_MAP[formData.state_slug]?.cities || []).map(c => (
+                      <option key={c.slug} value={c.slug}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div className={styles.formGroup}>
                 <label htmlFor="rev-name" className={styles.formLabel}>Full Name *</label>
                 <input
@@ -249,7 +437,8 @@ export default function TestimonialsForms() {
                   className={styles.formInput}
                   placeholder="e.g. 9835168368"
                   value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value.replace(/\D/g, '') }))}
+                  maxLength={10}
                 />
               </div>
 
@@ -261,11 +450,11 @@ export default function TestimonialsForms() {
                   value={formData.rating}
                   onChange={(e) => setFormData(prev => ({ ...prev, rating: Number(e.target.value) }))}
                 >
-                  <option value="5">5 Stars (Excellent Service)</option>
-                  <option value="4">4 Stars (Good Shifting)</option>
-                  <option value="3">3 Stars (Average)</option>
-                  <option value="2">2 Stars (Satisfactory)</option>
-                  <option value="1">1 Star (Needs Improvement)</option>
+                  <option value="5">⭐⭐⭐⭐⭐ 5 Stars (Excellent Service)</option>
+                  <option value="4">⭐⭐⭐⭐ 4 Stars (Good Shifting)</option>
+                  <option value="3">⭐⭐⭐ 3 Stars (Average)</option>
+                  <option value="2">⭐⭐ 2 Stars (Satisfactory)</option>
+                  <option value="1">⭐ 1 Star (Needs Improvement)</option>
                 </select>
               </div>
 
@@ -274,7 +463,7 @@ export default function TestimonialsForms() {
                 <textarea
                   id="rev-text"
                   className={styles.formTextArea}
-                  placeholder="Detail your move (e.g., Shifting from Dhanbad to Pune was extremely smooth...)"
+                  placeholder={`Detail your move (e.g., Shifting in ${formData.city_name} was extremely smooth, packing staff was verified and polite...)`}
                   rows="3"
                   value={formData.text}
                   onChange={(e) => setFormData(prev => ({ ...prev, text: e.target.value }))}
@@ -282,8 +471,13 @@ export default function TestimonialsForms() {
                 />
               </div>
 
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                🚀 Submit Shifting Review
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ width: '100%', justifyContent: 'center' }}
+                disabled={reviewSending}
+              >
+                {reviewSending ? '⏳ Publishing Review...' : '🚀 Submit Shifting Review'}
               </button>
             </form>
           </>
@@ -292,11 +486,16 @@ export default function TestimonialsForms() {
             <span className={styles.successIcon}>✔️</span>
             <h3 className={styles.successTitle}>Thank You for Your Feedback!</h3>
             <p className={styles.successText}>
-              Hi <strong>{formData.name}</strong>, your review has been successfully registered. We appreciate your support in helping us build and perfect our logistics empire.
+              Hi <strong>{formData.name}</strong>, your review for <strong>{formData.city_name}, {formData.state_name}</strong> has been registered.
             </p>
+            {feedbackNotice && (
+              <p style={{ color: '#F7B731', fontSize: '0.9rem', fontWeight: '600', marginTop: '0.5rem' }}>
+                {feedbackNotice}
+              </p>
+            )}
             
             <a
-              href={`https://wa.me/919835168368?text=Hi%20National%20Packers,%20I%20just%20submitted%20a%20feedback.%0A%0A*Name:*%20${encodeURIComponent(formData.name)}%0A*Rating:*%20${formData.rating}%20Stars%0A*Review:*%20${encodeURIComponent(formData.text)}`}
+              href={`https://wa.me/919835168368?text=Hi%20National%20Packers,%20I%20just%20submitted%20a%20feedback.%0A%0A*Name:*%20${encodeURIComponent(formData.name)}%0A*City:*%20${encodeURIComponent(formData.city_name)}%0A*Rating:*%20${formData.rating}%20Stars%0A*Review:*%20${encodeURIComponent(formData.text)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary"

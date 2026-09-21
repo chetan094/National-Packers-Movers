@@ -4,7 +4,7 @@ import styles from './page.module.css';
 import TestimonialsFeed from '@/components/TestimonialsFeed/TestimonialsFeed';
 import TestimonialsForms from '@/components/TestimonialsForms/TestimonialsForms';
 import YouTubePlayer from '@/components/YouTubePlayer/YouTubePlayer';
-import { getCustomMetadata } from '@/lib/supabase';
+import { getCustomMetadata, getCustomerReviews } from '@/lib/supabase';
 
 // Collage Images
 const COLLAGE_IMAGES = [
@@ -49,11 +49,55 @@ export async function generateMetadata() {
   };
 }
 
-export default function TestimonialsPage() {
-  // 1. Gather all unique testimonials from branchesData
+export default async function TestimonialsPage() {
+  // Fetch live customer reviews submitted via the website
+  const dbReviews = await getCustomerReviews({ status: 'approved', limit: 100 });
+
+  // 1. Gather all unique testimonials from branchesData and live database
   const allReviews = (() => {
     const list = [];
     const seen = new Set();
+
+    // Add live reviews from Supabase first
+    if (dbReviews && dbReviews.length > 0) {
+      dbReviews.forEach(r => {
+        const key = `${r.name}-${r.review_text.substring(0, 15)}`.toLowerCase();
+        if (!seen.has(key)) {
+          const lowerText = r.review_text.toLowerCase();
+          let category = 'household';
+          if (
+            lowerText.includes('corporate') || 
+            lowerText.includes('office') || 
+            lowerText.includes('bccl') || 
+            lowerText.includes('cmpdi') || 
+            lowerText.includes('ncl') || 
+            lowerText.includes('ntpc') || 
+            lowerText.includes('psu') || 
+            lowerText.includes('industrial')
+          ) {
+            category = 'corporate';
+          } else if (
+            lowerText.includes('car') || 
+            lowerText.includes('bike') || 
+            lowerText.includes('vehicle') || 
+            lowerText.includes('carrier')
+          ) {
+            category = 'vehicle';
+          }
+
+          list.push({
+            name: r.name,
+            text: r.review_text,
+            rating: r.rating,
+            branch: `${r.city_name} Branch`,
+            source: 'website',
+            date: r.created_at ? new Date(r.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : 'Verified Client',
+            category
+          });
+          seen.add(key);
+        }
+      });
+    }
 
     const addReview = (review, branchName) => {
       const key = `${review.name}-${review.text.substring(0, 15)}`.toLowerCase();
@@ -171,6 +215,20 @@ export default function TestimonialsPage() {
           <p className={styles.heroSubtitle}>
             With over 38 years of relocation legacy, we are chosen by families and corporate executives for one single reason: absolute honesty in packing and moving services.
           </p>
+          <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a href="#post-review" className="btn btn-primary" style={{ padding: '0.75rem 1.75rem', fontSize: '1rem' }}>
+              ✍️ Write a Shifting Review
+            </a>
+            <a
+              href="https://share.google/9BhocuLaaEBMMpu7q"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-secondary"
+              style={{ padding: '0.75rem 1.75rem', fontSize: '1rem' }}
+            >
+              ⭐ Rate on Google
+            </a>
+          </div>
         </div>
       </section>
 

@@ -1,8 +1,10 @@
 'use client';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Footer.module.css';
 import { trackEvent } from '@/lib/analytics';
+import ReviewModal from '@/components/BranchPage/ReviewModal';
 
 const branches = [
   { state: 'Jharkhand', slug: 'jharkhand', cities: [
@@ -61,6 +63,8 @@ const services = [
 
 export default function Footer() {
   const pathname = usePathname();
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+
   if (pathname?.startsWith('/admin')) {
     return null;
   }
@@ -176,14 +180,32 @@ export default function Footer() {
               <li><Link href="/track-shipment" className={styles.footerLink}>→ Track Shipment</Link></li>
               <li><Link href="/gallery" className={styles.footerLink}>→ Gallery</Link></li>
               <li><Link href="/testimonials" className={styles.footerLink}>→ Testimonials</Link></li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setReviewModalOpen(true)}
+                  className={styles.footerLinkBtn}
+                >
+                  → ⭐ Write a Review
+                </button>
+              </li>
               <li><Link href="/faqs" className={styles.footerLink}>→ FAQs</Link></li>
               <li><Link href="/blog" className={styles.footerLink}>→ Blog</Link></li>
               <li><Link href="/contact" className={styles.footerLink}>→ Contact</Link></li>
               <li><Link href="/billing-claim-kit" className={styles.footerLink}>→ Relocation Claim Kit</Link></li>
             </ul>
             <div className={styles.ctaBox}>
-              <p>Ready to move?</p>
-              <Link href="/get-quote" className="btn btn-primary btn-sm">Get Free Quote</Link>
+              <p>Ready to move or share feedback?</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <Link href="/get-quote" className="btn btn-primary btn-sm">Get Free Quote</Link>
+                <button
+                  type="button"
+                  onClick={() => setReviewModalOpen(true)}
+                  className={`btn btn-secondary btn-sm ${styles.footerReviewBtn}`}
+                >
+                  ⭐ Post a Review
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -205,6 +227,13 @@ export default function Footer() {
           </div>
         </div>
       </div>
+
+      {/* Site-wide Customer Review Modal */}
+      <ReviewModal
+        isOpen={reviewModalOpen}
+        onClose={() => setReviewModalOpen(false)}
+        allowLocationSelect={true}
+      />
     </footer>
   );
 }

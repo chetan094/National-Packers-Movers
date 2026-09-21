@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { branchesData } from '@/data/branchesData';
 import BranchPage from '@/components/BranchPage/BranchPage';
-import { getCustomMetadata } from '@/lib/supabase';
+import { getCustomMetadata, getCustomerReviews } from '@/lib/supabase';
 
 const ALLOWED_STATES = {
   'jharkhand': 'Jharkhand',
@@ -222,11 +222,14 @@ export default async function CityBranchPage({ params }) {
     notFound();
   }
 
+  // Fetch live customer reviews for this specific city
+  const liveReviews = await getCustomerReviews({ city_slug: city, status: 'approved', limit: 20 });
+
   let cityData = branchesData.cities[city];
   
   // If registered and matches current state slug
   if (cityData && cityData.stateSlug === state) {
-    return <BranchPage data={cityData} isCity={true} stateData={stateData} />;
+    return <BranchPage data={cityData} isCity={true} stateData={stateData} liveReviews={liveReviews} />;
   }
 
   // Dynamic fallback for unregistered cities with deterministic template spinning for SEO optimization
@@ -248,6 +251,6 @@ export default async function CityBranchPage({ params }) {
     isProgrammatic: true,
   };
 
-  return <BranchPage data={cityData} isCity={true} stateData={stateData} />;
+  return <BranchPage data={cityData} isCity={true} stateData={stateData} liveReviews={liveReviews} />;
 }
 

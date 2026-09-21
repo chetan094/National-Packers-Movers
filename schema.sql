@@ -177,3 +177,30 @@ CREATE INDEX IF NOT EXISTS idx_admin_users_username ON admin_users(username);
 -- CREATE POLICY "Allow admin CRUD access to site_metadata" ON site_metadata
 --   FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 
+
+-- ========================================================================
+-- Customer Reviews Table
+-- ========================================================================
+
+CREATE TABLE IF NOT EXISTS customer_reviews (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR NOT NULL,
+  phone VARCHAR,
+  state_slug VARCHAR NOT NULL,
+  state_name VARCHAR NOT NULL,
+  city_slug VARCHAR NOT NULL,
+  city_name VARCHAR NOT NULL,
+  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  review_text TEXT NOT NULL,
+  status VARCHAR NOT NULL DEFAULT 'approved', -- 'approved', 'pending', 'hidden'
+  source VARCHAR DEFAULT 'Website Review Form',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexing for optimized branch and testimonials queries
+CREATE INDEX IF NOT EXISTS idx_customer_reviews_city ON customer_reviews(city_slug);
+CREATE INDEX IF NOT EXISTS idx_customer_reviews_state ON customer_reviews(state_slug);
+CREATE INDEX IF NOT EXISTS idx_customer_reviews_status ON customer_reviews(status);
+CREATE INDEX IF NOT EXISTS idx_customer_reviews_created ON customer_reviews(created_at DESC);
+
+
