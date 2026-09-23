@@ -53,6 +53,7 @@ export async function POST(request) {
       rating: numRating,
       review_text: review_text.trim().slice(0, 1500),
       status,
+      display_target: 'both',
       source: 'Website Review Form'
     };
 

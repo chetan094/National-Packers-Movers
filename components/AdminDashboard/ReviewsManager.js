@@ -2,15 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import styles from '@/app/admin/dashboard/page.module.css';
-
-const STATES_LIST = [
-  { slug: 'jharkhand', name: 'Jharkhand' },
-  { slug: 'west-bengal', name: 'West Bengal' },
-  { slug: 'bihar', name: 'Bihar' },
-  { slug: 'madhya-pradesh', name: 'Madhya Pradesh' },
-  { slug: 'odisha', name: 'Odisha' },
-  { slug: 'uttar-pradesh', name: 'Uttar Pradesh' }
-];
+import { ALL_STATES_MAP } from '@/data/allCitiesData';
 
 export default function ReviewsManager() {
   const [reviews, setReviews] = useState([]);
@@ -31,9 +23,10 @@ export default function ReviewsManager() {
     state_slug: 'jharkhand',
     state_name: 'Jharkhand',
     city_slug: 'dhanbad',
-    city_name: 'Dhanbad',
+    city_name: 'Dhanbad (HQ)',
     review_text: '',
-    status: 'approved'
+    status: 'approved',
+    display_target: 'both'
   });
 
   // Manual Add Review Modal state
@@ -45,9 +38,10 @@ export default function ReviewsManager() {
     state_slug: 'jharkhand',
     state_name: 'Jharkhand',
     city_slug: 'dhanbad',
-    city_name: 'Dhanbad',
+    city_name: 'Dhanbad (HQ)',
     review_text: '',
-    status: 'approved'
+    status: 'approved',
+    display_target: 'both'
   });
 
   // Delete Confirm Modal
@@ -114,7 +108,8 @@ export default function ReviewsManager() {
       city_slug: review.city_slug || 'dhanbad',
       city_name: review.city_name || 'Dhanbad',
       review_text: review.review_text || '',
-      status: review.status || 'approved'
+      status: review.status || 'approved',
+      display_target: review.display_target || 'both'
     });
   };
 
@@ -181,9 +176,10 @@ export default function ReviewsManager() {
           state_slug: 'jharkhand',
           state_name: 'Jharkhand',
           city_slug: 'dhanbad',
-          city_name: 'Dhanbad',
+          city_name: 'Dhanbad (HQ)',
           review_text: '',
-          status: 'approved'
+          status: 'approved',
+          display_target: 'both'
         });
         setFeedbackMsg('New review published successfully.');
         setTimeout(() => setFeedbackMsg(''), 3000);
@@ -459,6 +455,28 @@ export default function ReviewsManager() {
                       <div style={{ fontSize: '0.75rem', color: '#888', marginTop: '0.25rem' }}>
                         {r.state_name || r.state_slug}
                       </div>
+                      <div style={{ marginTop: '0.35rem' }}>
+                        {(!r.display_target || r.display_target === 'both') && (
+                          <span title="Visible on both City Branch Page and State Division Page" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(52, 152, 219, 0.15)', color: '#3498db', border: '1px solid rgba(52, 152, 219, 0.3)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 600 }}>
+                            🏢 City + State
+                          </span>
+                        )}
+                        {r.display_target === 'city_only' && (
+                          <span title="Visible ONLY on City Branch Page" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(155, 89, 182, 0.18)', color: '#bb68ec', border: '1px solid rgba(155, 89, 182, 0.35)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 600 }}>
+                            📍 City Only
+                          </span>
+                        )}
+                        {r.display_target === 'state_only' && (
+                          <span title="Visible ONLY on State Division Page" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(230, 126, 34, 0.18)', color: '#f39c12', border: '1px solid rgba(230, 126, 34, 0.35)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 600 }}>
+                            🗺️ State Only
+                          </span>
+                        )}
+                        {r.display_target === 'testimonials_only' && (
+                          <span title="Visible ONLY on /testimonials page (hidden from branch pages)" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(241, 196, 15, 0.18)', color: '#f1c40f', border: '1px solid rgba(241, 196, 15, 0.35)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 600 }}>
+                            ⭐ Testimonials Only
+                          </span>
+                        )}
+                      </div>
                     </td>
 
                     <td style={{ padding: '0.85rem 1rem', verticalAlign: 'top', color: '#ddd', lineHeight: 1.5 }}>
@@ -552,7 +570,7 @@ export default function ReviewsManager() {
       {/* ── EDIT REVIEW MODAL ────────────────────────────────────── */}
       {editingReview && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.85)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ background: '#13141F', border: '1px solid rgba(247, 183, 49, 0.3)', borderRadius: '14px', width: '100%', maxWidth: '600px', padding: '2rem', color: '#fff', maxHeight: '90vh', overflowY: 'auto' }}>
+          <div style={{ background: '#13141F', border: '1px solid rgba(247, 183, 49, 0.3)', borderRadius: '14px', width: '100%', maxWidth: '600px', padding: '1.5rem 1.25rem', color: '#fff', maxHeight: '92vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <h2 style={{ margin: 0, fontSize: '1.3rem', color: '#fff' }}>✏️ Edit Customer Review</h2>
               <button
@@ -565,7 +583,7 @@ export default function ReviewsManager() {
             </div>
 
             <form onSubmit={handleSaveEdit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>Customer Name *</label>
                   <input
@@ -587,7 +605,7 @@ export default function ReviewsManager() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>Rating</label>
                   <select
@@ -603,48 +621,84 @@ export default function ReviewsManager() {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>State</label>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>State *</label>
                   <select
                     className={styles.select}
                     value={editForm.state_slug}
                     onChange={(e) => {
                       const slug = e.target.value;
-                      const sObj = STATES_LIST.find(s => s.slug === slug);
-                      setEditForm(prev => ({ ...prev, state_slug: slug, state_name: sObj?.name || slug }));
+                      const sObj = ALL_STATES_MAP[slug] || ALL_STATES_MAP['jharkhand'];
+                      const firstCity = sObj.cities[0] || { slug: 'dhanbad', name: 'Dhanbad' };
+                      setEditForm(prev => ({
+                        ...prev,
+                        state_slug: slug,
+                        state_name: sObj.name,
+                        city_slug: firstCity.slug,
+                        city_name: firstCity.name
+                      }));
                     }}
                   >
-                    {STATES_LIST.map(s => (
-                      <option key={s.slug} value={s.slug}>{s.name}</option>
+                    {Object.entries(ALL_STATES_MAP).map(([slug, sData]) => (
+                      <option key={slug} value={slug}>{sData.name}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>City Name</label>
-                  <input
-                    type="text"
-                    className={styles.input}
-                    value={editForm.city_name}
-                    onChange={(e) => setEditForm(prev => ({
-                      ...prev,
-                      city_name: e.target.value,
-                      city_slug: e.target.value.toLowerCase().trim().replace(/[^a-z0-9]/g, '-')
-                    }))}
-                    required
-                  />
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>City *</label>
+                  <select
+                    className={styles.select}
+                    value={editForm.city_slug}
+                    onChange={(e) => {
+                      const cSlug = e.target.value;
+                      const sObj = ALL_STATES_MAP[editForm.state_slug] || ALL_STATES_MAP['jharkhand'];
+                      const cObj = sObj.cities.find(c => c.slug === cSlug) || { slug: cSlug, name: cSlug };
+                      setEditForm(prev => ({
+                        ...prev,
+                        city_slug: cSlug,
+                        city_name: cObj.name
+                      }));
+                    }}
+                  >
+                    {(ALL_STATES_MAP[editForm.state_slug]?.cities || []).map(c => (
+                      <option key={c.slug} value={c.slug}>{c.name}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>Status</label>
-                <select
-                  className={styles.select}
-                  value={editForm.status}
-                  onChange={(e) => setEditForm(prev => ({ ...prev, status: e.target.value }))}
-                >
-                  <option value="approved">Approved (Visible on Website)</option>
-                  <option value="pending">Pending Moderation</option>
-                  <option value="hidden">Hidden</option>
-                </select>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#F7B731', fontWeight: 600, marginBottom: '0.3rem' }}>
+                    🏢 Branch Page Display Control *
+                  </label>
+                  <select
+                    className={styles.select}
+                    value={editForm.display_target || 'both'}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, display_target: e.target.value }))}
+                    style={{ border: '1px solid rgba(247, 183, 49, 0.4)', background: 'rgba(247, 183, 49, 0.05)' }}
+                  >
+                    <option value="both">🏢 Both City &amp; State Pages (Default)</option>
+                    <option value="city_only">📍 City Branch Page Only ({editForm.city_name})</option>
+                    <option value="state_only">🗺️ State Branch Page Only ({editForm.state_name})</option>
+                    <option value="testimonials_only">⭐ Testimonials Page Only (Hide from branch pages)</option>
+                  </select>
+                  <span style={{ fontSize: '0.74rem', color: '#888', display: 'block', marginTop: '0.25rem' }}>
+                    Choose exactly where this customer review should appear.
+                  </span>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>Publication Status</label>
+                  <select
+                    className={styles.select}
+                    value={editForm.status}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, status: e.target.value }))}
+                  >
+                    <option value="approved">Approved (Live on Website)</option>
+                    <option value="pending">Pending Moderation</option>
+                    <option value="hidden">Hidden</option>
+                  </select>
+                </div>
               </div>
 
               <div>
@@ -683,7 +737,7 @@ export default function ReviewsManager() {
       {/* ── MANUAL ADD REVIEW MODAL ─────────────────────────────── */}
       {showAddModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.85)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ background: '#13141F', border: '1px solid rgba(247, 183, 49, 0.3)', borderRadius: '14px', width: '100%', maxWidth: '600px', padding: '2rem', color: '#fff', maxHeight: '90vh', overflowY: 'auto' }}>
+          <div style={{ background: '#13141F', border: '1px solid rgba(247, 183, 49, 0.3)', borderRadius: '14px', width: '100%', maxWidth: '600px', padding: '1.5rem 1.25rem', color: '#fff', maxHeight: '92vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <h2 style={{ margin: 0, fontSize: '1.3rem', color: '#fff' }}>➕ Add Manual Verified Review</h2>
               <button
@@ -696,7 +750,7 @@ export default function ReviewsManager() {
             </div>
 
             <form onSubmit={handleCreateManualReview} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>Customer Name *</label>
                   <input
@@ -720,7 +774,7 @@ export default function ReviewsManager() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>Rating</label>
                   <select
@@ -736,35 +790,83 @@ export default function ReviewsManager() {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>State</label>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>State *</label>
                   <select
                     className={styles.select}
                     value={addForm.state_slug}
                     onChange={(e) => {
                       const slug = e.target.value;
-                      const sObj = STATES_LIST.find(s => s.slug === slug);
-                      setAddForm(prev => ({ ...prev, state_slug: slug, state_name: sObj?.name || slug }));
+                      const sObj = ALL_STATES_MAP[slug] || ALL_STATES_MAP['jharkhand'];
+                      const firstCity = sObj.cities[0] || { slug: 'dhanbad', name: 'Dhanbad' };
+                      setAddForm(prev => ({
+                        ...prev,
+                        state_slug: slug,
+                        state_name: sObj.name,
+                        city_slug: firstCity.slug,
+                        city_name: firstCity.name
+                      }));
                     }}
                   >
-                    {STATES_LIST.map(s => (
-                      <option key={s.slug} value={s.slug}>{s.name}</option>
+                    {Object.entries(ALL_STATES_MAP).map(([slug, sData]) => (
+                      <option key={slug} value={slug}>{sData.name}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>City Name *</label>
-                  <input
-                    type="text"
-                    className={styles.input}
-                    placeholder="e.g. Ranchi"
-                    value={addForm.city_name}
-                    onChange={(e) => setAddForm(prev => ({
-                      ...prev,
-                      city_name: e.target.value,
-                      city_slug: e.target.value.toLowerCase().trim().replace(/[^a-z0-9]/g, '-')
-                    }))}
-                    required
-                  />
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>City *</label>
+                  <select
+                    className={styles.select}
+                    value={addForm.city_slug}
+                    onChange={(e) => {
+                      const cSlug = e.target.value;
+                      const sObj = ALL_STATES_MAP[addForm.state_slug] || ALL_STATES_MAP['jharkhand'];
+                      const cObj = sObj.cities.find(c => c.slug === cSlug) || { slug: cSlug, name: cSlug };
+                      setAddForm(prev => ({
+                        ...prev,
+                        city_slug: cSlug,
+                        city_name: cObj.name
+                      }));
+                    }}
+                  >
+                    {(ALL_STATES_MAP[addForm.state_slug]?.cities || []).map(c => (
+                      <option key={c.slug} value={c.slug}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#F7B731', fontWeight: 600, marginBottom: '0.3rem' }}>
+                    🏢 Branch Page Display Control *
+                  </label>
+                  <select
+                    className={styles.select}
+                    value={addForm.display_target || 'both'}
+                    onChange={(e) => setAddForm(prev => ({ ...prev, display_target: e.target.value }))}
+                    style={{ border: '1px solid rgba(247, 183, 49, 0.4)', background: 'rgba(247, 183, 49, 0.05)' }}
+                  >
+                    <option value="both">🏢 Both City &amp; State Pages (Default)</option>
+                    <option value="city_only">📍 City Branch Page Only ({addForm.city_name})</option>
+                    <option value="state_only">🗺️ State Branch Page Only ({addForm.state_name})</option>
+                    <option value="testimonials_only">⭐ Testimonials Page Only (Hide from branch pages)</option>
+                  </select>
+                  <span style={{ fontSize: '0.74rem', color: '#888', display: 'block', marginTop: '0.25rem' }}>
+                    Choose exactly where this customer review should appear.
+                  </span>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.3rem' }}>Publication Status</label>
+                  <select
+                    className={styles.select}
+                    value={addForm.status}
+                    onChange={(e) => setAddForm(prev => ({ ...prev, status: e.target.value }))}
+                  >
+                    <option value="approved">Approved (Live on Website)</option>
+                    <option value="pending">Pending Moderation</option>
+                    <option value="hidden">Hidden</option>
+                  </select>
                 </div>
               </div>
 

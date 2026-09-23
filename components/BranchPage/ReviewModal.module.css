@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: center;
   z-index: 11000;
-  padding: 1rem;
+  padding: clamp(0.5rem, 2.5vw, 1rem);
   animation: fadeIn 0.25s ease forwards;
 }
 
@@ -25,9 +25,10 @@
   max-width: 540px;
   max-height: 90vh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(247, 183, 49, 0.1);
   position: relative;
-  padding: 2rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
   color: #fff;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -262,9 +263,40 @@
   gap: 0.75rem;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
+  .modalCard {
+    padding: 1.25rem 0.85rem;
+    max-height: 94vh;
+    border-radius: 12px;
+  }
+  .header {
+    margin-bottom: 1rem;
+    padding-right: 2.5rem;
+  }
+  .title {
+    font-size: 1.35rem;
+  }
+  .input, .select, .textarea {
+    font-size: 16px; /* Prevents unwanted iOS/Android auto-zoom */
+    min-height: 48px;
+    padding: 0.75rem 0.85rem;
+  }
+  .submitBtn {
+    min-height: 50px;
+    font-size: 1.05rem;
+    padding: 0.85rem;
+  }
   .selectGrid {
     grid-template-columns: 1fr;
   }
+  .starRow {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .starBtn {
+    font-size: 1.85rem;
+    padding: 0.2rem;
+  }
 }
+
 

@@ -544,3 +544,21 @@
     font-size: 0.85rem;
   }
 }
+
+@media (max-width: 480px) {
+  .searchCard,
+  .reportHeader,
+  .historyCard {
+    padding: 1.25rem 1rem !important;
+  }
+
+  .stepperContainer {
+    padding: 2.5rem 0.75rem 1rem 0.75rem !important;
+  }
+
+  .searchInput {
+    padding: 0.9rem 0.9rem 0.9rem 2.8rem;
+    font-size: 16px; /* Prevents auto-zoom */
+  }
+}
+

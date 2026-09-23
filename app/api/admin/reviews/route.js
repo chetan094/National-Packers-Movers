@@ -29,7 +29,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const body = await request.json();
-    const { name, phone, state_slug, state_name, city_slug, city_name, rating, review_text, status } = body;
+    const { name, phone, state_slug, state_name, city_slug, city_name, rating, review_text, status, display_target } = body;
 
     if (!name || !review_text) {
       return NextResponse.json({ error: 'Name and review text are required' }, { status: 400 });
@@ -45,6 +45,7 @@ export async function POST(request) {
       rating: parseInt(rating || 5, 10),
       review_text: review_text.trim(),
       status: status || 'approved',
+      display_target: display_target || 'both',
       source: 'Admin Entry'
     });
 

@@ -193,6 +193,7 @@ CREATE TABLE IF NOT EXISTS customer_reviews (
   rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
   review_text TEXT NOT NULL,
   status VARCHAR NOT NULL DEFAULT 'approved', -- 'approved', 'pending', 'hidden'
+  display_target VARCHAR(50) DEFAULT 'both', -- 'both', 'city_only', 'state_only', 'testimonials_only'
   source VARCHAR DEFAULT 'Website Review Form',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -202,5 +203,6 @@ CREATE INDEX IF NOT EXISTS idx_customer_reviews_city ON customer_reviews(city_sl
 CREATE INDEX IF NOT EXISTS idx_customer_reviews_state ON customer_reviews(state_slug);
 CREATE INDEX IF NOT EXISTS idx_customer_reviews_status ON customer_reviews(status);
 CREATE INDEX IF NOT EXISTS idx_customer_reviews_created ON customer_reviews(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_customer_reviews_display_target ON customer_reviews(display_target);
 
 

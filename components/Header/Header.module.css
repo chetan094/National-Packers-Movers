@@ -449,6 +449,7 @@
   transform: translateX(100%);
   transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mobileMenuOpen {
@@ -583,3 +584,17 @@
     padding: 0.7rem 0.75rem;
   }
 }
+
+@media (max-width: 360px) {
+  .logoName {
+    font-size: 0.78rem;
+  }
+  .logoImg {
+    width: 32px;
+    height: 32px;
+  }
+  .nav {
+    padding: 0.6rem 0.5rem;
+  }
+}
+

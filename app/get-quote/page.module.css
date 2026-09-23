@@ -1,9 +1,9 @@
-.quotePage { min-height: 100vh; padding-top: 110px; }
+.quotePage { min-height: 100vh; padding-top: clamp(75px, 14vw, 110px); }
 
 /* Hero */
 .quoteHero {
   position: relative;
-  padding: 4rem 1.5rem 3rem;
+  padding: clamp(2.5rem, 6vw, 4rem) clamp(0.75rem, 3vw, 1.5rem) clamp(1.5rem, 4vw, 3rem);
   text-align: center;
   overflow: hidden;
 }
@@ -144,7 +144,7 @@
   background: var(--grad-card);
   border: 1px solid rgba(247,183,49,0.1);
   border-radius: var(--radius-xl);
-  padding: 2.5rem;
+  padding: clamp(1.25rem, 3.5vw, 2.5rem);
 }
 
 .formStep { display: flex; flex-direction: column; gap: 1.5rem; }
@@ -552,3 +552,10 @@
     max-height: 200px;
   }
 }
+
+@media (max-width: 480px) {
+  .moveTypeGrid {
+    grid-template-columns: 1fr;
+  }
+}
+

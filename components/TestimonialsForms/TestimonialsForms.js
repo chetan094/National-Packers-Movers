@@ -2,91 +2,8 @@
 import { useState } from 'react';
 import styles from '@/app/testimonials/page.module.css';
 import { trackEvent } from '@/lib/analytics';
+import { ALL_STATES_MAP } from '@/data/allCitiesData';
 
-const STATES_MAP = {
-  'jharkhand': {
-    name: 'Jharkhand',
-    cities: [
-      { slug: 'dhanbad', name: 'Dhanbad (HQ)' },
-      { slug: 'ranchi', name: 'Ranchi' },
-      { slug: 'bokaro', name: 'Bokaro' },
-      { slug: 'deoghar', name: 'Deoghar' },
-      { slug: 'jamshedpur', name: 'Jamshedpur' },
-      { slug: 'hazaribagh', name: 'Hazaribagh' },
-      { slug: 'giridih', name: 'Giridih' },
-      { slug: 'ramgarh', name: 'Ramgarh' },
-      { slug: 'chas', name: 'Chas' },
-      { slug: 'katras', name: 'Katras' },
-      { slug: 'jharia', name: 'Jharia' },
-      { slug: 'other', name: 'Other Jharkhand Area' }
-    ]
-  },
-  'west-bengal': {
-    name: 'West Bengal',
-    cities: [
-      { slug: 'kolkata', name: 'Kolkata' },
-      { slug: 'durgapur', name: 'Durgapur' },
-      { slug: 'asansol', name: 'Asansol' },
-      { slug: 'siliguri', name: 'Siliguri' },
-      { slug: 'howrah', name: 'Howrah' },
-      { slug: 'bardhaman', name: 'Bardhaman' },
-      { slug: 'kharagpur', name: 'Kharagpur' },
-      { slug: 'haldia', name: 'Haldia' },
-      { slug: 'malda', name: 'Malda' },
-      { slug: 'jalpaiguri', name: 'Jalpaiguri' },
-      { slug: 'other', name: 'Other West Bengal Area' }
-    ]
-  },
-  'bihar': {
-    name: 'Bihar',
-    cities: [
-      { slug: 'patna', name: 'Patna' },
-      { slug: 'gaya', name: 'Gaya' },
-      { slug: 'bhagalpur', name: 'Bhagalpur' },
-      { slug: 'muzaffarpur', name: 'Muzaffarpur' },
-      { slug: 'purnia', name: 'Purnia' },
-      { slug: 'darbhanga', name: 'Darbhanga' },
-      { slug: 'begusarai', name: 'Begusarai' },
-      { slug: 'other', name: 'Other Bihar Area' }
-    ]
-  },
-  'madhya-pradesh': {
-    name: 'Madhya Pradesh',
-    cities: [
-      { slug: 'singrauli', name: 'Singrauli' },
-      { slug: 'waidhan', name: 'Waidhan' },
-      { slug: 'bhopal', name: 'Bhopal' },
-      { slug: 'indore', name: 'Indore' },
-      { slug: 'jabalpur', name: 'Jabalpur' },
-      { slug: 'gwalior', name: 'Gwalior' },
-      { slug: 'other', name: 'Other MP Area' }
-    ]
-  },
-  'odisha': {
-    name: 'Odisha',
-    cities: [
-      { slug: 'bhubaneswar', name: 'Bhubaneswar' },
-      { slug: 'cuttack', name: 'Cuttack' },
-      { slug: 'rourkela', name: 'Rourkela' },
-      { slug: 'sambalpur', name: 'Sambalpur' },
-      { slug: 'puri', name: 'Puri' },
-      { slug: 'other', name: 'Other Odisha Area' }
-    ]
-  },
-  'uttar-pradesh': {
-    name: 'Uttar Pradesh',
-    cities: [
-      { slug: 'lucknow', name: 'Lucknow' },
-      { slug: 'kanpur', name: 'Kanpur' },
-      { slug: 'varanasi', name: 'Varanasi' },
-      { slug: 'prayagraj', name: 'Prayagraj' },
-      { slug: 'noida', name: 'Noida' },
-      { slug: 'ghaziabad', name: 'Ghaziabad' },
-      { slug: 'gorakhpur', name: 'Gorakhpur' },
-      { slug: 'other', name: 'Other UP Area' }
-    ]
-  }
-};
 
 export default function TestimonialsForms() {
   // Shifting Review Form state
@@ -157,8 +74,8 @@ export default function TestimonialsForms() {
 
   const handleStateChange = (e) => {
     const sSlug = e.target.value;
-    const sObj = STATES_MAP[sSlug] || STATES_MAP['jharkhand'];
-    const firstCity = sObj.cities[0] || { slug: 'other', name: 'Other' };
+    const sObj = ALL_STATES_MAP[sSlug] || ALL_STATES_MAP['jharkhand'];
+    const firstCity = sObj.cities[0] || { slug: 'dhanbad', name: 'Dhanbad' };
     setFormData(prev => ({
       ...prev,
       state_slug: sSlug,
@@ -170,7 +87,7 @@ export default function TestimonialsForms() {
 
   const handleCityChange = (e) => {
     const cSlug = e.target.value;
-    const sObj = STATES_MAP[formData.state_slug] || STATES_MAP['jharkhand'];
+    const sObj = ALL_STATES_MAP[formData.state_slug] || ALL_STATES_MAP['jharkhand'];
     const cObj = sObj.cities.find(c => c.slug === cSlug) || { slug: cSlug, name: cSlug };
     setFormData(prev => ({
       ...prev,
@@ -386,7 +303,7 @@ export default function TestimonialsForms() {
             {formError && <div className={styles.formAlert}>{formError}</div>}
 
             <form onSubmit={handleFormSubmit} className={styles.subForm}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div className={styles.formRowTwoCol}>
                 <div className={styles.formGroup}>
                   <label htmlFor="rev-state" className={styles.formLabel}>Shifting State *</label>
                   <select
@@ -395,7 +312,7 @@ export default function TestimonialsForms() {
                     value={formData.state_slug}
                     onChange={handleStateChange}
                   >
-                    {Object.entries(STATES_MAP).map(([slug, sData]) => (
+                    {Object.entries(ALL_STATES_MAP).map(([slug, sData]) => (
                       <option key={slug} value={slug}>{sData.name}</option>
                     ))}
                   </select>
@@ -409,7 +326,7 @@ export default function TestimonialsForms() {
                     value={formData.city_slug}
                     onChange={handleCityChange}
                   >
-                    {(STATES_MAP[formData.state_slug]?.cities || []).map(c => (
+                    {(ALL_STATES_MAP[formData.state_slug]?.cities || []).map(c => (
                       <option key={c.slug} value={c.slug}>{c.name}</option>
                     ))}
                   </select>

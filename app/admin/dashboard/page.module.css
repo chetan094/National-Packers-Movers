@@ -2430,4 +2430,44 @@
   border: 1px solid #ddd;
 }
 
+/* Reviews and Leads Form Controls */
+.input, .select, .textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #fff;
+  padding: 0.75rem 0.9rem;
+  font-size: 1rem; /* 16px to prevent mobile iOS zoom */
+  font-family: inherit;
+  outline: none;
+  min-height: 46px;
+  box-sizing: border-box;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.select option {
+  background: #161724;
+  color: #fff;
+}
+
+.input:focus, .select:focus, .textarea:focus {
+  border-color: var(--gold, #F7B731);
+  box-shadow: 0 0 0 3px rgba(247, 183, 49, 0.15);
+}
+
+.textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+@media (max-width: 600px) {
+  .input, .select, .textarea {
+    font-size: 16px;
+    min-height: 48px;
+    padding: 0.75rem 0.85rem;
+  }
+}
+
+
 

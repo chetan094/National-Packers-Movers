@@ -777,27 +777,93 @@
 }
 
 @media (max-width: 640px) {
-  .hero { padding-top: 100px; }
+  .hero { 
+    padding-top: 95px;
+    padding-left: clamp(0.75rem, 3vw, 1.25rem);
+    padding-right: clamp(0.75rem, 3vw, 1.25rem);
+  }
   .servicesGrid { grid-template-columns: 1fr; }
   .trustGrid { grid-template-columns: repeat(2, 1fr); }
   .stepsGrid { grid-template-columns: 1fr; }
   .branchGrid { grid-template-columns: 1fr; }
   .corporateGrid { grid-template-columns: 1fr; }
   .trustItem::after { display: none; }
-  .heroCtas { flex-direction: column; align-items: center; }
-  .ctaBtns { flex-direction: column; align-items: center; }
+  .heroCtas { 
+    flex-direction: column; 
+    align-items: stretch;
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .ctaBtns { 
+    flex-direction: column; 
+    align-items: stretch;
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
   .sliderArrow {
     width: 36px;
     height: 36px;
     font-size: 1.4rem;
   }
   .prevArrow {
-    left: 8px;
+    left: 4px;
   }
   .nextArrow {
-    right: 8px;
+    right: 4px;
   }
   .testimonialsCarousel {
     min-height: 280px;
+    padding: 1.75rem 1.25rem;
   }
 }
+
+@media (max-width: 480px) {
+  .hero {
+    padding-top: 90px;
+    padding-bottom: 3rem;
+  }
+  .heroTitle {
+    font-size: clamp(1.85rem, 8vw, 2.5rem);
+    line-height: 1.15;
+  }
+  .heroSubtitle {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin-bottom: 1.5rem;
+  }
+  .heroBadge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.85rem;
+  }
+  .heroContacts {
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+  .heroDivider {
+    display: none;
+  }
+  .serviceCard, .stepCard, .branchCard {
+    padding: 1.35rem 1.1rem;
+    border-radius: var(--radius-md);
+  }
+  .trustGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .ctaSection {
+    padding: 4rem 1rem;
+  }
+  .ctaTitle {
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
+  }
+  .ctaSubtitle {
+    font-size: 0.95rem;
+    margin-bottom: 1.75rem;
+  }
+}
+
