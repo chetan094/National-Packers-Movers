@@ -2469,5 +2469,251 @@
   }
 }
 
+/* Custom SEO Page Selector Dropdown with Dual Scrollbars */
+.seoSelectorWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  width: 100%;
+}
+
+.seoSelectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.85rem 1.1rem;
+  background: rgba(8, 12, 18, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm, 8px);
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  min-height: 48px;
+}
+
+.seoSelectTrigger:hover,
+.seoSelectTrigger:focus-visible {
+  border-color: var(--gold, #F7B731);
+  background: rgba(8, 12, 18, 0.9);
+  box-shadow: 0 0 0 3px rgba(247, 183, 49, 0.15);
+  outline: none;
+}
+
+.seoSelectValue {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.seoItemIcon {
+  color: var(--white);
+}
+
+.seoPathBadge {
+  background: rgba(255, 255, 255, 0.08);
+  color: #8ab4f8;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-family: monospace;
+}
+
+.seoCustomizedBadge {
+  background: rgba(247, 183, 49, 0.15);
+  color: var(--gold, #F7B731);
+  border: 1px solid rgba(247, 183, 49, 0.3);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.seoChevron {
+  font-size: 0.75rem;
+  color: var(--gold, #F7B731);
+  transition: transform 0.2s ease;
+}
+
+.seoChevronOpen {
+  transform: rotate(180deg);
+}
+
+.seoDropdownMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #0f1724;
+  border: 1.5px solid rgba(247, 183, 49, 0.35);
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75), 0 0 20px rgba(247, 183, 49, 0.1);
+  z-index: 100;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.seoSearchHeader {
+  position: relative;
+  padding: 0.75rem;
+  background: rgba(8, 12, 18, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.seoSearchInput {
+  width: 100%;
+  padding: 0.7rem 2.2rem 0.7rem 0.9rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(247, 183, 49, 0.3);
+  border-radius: 6px;
+  color: var(--white);
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.seoSearchInput:focus {
+  border-color: var(--gold, #F7B731);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 2px rgba(247, 183, 49, 0.2);
+}
+
+.seoClearSearchBtn {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 4px;
+}
+
+.seoClearSearchBtn:hover {
+  color: var(--white);
+}
+
+/* Explicit Horizontal and Vertical Scroll Area */
+.seoScrollArea {
+  max-height: 380px;
+  overflow-y: auto;
+  overflow-x: auto;
+  padding: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(247, 183, 49, 0.45) rgba(8, 12, 18, 0.8);
+}
+
+.seoScrollArea::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.seoScrollArea::-webkit-scrollbar-track {
+  background: rgba(8, 12, 18, 0.8);
+  border-radius: 4px;
+}
+
+.seoScrollArea::-webkit-scrollbar-thumb {
+  background: rgba(247, 183, 49, 0.45);
+  border-radius: 4px;
+}
+
+.seoScrollArea::-webkit-scrollbar-thumb:hover {
+  background: var(--gold, #F7B731);
+}
+
+.seoOptionGroup {
+  margin-bottom: 0.75rem;
+}
+
+.seoGroupHeading {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--gold, #F7B731);
+  text-transform: uppercase;
+  letter-spacing: 0.75px;
+  padding: 0.4rem 0.75rem;
+  background: rgba(247, 183, 49, 0.08);
+  border-radius: 4px;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+}
+
+.seoOptionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.seoOptionItem:hover {
+  background: rgba(247, 183, 49, 0.12);
+}
+
+.seoOptionItemSelected {
+  background: rgba(247, 183, 49, 0.18);
+  border-left: 3px solid var(--gold, #F7B731);
+}
+
+.seoOptionLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  white-space: nowrap;
+}
+
+.seoOptionLabel {
+  font-size: 0.9rem;
+  color: var(--white);
+  font-weight: 500;
+}
+
+.seoOptionPath {
+  font-size: 0.8rem;
+  color: #8ab4f8;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.seoOptionBadge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gold, #F7B731);
+  background: rgba(247, 183, 49, 0.15);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.seoCheckmark {
+  color: var(--gold, #F7B731);
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.seoNoMatch {
+  padding: 2rem;
+  text-align: center;
+  color: #a0aec0;
+  font-size: 0.9rem;
+}
+
+
 
 

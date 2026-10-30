@@ -338,6 +338,8 @@ export default function AdminDashboard() {
   const [seoError, setSeoError] = useState('');
   const [seoSuccess, setSeoSuccess] = useState('');
   const [seoMetadataList, setSeoMetadataList] = useState([]);
+  const [seoDropdownOpen, setSeoDropdownOpen] = useState(false);
+  const [seoPathSearch, setSeoPathSearch] = useState('');
 
   // Gallery Manager states
   const [galleryImages, setGalleryImages] = useState([]);
@@ -747,6 +749,25 @@ export default function AdminDashboard() {
       fetchSeoMetadata(selectedSeoPath);
     }
   }, [selectedSeoPath]);
+
+  useEffect(() => {
+    if (!seoDropdownOpen) return;
+    const handleClickOutside = (e) => {
+      const container = document.getElementById('seoPathSelectorContainer');
+      if (container && !container.contains(e.target)) {
+        setSeoDropdownOpen(false);
+      }
+    };
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setSeoDropdownOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [seoDropdownOpen]);
 
   const handleSeoSubmit = async (e) => {
     e.preventDefault();
@@ -4602,62 +4623,166 @@ export default function AdminDashboard() {
               <div className={styles.paneCard}>
                 <h2 className={styles.paneTitle}>🔍 Custom Meta Details</h2>
                 <form onSubmit={handleSeoSubmit} className={styles.seoForm}>
-                  <div className={styles.inputGroup}>
-                    <label className={styles.label}>Select Page Path *</label>
-                    <select
-                      className={styles.select}
-                      value={selectedSeoPath}
-                      onChange={(e) => setSelectedSeoPath(e.target.value)}
-                    >
-                      <optgroup label="Static &amp; Core Pages">
-                        {STATIC_PATHS.map(item => {
-                          const hasCustom = seoMetadataList.some(m => m.path === item.path);
-                          return (
-                            <option key={item.path} value={item.path}>
-                              {item.label} {hasCustom ? '✓ (Customized)' : ''}
-                            </option>
-                          );
-                        })}
-                      </optgroup>
-                      <optgroup label="State Branch Directories">
-                        {Object.entries(ALLOWED_STATES_LABEL).map(([slug, name]) => {
+                  {(() => {
+                    const allSeoOptions = [
+                      {
+                        group: 'Static & Core Pages',
+                        items: STATIC_PATHS.map(item => ({
+                          path: item.path,
+                          label: item.label,
+                          hasCustom: seoMetadataList.some(m => m.path === item.path)
+                        }))
+                      },
+                      {
+                        group: 'State Branch Directories',
+                        items: Object.entries(ALLOWED_STATES_LABEL).map(([slug, name]) => {
                           const path = `/branches/${slug}`;
-                          const hasCustom = seoMetadataList.some(m => m.path === path);
-                          return (
-                            <option key={path} value={path}>
-                              📍 State: {name} ({path}) {hasCustom ? '✓' : ''}
-                            </option>
-                          );
-                        })}
-                      </optgroup>
-                      <optgroup label="All Cities of Operating States">
-                        {Object.entries(STATE_CITIES_SEO).flatMap(([stateSlug, cities]) =>
+                          return {
+                            path,
+                            label: `📍 State: ${name}`,
+                            hasCustom: seoMetadataList.some(m => m.path === path)
+                          };
+                        })
+                      },
+                      {
+                        group: 'All Cities of Operating States',
+                        items: Object.entries(STATE_CITIES_SEO).flatMap(([stateSlug, cities]) =>
                           cities.map(citySlug => {
                             const path = `/branches/${stateSlug}/${citySlug}`;
-                            const hasCustom = seoMetadataList.some(m => m.path === path);
                             const cityName = formatCityName(citySlug);
                             const stateName = ALLOWED_STATES_LABEL[stateSlug];
-                            return (
-                              <option key={path} value={path}>
-                                🏙️ {cityName}, {stateName} ({path}) {hasCustom ? '✓' : ''}
-                              </option>
-                            );
+                            return {
+                              path,
+                              label: `🏙️ ${cityName}, ${stateName}`,
+                              hasCustom: seoMetadataList.some(m => m.path === path)
+                            };
                           })
-                        )}
-                      </optgroup>
-                      <optgroup label="Dynamic Editorial Articles">
-                        {blogs.map(blog => {
+                        )
+                      },
+                      {
+                        group: 'Dynamic Editorial Articles',
+                        items: blogs.map(blog => {
                           const path = `/blog/${blog.slug}`;
-                          const hasCustom = seoMetadataList.some(m => m.path === path);
-                          return (
-                            <option key={path} value={path}>
-                              📝 Blog: {blog.title} ({path}) {hasCustom ? '✓' : ''}
-                            </option>
-                          );
-                        })}
-                      </optgroup>
-                    </select>
-                  </div>
+                          return {
+                            path,
+                            label: `📝 Blog: ${blog.title}`,
+                            hasCustom: seoMetadataList.some(m => m.path === path)
+                          };
+                        })
+                      }
+                    ];
+
+                    const q = seoPathSearch.toLowerCase().trim();
+                    const filteredSeoGroups = allSeoOptions.map(group => ({
+                      ...group,
+                      items: group.items.filter(item => {
+                        if (!q) return true;
+                        return item.label.toLowerCase().includes(q) || item.path.toLowerCase().includes(q);
+                      })
+                    })).filter(group => group.items.length > 0);
+
+                    const currentItem = allSeoOptions
+                      .flatMap(g => g.items)
+                      .find(item => item.path === selectedSeoPath);
+
+                    return (
+                      <div className={styles.seoSelectorWrapper} id="seoPathSelectorContainer">
+                        <label className={styles.label}>Select Page Path *</label>
+                        <div
+                          className={styles.seoSelectTrigger}
+                          onClick={() => setSeoDropdownOpen(prev => !prev)}
+                          tabIndex={0}
+                          role="button"
+                          aria-expanded={seoDropdownOpen}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              setSeoDropdownOpen(prev => !prev);
+                            }
+                          }}
+                        >
+                          <div className={styles.seoSelectValue}>
+                            <span className={styles.seoItemIcon}>{currentItem?.label || selectedSeoPath}</span>
+                            <code className={styles.seoPathBadge}>{selectedSeoPath}</code>
+                            {currentItem?.hasCustom && (
+                              <span className={styles.seoCustomizedBadge}>✓ Customized</span>
+                            )}
+                          </div>
+                          <span className={`${styles.seoChevron} ${seoDropdownOpen ? styles.seoChevronOpen : ''}`}>
+                            ▼
+                          </span>
+                        </div>
+
+                        {seoDropdownOpen && (
+                          <div className={styles.seoDropdownMenu}>
+                            <div className={styles.seoSearchHeader}>
+                              <input
+                                type="text"
+                                className={styles.seoSearchInput}
+                                placeholder="🔍 Filter 220+ pages by city, state, or path (e.g. dhanbad, /about)..."
+                                value={seoPathSearch}
+                                onChange={(e) => setSeoPathSearch(e.target.value)}
+                                autoFocus
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                              {seoPathSearch && (
+                                <button
+                                  type="button"
+                                  className={styles.seoClearSearchBtn}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSeoPathSearch('');
+                                  }}
+                                >
+                                  ✕
+                                </button>
+                              )}
+                            </div>
+
+                            <div className={styles.seoScrollArea}>
+                              {filteredSeoGroups.length === 0 ? (
+                                <div className={styles.seoNoMatch}>
+                                  No matching pages found for "{seoPathSearch}"
+                                </div>
+                              ) : (
+                                filteredSeoGroups.map((group, gIdx) => (
+                                  <div key={gIdx} className={styles.seoOptionGroup}>
+                                    <div className={styles.seoGroupHeading}>
+                                      {group.group} ({group.items.length})
+                                    </div>
+                                    {group.items.map(item => {
+                                      const isSelected = item.path === selectedSeoPath;
+                                      return (
+                                        <div
+                                          key={item.path}
+                                          className={`${styles.seoOptionItem} ${isSelected ? styles.seoOptionItemSelected : ''}`}
+                                          onClick={() => {
+                                            setSelectedSeoPath(item.path);
+                                            setSeoDropdownOpen(false);
+                                          }}
+                                        >
+                                          <div className={styles.seoOptionLeft}>
+                                            <span className={styles.seoOptionLabel}>{item.label}</span>
+                                            <code className={styles.seoOptionPath}>{item.path}</code>
+                                          </div>
+                                          {item.hasCustom && (
+                                            <span className={styles.seoOptionBadge}>✓ Customized</span>
+                                          )}
+                                          {isSelected && (
+                                            <span className={styles.seoCheckmark}>✔</span>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
 
                   <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginTop: '1rem' }}>
                     <div style={{ flex: 1, minWidth: '300px' }}>

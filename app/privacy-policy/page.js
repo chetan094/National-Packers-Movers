@@ -1,12 +1,37 @@
 import styles from './page.module.css';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'Privacy Policy — National Packers & Movers | Relocation Security',
-  description: 'Read the privacy policy of National Packers & Movers. Learn how we collect, protect, and process data for home, office, and vehicle relocation services.',
-  keywords: 'privacy policy packers movers, data protection, national packers movers privacy, shifting information security',
-};
+export async function generateMetadata() {
+  const path = '/privacy-policy';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Privacy Policy — National Packers & Movers | Relocation Security';
+  const description = custom?.meta_description || 'Read the privacy policy of National Packers & Movers. Learn how we collect, protect, and process data for home, office, and vehicle relocation services.';
+  const keywords = custom?.meta_keywords || 'privacy policy packers movers, data protection, national packers movers privacy, shifting information security';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 export default function PrivacyPolicyPage() {
+
   return (
     <div className={styles.page}>
       <div className={styles.heroBg}>

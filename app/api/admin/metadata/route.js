@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getCustomMetadata, upsertCustomMetadata, getCustomMetadataList } from '@/lib/supabase';
 import { checkPermission } from '@/lib/auth';
 
@@ -49,9 +50,20 @@ export async function POST(request) {
       is_noindex
     });
 
+    // Invalidate Next.js cache on-demand so Edge CDN and static pre-rendered HTML update immediately
+    try {
+      revalidatePath(path);
+      if (path === '/') {
+        revalidatePath('/', 'layout');
+      }
+    } catch (revalErr) {
+      console.warn('Cache revalidation warning for path:', path, revalErr);
+    }
+
     return NextResponse.json({ success: true, metadata: updated });
   } catch (error) {
     console.error('API POST /api/admin/metadata error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+

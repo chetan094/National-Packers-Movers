@@ -1,12 +1,37 @@
 import styles from './page.module.css';
+import { getCustomMetadata } from '@/lib/supabase';
 
-export const metadata = {
-  title: 'Terms of Service — National Packers & Movers | Relocation Contract',
-  description: 'Read the terms of service of National Packers & Movers. Learn about our booking terms, transit insurance rules, excluded items, and legal jurisdictions.',
-  keywords: 'terms of service packers movers, shifting contract terms, national packers movers rules, moving terms and conditions',
-};
+export async function generateMetadata() {
+  const path = '/terms';
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || 'Terms of Service — National Packers & Movers | Relocation Contract';
+  const description = custom?.meta_description || 'Read the terms of service of National Packers & Movers. Learn about our booking terms, transit insurance rules, excluded items, and legal jurisdictions.';
+  const keywords = custom?.meta_keywords || 'terms of service packers movers, shifting contract terms, national packers movers rules, moving terms and conditions';
+  const isNoindex = custom?.is_noindex ?? false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
+  };
+}
 
 export default function TermsOfServicePage() {
+
   return (
     <div className={styles.page}>
       <div className={styles.heroBg}>

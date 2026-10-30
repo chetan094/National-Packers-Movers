@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { routesData } from '@/data/routesData';
 import styles from './page.module.css';
 import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
+import { getCustomMetadata } from '@/lib/supabase';
 
 const STATE_CITIES = {
   'jharkhand': [
@@ -101,12 +102,34 @@ export async function generateMetadata({ params }) {
   }
 
   const route = getRouteData(resolvedParams.route);
+  const path = `/routes/${routeParam}`;
+  const custom = await getCustomMetadata(path);
+
+  const title = custom?.meta_title || `Packers and Movers from ${route.originName} to ${route.destinationName} | National Packers & Movers`;
+  const description = custom?.meta_description || `Looking for reliable packers and movers from ${route.originName} to ${route.destinationName}? We offer IBA-compliant billing documents, multi-layer packing, and direct container transit.`;
+  const keywords = custom?.meta_keywords || `packers and movers ${route.origin} to ${route.destination}, shifting from ${route.origin} to ${route.destination}, movers ${route.originName} to ${route.destinationName}`;
+  const isNoindex = custom?.is_noindex ?? false;
+
   return {
-    title: `Packers and Movers from ${route.originName} to ${route.destinationName} | National Packers & Movers`,
-    description: `Looking for reliable packers and movers from ${route.originName} to ${route.destinationName}? We offer IBA-compliant billing documents, multi-layer packing, and direct container transit.`,
-    keywords: `packers and movers ${route.origin} to ${route.destination}, shifting from ${route.origin} to ${route.destination}, movers ${route.originName} to ${route.destinationName}`
+    title,
+    description,
+    keywords,
+    robots: {
+      index: !isNoindex,
+      follow: !isNoindex,
+    },
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
   };
 }
+
 
 export default async function RoutePage({ params }) {
   const resolvedParams = await params;
