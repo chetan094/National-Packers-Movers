@@ -1,3 +1,5 @@
+import fs from 'fs/promises';
+import path from 'path';
 import { NextResponse } from 'next/server';
 import { checkPermission } from '@/lib/auth';
 
@@ -41,13 +43,10 @@ export async function POST(request) {
     let filename;
 
     if (title && title.trim().length > 0) {
-      // Auto-rename: convert title to slug → SEO-friendly filename
       const slug = titleToSlug(title);
-      // Add timestamp suffix to prevent collisions if same title uploaded twice
       const timestamp = Date.now();
       filename = `${slug}-${timestamp}.${ext}`;
     } else {
-      // Fallback: timestamp-based name if no title provided
       filename = `gallery-photo-${Date.now()}.${ext}`;
     }
 
@@ -55,26 +54,40 @@ export async function POST(request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // 5. Upload to Supabase Storage Bucket
-    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/blog-images/${filename}`;
-    const res = await fetch(uploadUrl, {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': file.type || 'application/octet-stream',
-      },
-      body: buffer,
-    });
+    // 5. Save locally to public/photos/ (Self-hosted on Hostinger / Local)
+    const publicPhotosDir = path.join(process.cwd(), 'public', 'photos');
+    await fs.mkdir(publicPhotosDir, { recursive: true });
+    const localFilePath = path.join(publicPhotosDir, filename);
+    await fs.writeFile(localFilePath, buffer);
+    console.log(`[MEDIA UPLOAD] Successfully saved file locally: ${localFilePath}`);
 
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error('Supabase upload error:', errText);
-      return NextResponse.json({ error: `Upload failed: ${errText}` }, { status: 500 });
+    // Also persist in persistent external media directory on Hostinger if it exists
+    const persistentHostingerDir = '/home/u373069423/media_uploads';
+    try {
+      await fs.mkdir(persistentHostingerDir, { recursive: true });
+      await fs.writeFile(path.join(persistentHostingerDir, filename), buffer);
+    } catch {}
+
+    // 6. Optional background backup to Supabase (only if credentials still exist)
+    if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+      try {
+        const uploadUrl = `${SUPABASE_URL}/storage/v1/object/blog-images/${filename}`;
+        await fetch(uploadUrl, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': file.type || 'application/octet-stream',
+          },
+          body: buffer,
+        });
+      } catch (backupErr) {
+        console.warn('[UPLOAD BACKUP] Supabase backup upload skipped/failed:', backupErr.message);
+      }
     }
 
-    // 6. Construct public URL
-    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/blog-images/${filename}`;
+    // 7. Return local self-hosted URL
+    const publicUrl = `/photos/${filename}`;
     return NextResponse.json({ url: publicUrl, filename }, { status: 200 });
 
   } catch (error) {
