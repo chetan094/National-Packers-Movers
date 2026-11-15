@@ -1,0 +1,63 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/server-card/v1.json",
+  "name": "national-packers-movers-mcp",
+  "version": "1.0.0",
+  "description": "Official Model Context Protocol server for National Packers & Movers logistics, relocation pricing, and consignment tracking.",
+  "url": "https://www.thenationalpackersmovers.com/.well-known/mcp/server-card.json",
+  "endpoint": "https://www.thenationalpackersmovers.com/api/mcp",
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    },
+    "resources": {
+      "subscribe": false,
+      "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    }
+  },
+  "tools": [
+    {
+      "name": "calculate_moving_cost",
+      "description": "Calculate instant estimated shifting prices for household goods, commercial cargo, or vehicles across Indian cities.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "moveType": {
+            "type": "string",
+            "enum": ["household", "corporate", "vehicle", "industrial"],
+            "description": "Category of relocation required"
+          },
+          "origin": {
+            "type": "string",
+            "description": "Pickup city or pincode"
+          },
+          "destination": {
+            "type": "string",
+            "description": "Drop city or pincode"
+          },
+          "size": {
+            "type": "string",
+            "description": "Volume of move (e.g., 1BHK, 2BHK, 3BHK, Bike, Car, Office)"
+          }
+        },
+        "required": ["moveType", "origin", "destination"]
+      }
+    },
+    {
+      "name": "track_consignment",
+      "description": "Query live transit status and dispatch milestone for a National Packers & Movers consignment by tracking or LR number.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "consignmentNumber": {
+            "type": "string",
+            "description": "Consignment or booking note number"
+          }
+        },
+        "required": ["consignmentNumber"]
+      }
+    }
+  ]
+}

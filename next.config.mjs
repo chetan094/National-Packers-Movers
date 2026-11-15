@@ -25,6 +25,16 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // Homepage agent discovery link
+        source: '/',
+        headers: [
+          {
+            key: 'Link',
+            value: '</llms.txt>; rel="alternate"; type="text/markdown"',
+          },
+        ],
+      },
+      {
         // Apply to all routes
         source: '/(.*)',
         headers: [

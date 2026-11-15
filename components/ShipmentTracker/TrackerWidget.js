@@ -104,7 +104,12 @@ export default function TrackerWidget() {
     <div className={styles.trackerWrapper}>
       {/* ── SEARCH INPUT FORM ────────────────────────────────── */}
       <div className={styles.searchCard}>
-        <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+        <form
+          onSubmit={handleSearchSubmit}
+          className={styles.searchForm}
+          toolname="track_consignment"
+          tooldescription="Track consignment delivery status"
+        >
           <div className={styles.inputBoxGroup}>
             <span className={styles.searchIcon}>🔍</span>
             <input

@@ -7,6 +7,7 @@ import WhatsAppButton from '@/components/WhatsAppButton/WhatsAppButton';
 import PageCurtain from '@/components/animations/PageCurtain';
 import GlobalAnimations from '@/components/animations/GlobalAnimations';
 import AnalyticsTracker from '@/components/AnalyticsTracker/AnalyticsTracker';
+import WebMcpRegister from '@/components/WebMcpRegister/WebMcpRegister';
 
 const inter = Inter({ subsets: ['latin'], variable: '--inter', display: 'swap' });
 const rajdhani = Rajdhani({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--rajdhani', display: 'swap' });
@@ -48,13 +49,19 @@ export const metadata = {
 
 const GLOBAL_MOVING_SCHEMA = {
   '@context': 'https://schema.org',
-  '@type': 'MovingCompany',
+  '@type': ['LocalBusiness', 'MovingCompany', 'Organization'],
   'name': 'National Packers & Movers',
   'alternateName': 'National Packers Movers',
+  'legalName': 'National Packers and Movers',
+  'description': "India's trusted relocation experts since 1987. Household, corporate, industrial and vehicle relocation across Jharkhand, West Bengal, Bihar, MP, UP, Odisha.",
   'url': 'https://www.thenationalpackersmovers.com',
   'logo': 'https://www.thenationalpackersmovers.com/icon.png',
+  'image': 'https://www.thenationalpackersmovers.com/icon.png',
   'telephone': '+91-9835168368',
   'priceRange': '₹₹',
+  'currenciesAccepted': 'INR',
+  'paymentAccepted': 'Cash, Credit Card, Debit Card, UPI, Net Banking',
+  'openingHours': 'Mo-Su 00:00-23:59',
   'foundingDate': '1987',
   'founder': {
     '@type': 'Person',
@@ -121,6 +128,7 @@ export default function RootLayout({ children }) {
         <PageCurtain />
         <GlobalAnimations />
         <AnalyticsTracker />
+        <WebMcpRegister />
         <Header />
         <main>{children}</main>
         <Footer />

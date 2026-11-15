@@ -1,0 +1,96 @@
+# National Packers & Movers — Full Enterprise Knowledge Base
+
+## 1. Company Profile
+- **Company Name:** National Packers & Movers
+- **Legal Entity:** National Packers and Movers
+- **Founded:** 1987 (37+ Years of Operational Excellence)
+- **Founder:** Debabrata Jhampaty
+- **Executive Leadership:** Chetan Jhampaty
+- **Headquarters:** National Packers & Movers HQ, Near City Center, Dhanbad, Jharkhand 826001, India
+- **Primary Service Territories:** Jharkhand, West Bengal, Bihar, Madhya Pradesh, Uttar Pradesh, Andhra Pradesh, Odisha, and nationwide inter-state routes across 1,200+ Indian cities.
+- **Official Website:** https://www.thenationalpackersmovers.com
+- **Customer Helpline:** +91-9835168368, +91-9431113263
+- **Customer Rating:** 4.9/5 based on 1,250+ verified customer reviews.
+
+---
+
+## 2. Relocation Services & Operating Procedures
+
+### Household Shifting
+Complete home relocation covering delicate chinaware, heavy furniture, consumer electronics, kitchen appliances, and wardrobe items.
+- Multi-layer protective packaging: 7-ply heavy corrugated cartons, air bubble films, expanded foam wraps, stretch cling wrap, and reinforced corrugated edge protectors.
+- Dismantling and reassembly: Bed frames, wardrobes, dining sets, modular furnishings.
+- Direct-door loading into lockable weatherproof container vehicles without intermediate warehousing transshipment.
+
+### Corporate & Office Relocation
+Specialized corporate mobility engineered for minimal business downtime.
+- IT infrastructure handling: Antistatic packaging for servers, desktop workstations, networking equipment, and PBX setups.
+- Modular office furniture de-installation, labeling, sequential floor-plan reconstruction.
+- Document and records archiving with tamper-evident serial-numbered security seals.
+
+### Industrial Machinery & Equipment Transport
+Heavy-duty industrial logistics supporting mining, manufacturing, steel, and thermal power facilities.
+- Industrial wooden crating, moisture-barrier vacuum packaging, heavy machinery rigging, low-bed trailer logistics, and crane loading.
+
+### Automobile & Two-Wheeler Relocation
+Door-to-door vehicle transport using enclosed car carriers.
+- Comprehensive pre-loading photographic inspection and odometer logging.
+- Hydraulic ramp loading, wheel chocks, four-point nylon tie-down strapping.
+- Transit insurance coverage with real-time GPS fleet monitoring.
+
+### Warehousing & Storage Facilities
+Short-term and extended household goods storage in secure commercial logistics hubs.
+- 24/7 CCTV surveillance, automated pest management, moisture-controlled storage bays, and fire-suppression systems.
+
+---
+
+## 3. Indicative Pricing Guidelines
+*Note: Exact moving charges depend on total transit distance, cargo cubic volume, elevator access, and packing material tiers. Pre-move surveys are 100% free.*
+
+- **Local Shifting (Within City):**
+  - 1 BHK Apartment: ₹4,000 – ₹7,500
+  - 2 BHK Apartment: ₹6,500 – ₹12,000
+  - 3 BHK / Villa: ₹10,000 – ₹18,000
+  - Two-Wheeler: ₹1,500 – ₹3,000
+  - Car / Sedan: ₹3,500 – ₹6,000
+
+- **Inter-State Shifting (Between Major Hubs e.g., Dhanbad/Kolkata/Ranchi to Patna/Lucknow/Delhi/Bangalore):**
+  - 1 BHK Household: ₹12,000 – ₹24,000
+  - 2 BHK Household: ₹18,000 – ₹35,000
+  - 3 BHK Household: ₹28,000 – ₹55,000
+  - Bike / Motorcycle: ₹4,500 – ₹8,500
+  - Car / SUV: ₹12,000 – ₹22,000
+
+---
+
+## 4. Government & PSU Reimbursement Compliance
+National Packers & Movers is an authorized, recognized transport provider for government and corporate relocation claims:
+- Accepted by: Coal India (BCCL, ECL, CCL), Steel Authority of India (SAIL), NTPC, State Bank of India (SBI), Indian Railways, ONGC, BHEL, and Central Armed Police Forces.
+- Complete Claim Documentation Provided:
+  1. 100% Tax-Compliant GST Invoice (SAC Code 9965 / 9967)
+  2. Official Consignment Note (Lorry Receipt / Bilty - LR)
+  3. Itemized Packing List with Serialized Item Value Declarations
+  4. Official Money Receipt stamped and signed
+  5. Vehicle Transit Insurance Certificate
+
+---
+
+## 5. Hub Network & Branches
+- **Dhanbad (HQ):** Near City Center, Dhanbad, Jharkhand 826001
+- **Ranchi:** Circular Road / Hinoo, Ranchi, Jharkhand
+- **Jamshedpur:** Bistupur / Sakchi, Jamshedpur, Jharkhand
+- **Bokaro:** Sector 4, Bokaro Steel City, Jharkhand
+- **Kolkata:** Salt Lake / Newtown / Howrah, West Bengal
+- **Asansol / Durgapur:** GT Road, Asansol & City Centre, Durgapur, West Bengal
+- **Patna:** Bailey Road / Kankarbagh, Patna, Bihar
+- **Lucknow:** Gomti Nagar / Transport Nagar, Lucknow, Uttar Pradesh
+- **Varanasi:** Cantonment / Shivpur, Varanasi, Uttar Pradesh
+- **Bhopal & Indore:** MP Transport Hubs
+
+---
+
+## 6. Official Machine-Readable Interfaces
+- Quote API / Calculator: https://www.thenationalpackersmovers.com/get-quote
+- Shipment Tracking Portal: https://www.thenationalpackersmovers.com/track-shipment
+- MCP Server Descriptor: https://www.thenationalpackersmovers.com/.well-known/mcp/server-card.json
+- MCP API Endpoint: https://www.thenationalpackersmovers.com/api/mcp

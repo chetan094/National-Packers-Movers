@@ -415,7 +415,12 @@ export default function QuoteWizard() {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className={styles.quoteForm}>
+      <form
+        onSubmit={handleSubmit}
+        className={styles.quoteForm}
+        toolname="request_quote"
+        tooldescription="Submit inquiry for packers and movers relocation estimate"
+      >
         {/* Step 0: From / To */}
         {step === 0 && (
           <div className={styles.formStep}>
