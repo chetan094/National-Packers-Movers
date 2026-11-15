@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getGalleryImages } from '@/lib/supabase';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -88,16 +89,16 @@ async function getSupabaseGalleryImages() {
 }
 
 export async function GET() {
-  // Fetch real Supabase photos — these are the single source of truth
-  const supabasePhotos = await getSupabaseGalleryImages();
+  // Fetch real photos — powered by Hostinger MySQL (with Supabase fallback)
+  const dbPhotos = await getGalleryImages();
 
-  // Use Supabase records if they exist (they ARE the gallery).
-  // Only fall back to static list if Supabase is completely empty.
-  const allImages = supabasePhotos.length > 0
-    ? supabasePhotos.map(img => ({
+  // Use database records if they exist (they ARE the gallery).
+  // Only fall back to static list if database is completely empty.
+  const allImages = dbPhotos && dbPhotos.length > 0
+    ? dbPhotos.map(img => ({
         src: img.src.startsWith('http')
-          ? img.src                              // Real Supabase CDN URL — use as-is
-          : `${BASE_URL}${img.src}`,             // Local /photos/ path — make absolute
+          ? img.src
+          : `${BASE_URL}${img.src}`,
         title: img.title || img.alt || 'National Packers & Movers Gallery Photo',
         caption: img.description || img.desc || 'National Packers & Movers — Professional Relocation Services',
       }))
