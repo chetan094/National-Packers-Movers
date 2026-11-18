@@ -1,9 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ── Performance ──────────────────────────────────────────────────
+  // ── Performance & Build Optimization ─────────────────────────────
   compress: true,           // Enable Gzip/Brotli response compression
   poweredByHeader: false,   // Remove "X-Powered-By: Next.js" leak
   reactStrictMode: true,    // Surface bugs early in development
+  experimental: {
+    cpus: 4,                // Cap worker processes to 4 during build (prevents DB connection spikes)
+  },
 
   // ── Image Optimization ───────────────────────────────────────────
   images: {
@@ -31,6 +34,34 @@ const nextConfig = {
           {
             key: 'Link',
             value: '</llms.txt>; rel="alternate"; type="text/markdown"',
+          },
+        ],
+      },
+      {
+        // LLM agent discovery file headers
+        source: '/llms.txt',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/markdown; charset=utf-8',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=43200',
+          },
+        ],
+      },
+      {
+        // Full LLM agent discovery file headers
+        source: '/llms-full.txt',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/markdown; charset=utf-8',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=43200',
           },
         ],
       },

@@ -14,5 +14,5 @@ echo 3. Pushing to live server...
 git push origin main
 
 echo.
-echo Success! Vercel is now building your live site.
+echo Success! Hostinger is now building your live site.
 pause
