@@ -184,3 +184,78 @@ export const ALL_STATES_MAP = {
     ]
   }
 };
+
+/**
+ * Canonical mapping: stateSlug -> array of citySlug strings (143 total cities)
+ */
+export const CANONICAL_STATE_CITIES = Object.fromEntries(
+  Object.entries(ALL_STATES_MAP).map(([stateSlug, stateData]) => [
+    stateSlug,
+    stateData.cities.map(c => c.slug)
+  ])
+);
+
+/**
+ * 301 Permanent Redirects for legacy/duplicate city aliases
+ * Eliminates keyword cannibalization and consolidates PageRank onto canonical URLs
+ */
+export const CITY_ALIAS_REDIRECTS = [
+  // Jharkhand
+  { source: '/branches/jharkhand/kodarma', destination: '/branches/jharkhand/koderma', permanent: true },
+  { source: '/branches/jharkhand/sahebganj', destination: '/branches/jharkhand/sahibganj', permanent: true },
+  { source: '/branches/jharkhand/daltonganj', destination: '/branches/jharkhand/medininagar', permanent: true },
+  // West Bengal
+  { source: '/branches/west-bengal/medinipur', destination: '/branches/west-bengal/midnapore', permanent: true },
+  { source: '/branches/west-bengal/bolpur', destination: '/branches/west-bengal/shantiniketan', permanent: true },
+  // Bihar
+  { source: '/branches/bihar/arrah', destination: '/branches/bihar/ara', permanent: true },
+  // Odisha
+  { source: '/branches/odisha/berhampur', destination: '/branches/odisha/brahmapur', permanent: true },
+  // Uttar Pradesh
+  { source: '/branches/uttar-pradesh/allahabad', destination: '/branches/uttar-pradesh/prayagraj', permanent: true },
+  { source: '/branches/uttar-pradesh/faizabad', destination: '/branches/uttar-pradesh/ayodhya', permanent: true },
+];
+
+/**
+ * Checks if a city slug is valid for a given state
+ */
+export function isValidCity(stateSlug, citySlug) {
+  if (!stateSlug || !citySlug) return false;
+  const cities = CANONICAL_STATE_CITIES[stateSlug.toLowerCase()];
+  return Array.isArray(cities) && cities.includes(citySlug.toLowerCase());
+}
+
+/**
+ * Retrieves city info { slug, name, stateSlug, stateName }
+ */
+export function getCityData(stateSlug, citySlug) {
+  const state = ALL_STATES_MAP[stateSlug?.toLowerCase()];
+  if (!state) return null;
+  const city = state.cities.find(c => c.slug === citySlug?.toLowerCase());
+  if (!city) return null;
+  return {
+    slug: city.slug,
+    name: city.name,
+    stateSlug: state.slug,
+    stateName: state.name
+  };
+}
+
+/**
+ * Flattened list of all 143 operational cities
+ */
+export function getAllCanonicalCities() {
+  const all = [];
+  Object.values(ALL_STATES_MAP).forEach(state => {
+    state.cities.forEach(city => {
+      all.push({
+        stateSlug: state.slug,
+        stateName: state.name,
+        citySlug: city.slug,
+        cityName: city.name
+      });
+    });
+  });
+  return all;
+}
+

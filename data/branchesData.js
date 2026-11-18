@@ -7,7 +7,7 @@ export const branchesData = {
       keywords: 'packers and movers jharkhand, home shifting services jharkhand, packers movers dhanbad, relocation ranchi, bokaro steel city transport',
       introTitle: 'Moving Jharkhand Safely Since 1987',
       introText: 'With over 38 years of logistics excellence, National Packers & Movers is the premier brand for shifting in Jharkhand. Founded by Debabrata Jhampaty, we started our journey here and have expanded to cover the entire state. From household shifting in Ranchi to heavy industrial transport in Dhanbad and Bokaro, we handle every relocation with our principle of absolute honesty.',
-      cities: ['dhanbad', 'ranchi', 'bokaro', 'deoghar', 'hazaribagh', 'jamshedpur', 'giridih', 'chas', 'dumka', 'koderma', 'sahibganj', 'katras', 'jharia', 'govindpur', 'dhansar', 'chirkunda', 'sindri', 'jasidih'],
+      cities: ['dhanbad', 'ranchi', 'bokaro', 'jamshedpur', 'deoghar', 'hazaribagh', 'giridih', 'ramgarh', 'chas', 'adityapur', 'medininagar', 'dumka', 'chatra', 'gumla', 'koderma', 'pakur', 'sahibganj', 'simdega', 'latehar', 'khunti', 'saraikela', 'garhwa', 'lohardaga', 'ghatsila', 'phusro', 'katras', 'jharia', 'govindpur', 'dhansar', 'chirkunda', 'sindri', 'jasidih', 'madhupur'],
       stats: [
         { number: 45000, suffix: '+', label: 'Moves in Jharkhand' },
         { number: 38, suffix: '', label: 'Years Trusted Legacy' },
@@ -22,11 +22,11 @@ export const branchesData = {
     'west-bengal': {
       name: 'West Bengal',
       title: 'Top Packers and Movers in West Bengal | Safe & Insured Shifting',
-      description: 'Professional packing & shifting services in West Bengal. Secure relocations in Kolkata, Durgapur, and Asansol. IBA approved billing, secure transit.',
+      description: 'Professional packing & shifting services in West Bengal. Secure relocations in Kolkata, Durgapur, Asansol, and Siliguri. IBA approved billing, secure transit.',
       keywords: 'packers and movers west bengal, kolkata shifting company, movers asansol, durgapur industrial shifting',
       introTitle: 'Your Reliable Relocation Partner in West Bengal',
       introText: 'West Bengal is a crucial hub in our Eastern India logistics network. National Packers & Movers offers high-end residential, corporate, and industrial relocation services. Whether it is navigating the busy lanes of Kolkata, moving families in the steel city of Asansol, or managing industrial logistics in Durgapur, our dedicated teams ensure a seamless transition.',
-      cities: ['kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'kharagpur', 'haldia', 'bardhaman', 'malda', 'bankura', 'barasat', 'barrackpore', 'raniganj', 'salt-lake', 'newtown', 'rajarhat'],
+      cities: ['kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur', 'haldia', 'bardhaman', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 'bankura', 'midnapore', 'krishnanagar', 'barasat', 'barrackpore', 'serampore', 'chinsurah', 'shantiniketan', 'raniganj', 'burnpur', 'salt-lake', 'newtown', 'rajarhat'],
       stats: [
         { number: 35000, suffix: '+', label: 'Bengal Shifts' },
         { number: 3, suffix: '', label: 'Full Hubs' },
@@ -41,11 +41,11 @@ export const branchesData = {
     'bihar': {
       name: 'Bihar',
       title: 'Reliable Packers and Movers in Bihar | Home & Bike Transport',
-      description: 'Experienced relocation experts in Bihar. Serving Patna and Bhagalpur. Safe door-to-door shifting with multi-layer packing. Get a free quote.',
+      description: 'Experienced relocation experts in Bihar. Serving Patna, Bhagalpur, Gaya, and Muzaffarpur. Safe door-to-door shifting with multi-layer packing. Get a free quote.',
       keywords: 'packers and movers bihar, packers movers patna, bhagalpur shifting company, bike relocation bihar',
       introTitle: 'Safe, Efficient, and Honest Shifting Across Bihar',
       introText: 'National Packers & Movers brings world-class packing and moving services to Bihar. We service the historic capital of Patna and the silk city of Bhagalpur, bridging relocations across Bihar to the rest of India. We utilize our own dedicated fleet of vehicles to eliminate third-party delays and damages.',
-      cities: ['patna', 'bhagalpur', 'gaya', 'muzaffarpur', 'purnia', 'darbhanga', 'ara', 'begusarai', 'katihar', 'chhapra', 'sasaram', 'motihari', 'gopalganj'],
+      cities: ['patna', 'bhagalpur', 'gaya', 'muzaffarpur', 'purnia', 'darbhanga', 'bihar-sharif', 'ara', 'begusarai', 'katihar', 'munger', 'chhapra', 'danapur', 'bettiah', 'saharsa', 'hajipur', 'sasaram', 'motihari', 'siwan', 'madhubani', 'buxar', 'jehanabad', 'aurangabad', 'nawada', 'jamui', 'kishanganj', 'samastipur', 'lakhisarai', 'gopalganj'],
       stats: [
         { number: 30000, suffix: '+', label: 'Families Moved' },
         { number: 2, suffix: '', label: 'Key Cities' },
@@ -64,7 +64,7 @@ export const branchesData = {
       keywords: 'packers and movers madhya pradesh, packers movers singrauli, coal mine relocation mp',
       introTitle: 'Logistics Leadership in Madhya Pradesh',
       introText: 'We support Madhya Pradesh\'s industrial relocation needs, with a specialized branch in Singrauli. We have handled hundreds of relocations for employees of NCL, NTPC, and other major corporations, offering professional paperwork, IBA-compliant billing, and heavy item handling.',
-      cities: ['singrauli', 'indore', 'bhopal', 'ujjain'],
+      cities: ['singrauli', 'waidhan', 'bhopal', 'indore', 'jabalpur', 'gwalior', 'ujjain', 'sagar', 'dewas', 'satna', 'ratlam', 'rewa', 'katni', 'morwa', 'vindhyanagar', 'jayant', 'dudhichua'],
       stats: [
         { number: 12000, suffix: '+', label: 'PSU Relocations' },
         { number: 1,    suffix: '', label: 'Industrial Hub' },
@@ -77,30 +77,31 @@ export const branchesData = {
     },
     'odisha': {
       name: 'Odisha',
-      title: 'Packers and Movers in Odisha | Virtual Office & Transport',
-      description: 'Coordinate relocations in Bhubaneswar, Cuttack, and all Odisha cities through our virtual office network. Secure packing and full transit insurance.',
-      keywords: 'packers and movers odisha, movers in bhubaneswar, cuttack relocation',
-      introTitle: 'Seamless Logistics Coordination in Odisha',
-      introText: 'National Packers & Movers services Odisha through a highly coordinated Virtual Office network. While all bookings and administration are run through our regional administrative coordination network, we dispatch specialized teams and vehicles from our neighboring hubs to execute safe, prompt relocations in Bhubaneswar, Cuttack, Rourkela, and beyond.',
-      cities: ['virtual-office', 'bhubaneswar', 'rourkela', 'sambalpur', 'puri'],
+      title: 'Top Packers and Movers in Odisha | Safe & Insured Shifting',
+      description: 'Professional packing & shifting services across Odisha. Direct moving operations in Bhubaneswar, Cuttack, Rourkela, Sambalpur, and Puri with 100% insured transit.',
+      keywords: 'packers and movers odisha, movers in bhubaneswar, cuttack relocation, rourkela shifting, sambalpur movers',
+      introTitle: 'Comprehensive Logistics & Shifting Network Across Odisha',
+      introText: 'National Packers & Movers delivers over 38 years of trusted moving expertise across Odisha. With primary operational hubs serving Bhubaneswar, Cuttack, Rourkela, Sambalpur, and coastal corridors, we provide door-to-door household shifting, corporate relocations, and closed-container vehicle transport backed by all-India transit insurance and IBA-compliant billing.',
+      cities: ['bhubaneswar', 'cuttack', 'rourkela', 'brahmapur', 'sambalpur', 'puri', 'balasore', 'bhadrak', 'baripada', 'jharsuguda', 'jeypore', 'rayagada', 'angul', 'balangir'],
       stats: [
-        { number: 3500,  suffix: '+', label: 'Odisha Bookings' },
-        { number: 1,    suffix: '', label: 'Central HQ Control' },
-        { number: 100,  suffix: '%', label: 'Insured Goods' },
-        { number: 7,    suffix: 'Days', label: 'Active Service' }
+        { number: 6500,  suffix: '+', label: 'Odisha Moves' },
+        { number: 5,     suffix: '', label: 'Major Hubs' },
+        { number: 100,   suffix: '%', label: 'Insured Goods' },
+        { number: 7,     suffix: 'Days', label: 'Active Service' }
       ],
       testimonials: [
-        { name: 'Jyoti Ranjan', text: 'My household movement from Bhubaneswar to Dhanbad was handled smoothly. Highly professional coordination by this Packers and Movers Odisha virtual office.', rating: 5, initials: 'JR' }
+        { name: 'Jyoti Ranjan', text: 'My household movement from Bhubaneswar to Dhanbad was handled smoothly. Highly professional coordination by National Packers & Movers crew.', rating: 5, initials: 'JR' },
+        { name: 'Debashish Nayak', text: 'Very disciplined team in Cuttack. Loaded our complete household goods within 4 hours and delivered to Kolkata safely.', rating: 5, initials: 'DN' }
       ]
     },
     'uttar-pradesh': {
       name: 'Uttar Pradesh',
       title: 'Best Packers and Movers in Uttar Pradesh | Secure Relocations',
-      description: 'Professional packers and movers services in Uttar Pradesh. Reliable household shifting, vehicle transportation, and corporate office moves in Lucknow, Noida, Kanpur, and other major cities.',
-      keywords: 'packers and movers up, packers movers lucknow, kanpur relocation',
-      introTitle: 'Expanding Our Logistics Empire to Uttar Pradesh',
-      introText: 'As part of our commitment to scale National Packers & Movers into a nationwide logistics powerhouse, we are establishing physical branch offices in Uttar Pradesh soon. Currently, we manage daily inter-state relocation trucks running from Jharkhand/Bengal to major UP cities including Lucknow, Kanpur, Varanasi, and Noida.',
-      cities: ['lucknow', 'kanpur', 'ghaziabad', 'prayagraj', 'moradabad', 'gorakhpur', 'noida', 'greater-noida', 'faizabad'],
+      description: 'Professional packers and movers services in Uttar Pradesh. Reliable household shifting, vehicle transportation, and corporate office moves in Lucknow, Noida, Kanpur, Varanasi, and Prayagraj.',
+      keywords: 'packers and movers up, packers movers lucknow, kanpur relocation, packers movers varanasi',
+      introTitle: 'Expanding Our Logistics Empire Across Uttar Pradesh',
+      introText: 'National Packers & Movers operates dedicated logistics corridors across Uttar Pradesh. We manage regular inter-state relocation trucks and regional door-to-door shifting connecting Lucknow, Kanpur, Varanasi, Prayagraj, Noida, and Ghaziabad with Jharkhand, Bihar, Bengal, and the rest of India.',
+      cities: ['lucknow', 'kanpur', 'ghaziabad', 'noida', 'greater-noida', 'varanasi', 'prayagraj', 'agra', 'meerut', 'bareilly', 'aligarh', 'moradabad', 'saharanpur', 'gorakhpur', 'jhansi', 'muzaffarnagar', 'mathura', 'ayodhya', 'firozabad', 'mirzapur', 'jaunpur', 'hapur', 'loni', 'pilkhuwa'],
       stats: [
         { number: 90000, suffix: '+', label: 'Cross-State Moves' },
         { number: 5,    suffix: '+', label: 'Daily Trucks to UP' },

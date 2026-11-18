@@ -82,6 +82,28 @@ const nextConfig = {
       },
     ];
   },
+
+  // ── 301 Permanent SEO Redirects ──────────────────────────────────
+  async redirects() {
+    return [
+      // Duplicate city aliases -> canonical branch pages
+      { source: '/branches/jharkhand/kodarma', destination: '/branches/jharkhand/koderma', permanent: true },
+      { source: '/branches/jharkhand/sahebganj', destination: '/branches/jharkhand/sahibganj', permanent: true },
+      { source: '/branches/jharkhand/daltonganj', destination: '/branches/jharkhand/medininagar', permanent: true },
+      { source: '/branches/west-bengal/medinipur', destination: '/branches/west-bengal/midnapore', permanent: true },
+      { source: '/branches/west-bengal/bolpur', destination: '/branches/west-bengal/shantiniketan', permanent: true },
+      { source: '/branches/bihar/arrah', destination: '/branches/bihar/ara', permanent: true },
+      { source: '/branches/odisha/berhampur', destination: '/branches/odisha/brahmapur', permanent: true },
+      { source: '/branches/uttar-pradesh/allahabad', destination: '/branches/uttar-pradesh/prayagraj', permanent: true },
+      { source: '/branches/uttar-pradesh/faizabad', destination: '/branches/uttar-pradesh/ayodhya', permanent: true },
+
+      // Legacy route aliases
+      { source: '/routes/allahabad-to-:dest', destination: '/routes/prayagraj-to-:dest', permanent: true },
+      { source: '/routes/faizabad-to-:dest', destination: '/routes/ayodhya-to-:dest', permanent: true },
+      { source: '/routes/kodarma-to-:dest', destination: '/routes/koderma-to-:dest', permanent: true },
+      { source: '/routes/berhampur-to-:dest', destination: '/routes/brahmapur-to-:dest', permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

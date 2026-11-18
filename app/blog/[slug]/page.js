@@ -243,6 +243,57 @@ export default async function BlogPostPage({ params }) {
     }))
   };
 
+  const blogPostingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    'headline': blog.title,
+    'description': blog.excerpt,
+    'image': blog.image_url ? [blog.image_url] : ['https://www.thenationalpackersmovers.com/icon.png'],
+    'datePublished': blog.created_at,
+    'dateModified': blog.updated_at || blog.created_at,
+    'author': {
+      '@type': 'Person',
+      'name': 'Chetan Jhampaty'
+    },
+    'publisher': {
+      '@type': 'Organization',
+      'name': 'National Packers & Movers',
+      'logo': {
+        '@type': 'ImageObject',
+        'url': 'https://www.thenationalpackersmovers.com/logo.png'
+      }
+    },
+    'mainEntityOfPage': {
+      '@type': 'WebPage',
+      '@id': `https://www.thenationalpackersmovers.com/blog/${slug}`
+    }
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    'itemListElement': [
+      {
+        '@type': 'ListItem',
+        'position': 1,
+        'name': 'Home',
+        'item': 'https://www.thenationalpackersmovers.com'
+      },
+      {
+        '@type': 'ListItem',
+        'position': 2,
+        'name': 'Blog',
+        'item': 'https://www.thenationalpackersmovers.com/blog'
+      },
+      {
+        '@type': 'ListItem',
+        'position': 3,
+        'name': blog.title,
+        'item': `https://www.thenationalpackersmovers.com/blog/${slug}`
+      }
+    ]
+  };
+
   // Calculate reading time
   const wordsPerMinute = 200;
   const words = blog.content ? blog.content.split(/\s+/).length : 0;
@@ -326,6 +377,16 @@ export default async function BlogPostPage({ params }) {
 
   return (
     <div className={styles.articlePage}>
+      {/* ── SEO JSON-LD Schemas ────────────────────────── */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       {/* ── SEO JSON-LD HowTo Schema ────────────────────────── */}
       {howToSchema && (
         <script

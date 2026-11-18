@@ -1,45 +1,12 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { routesData } from '@/data/routesData';
+import { CANONICAL_STATE_CITIES } from '@/data/allCitiesData';
 import styles from './page.module.css';
 import FaqAccordion from '@/components/FaqAccordion/FaqAccordion';
 import { getCustomMetadata } from '@/lib/supabase';
 
-const STATE_CITIES = {
-  'jharkhand': [
-    'dhanbad', 'ranchi', 'bokaro', 'deoghar', 'jamshedpur', 'hazaribagh', 'giridih', 
-    'ramgarh', 'medininagar', 'daltonganj', 'chas', 'adityapur', 'dumka', 'chatra', 
-    'gumla', 'kodarma', 'koderma', 'pakur', 'sahibganj', 'sahebganj', 'simdega', 
-    'latehar', 'khunti', 'saraikela', 'garhwa', 'lohardaga', 'ghatsila', 'phusro', 
-    'katras', 'jharia', 'govindpur', 'dhansar', 'chirkunda', 'sindri', 'jasidih', 'madhupur'
-  ],
-  'west-bengal': [
-    'kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur', 
-    'haldia', 'bardhaman', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 
-    'bankura', 'midnapore', 'medinipur', 'krishnanagar', 'barasat', 'barrackpore', 
-    'serampore', 'chinsurah', 'shantiniketan', 'bolpur', 'raniganj', 'burnpur', 'salt-lake', 'newtown', 'rajarhat'
-  ],
-  'bihar': [
-    'patna', 'bhagalpur', 'gaya', 'muzaffarpur', 'purnia', 'darbhanga', 'bihar-sharif', 
-    'ara', 'arrah', 'begusarai', 'katihar', 'munger', 'chhapra', 'danapur', 'bettiah', 
-    'saharsa', 'hajipur', 'sasaram', 'motihari', 'siwan', 'madhubani', 'buxar', 'jehanabad', 
-    'aurangabad', 'nawada', 'jamui', 'kishanganj', 'samastipur', 'lakhisarai', 'gopalganj'
-  ],
-  'madhya-pradesh': [
-    'singrauli', 'waidhan', 'bhopal', 'indore', 'jabalpur', 'gwalior', 'ujjain', 'sagar', 
-    'dewas', 'satna', 'ratlam', 'rewa', 'katni', 'morwa', 'vindhyanagar', 'jayant', 'dudhichua'
-  ],
-  'odisha': [
-    'bhubaneswar', 'cuttack', 'rourkela', 'brahmapur', 'berhampur', 'sambalpur', 'puri', 
-    'balasore', 'bhadrak', 'baripada', 'jharsuguda', 'jeypore', 'rayagada', 'angul', 'balangir'
-  ],
-  'uttar-pradesh': [
-    'lucknow', 'kanpur', 'ghaziabad', 'agra', 'meerut', 'varanasi', 'prayagraj', 'allahabad', 
-    'bareilly', 'aligarh', 'moradabad', 'saharanpur', 'gorakhpur', 'noida', 'greater-noida', 
-    'jhansi', 'muzaffarnagar', 'mathura', 'ayodhya', 'faizabad', 'firozabad', 'mirzapur', 
-    'jaunpur', 'hapur', 'loni', 'pilkhuwa'
-  ]
-};
+const STATE_CITIES = CANONICAL_STATE_CITIES;
 
 const RELOCATION_SERVICES = [
   { slug: 'household-relocation', name: 'Household Relocation', icon: '🏠', desc: 'Secure home shifting with multi-layer packing.', color: '#F7B731' },
@@ -151,8 +118,8 @@ export default async function RoutePage({ params }) {
     '@type': 'BreadcrumbList',
     'itemListElement': [
       { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://www.thenationalpackersmovers.com' },
-      { '@type': 'ListItem', 'position': 2, 'name': 'Routes', 'item': `https://www.thenationalpackersmovers.com/routes/${route.origin}-to-${route.destination}` },
-      { '@type': 'ListItem', 'position': 3, 'name': `${route.originName} to ${route.destinationName}` }
+      { '@type': 'ListItem', 'position': 2, 'name': 'Routes', 'item': 'https://www.thenationalpackersmovers.com/routes' },
+      { '@type': 'ListItem', 'position': 3, 'name': `${route.originName} to ${route.destinationName}`, 'item': `https://www.thenationalpackersmovers.com/routes/${route.origin}-to-${route.destination}` }
     ]
   };
 

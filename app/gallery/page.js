@@ -4,6 +4,9 @@ import GalleryGrid from '@/components/GalleryGrid/GalleryGrid';
 import VideoShowcase from '@/components/VideoShowcase/VideoShowcase';
 import { getCustomMetadata, getGalleryImages } from '@/lib/supabase';
 
+// Revalidate public gallery page every 30s
+export const revalidate = 30;
+
 const BASE_URL = 'https://www.thenationalpackersmovers.com';
 
 // Static photo list — same source of truth as GalleryGrid

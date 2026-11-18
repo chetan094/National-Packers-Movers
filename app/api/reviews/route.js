@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getCustomerReviews, createCustomerReview } from '@/lib/supabase';
 import { sendLeadNotifications } from '@/lib/notifications';
 
@@ -58,6 +59,15 @@ export async function POST(request) {
     };
 
     const newReview = await createCustomerReview(reviewPayload);
+
+    if (status === 'approved') {
+      try {
+        revalidatePath('/testimonials');
+        revalidatePath(`/branches/${reviewPayload.state_slug}/${reviewPayload.city_slug}`);
+      } catch (e) {
+        console.warn('revalidatePath warning:', e);
+      }
+    }
 
     // 3. Send Telegram / Email Alert to Debabrata & Chetan
     try {

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getCustomerReviews, createCustomerReview, updateCustomerReview, deleteCustomerReview } from '@/lib/supabase';
 import { checkPermission } from '@/lib/auth';
 
@@ -49,6 +50,13 @@ export async function POST(request) {
       source: 'Admin Entry'
     });
 
+    try {
+      revalidatePath('/testimonials');
+      revalidatePath('/branches', 'layout');
+    } catch (e) {
+      console.warn('revalidatePath warning:', e);
+    }
+
     return NextResponse.json({ success: true, review });
   } catch (error) {
     console.error('API POST /api/admin/reviews error:', error);
@@ -69,6 +77,14 @@ export async function PATCH(request) {
     }
 
     const updated = await updateCustomerReview(id, updates);
+
+    try {
+      revalidatePath('/testimonials');
+      revalidatePath('/branches', 'layout');
+    } catch (e) {
+      console.warn('revalidatePath warning:', e);
+    }
+
     return NextResponse.json({ success: true, review: updated });
   } catch (error) {
     console.error('API PATCH /api/admin/reviews error:', error);
@@ -89,6 +105,14 @@ export async function DELETE(request) {
     }
 
     await deleteCustomerReview(id);
+
+    try {
+      revalidatePath('/testimonials');
+      revalidatePath('/branches', 'layout');
+    } catch (e) {
+      console.warn('revalidatePath warning:', e);
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('API DELETE /api/admin/reviews error:', error);

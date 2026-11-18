@@ -6,7 +6,16 @@ import styles from './page.module.css';
 export const metadata = {
   title: 'Our Active Domestic Shifting Routes | National Packers & Movers',
   description: 'Explore our direct transit corridors connecting Jharkhand, West Bengal, Bihar, UP, MP, and Odisha to major national destinations. View estimated durations and pricing.',
-  keywords: 'shifting routes, packers movers routes, household relocation corridors, interstate shifting rates'
+  keywords: 'shifting routes, packers movers routes, household relocation corridors, interstate shifting rates',
+  alternates: {
+    canonical: 'https://www.thenationalpackersmovers.com/routes',
+  },
+  openGraph: {
+    title: 'Our Active Domestic Shifting Routes | National Packers & Movers',
+    description: 'Explore our direct transit corridors connecting Jharkhand, West Bengal, Bihar, UP, MP, and Odisha to major national destinations.',
+    type: 'website',
+    url: 'https://www.thenationalpackersmovers.com/routes',
+  },
 };
 
 export default function RoutesIndexPage() {
@@ -59,7 +68,7 @@ export default function RoutesIndexPage() {
                   </div>
 
                   <div className={styles.citiesGrid}>
-                    {state.cities.length > 0 && state.cities[0] !== 'coming-soon' && state.cities[0] !== 'virtual-office' ? (
+                    {state.cities.length > 0 ? (
                       state.cities.map(cityKey => {
                         const cityName = cityKey
                           .split('-')
@@ -93,9 +102,7 @@ export default function RoutesIndexPage() {
                       })
                     ) : (
                       <p style={{ color: 'var(--gray-500)', fontSize: '0.95rem' }}>
-                        {state.cities[0] === 'virtual-office'
-                          ? 'We offer virtual logistics coordination in this state. All operations are run from our main HQ.'
-                          : 'Physical branches and direct lanes are coming soon. Inter-state trucks are active daily.'}
+                        Direct transit corridors originating from this state are scheduled regularly. Contact HQ for customized quotes.
                       </p>
                     )}
                   </div>

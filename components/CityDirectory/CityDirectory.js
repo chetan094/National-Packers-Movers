@@ -21,7 +21,7 @@ const STATE_DIRECTORIES = [
       { name: 'Chas', slug: 'chas', tag: 'Bokaro Extension' },
       { name: 'Adityapur', slug: 'adityapur', tag: 'Industrial Estate' },
       { name: 'Dumka', slug: 'dumka', tag: 'Santhal Branch' },
-      { name: 'Kodarma', slug: 'kodarma', tag: 'Mining Zone' },
+      { name: 'Koderma', slug: 'koderma', tag: 'Mining Zone' },
       { name: 'Chaibasa', slug: 'chaibasa', tag: 'West Singhbhum' },
       { name: 'Jharia', slug: 'jharia', tag: 'Dhanbad Region' },
       { name: 'Katras', slug: 'katras', tag: 'Colliery Branch' },
@@ -91,7 +91,7 @@ const STATE_DIRECTORIES = [
       { name: 'Bhubaneswar', slug: 'bhubaneswar', tag: 'Capital Hub' },
       { name: 'Cuttack', slug: 'cuttack', tag: 'Silver City' },
       { name: 'Rourkela', slug: 'rourkela', tag: 'Steel City' },
-      { name: 'Berhampur', slug: 'berhampur', tag: 'Silk City' },
+      { name: 'Brahmapur (Berhampur)', slug: 'brahmapur', tag: 'Silk City' },
       { name: 'Sambalpur', slug: 'sambalpur', tag: 'Western Odisha' },
       { name: 'Puri', slug: 'puri', tag: 'Coastal Branch' },
       { name: 'Jharsuguda', slug: 'jharsuguda', tag: 'Industrial Hub' },
@@ -149,40 +149,48 @@ export default function CityDirectory() {
         ))}
       </div>
 
-      {/* Active State Cities Grid */}
-      <div className={styles.cityCardContainer}>
-        <div className={styles.stateHeaderMeta}>
-          <h3 className={styles.stateHeaderTitle}>
-            Packers & Movers in <span>{selectedStateData.name}</span>
-          </h3>
-          <span className={styles.stateMetaBadge}>✨ {selectedStateData.badge}</span>
-        </div>
+      {/* State Directory Panels — Rendered in SSR HTML for 100% Googlebot Crawlability */}
+      {STATE_DIRECTORIES.map((st) => (
+        <div
+          key={st.slug}
+          className={styles.cityCardContainer}
+          style={{ display: activeState === st.slug ? 'block' : 'none' }}
+          role="tabpanel"
+          aria-hidden={activeState !== st.slug}
+        >
+          <div className={styles.stateHeaderMeta}>
+            <h3 className={styles.stateHeaderTitle}>
+              Packers &amp; Movers in <span>{st.name}</span>
+            </h3>
+            <span className={styles.stateMetaBadge}>✨ {st.badge}</span>
+          </div>
 
-        <div className={styles.citiesGrid}>
-          {selectedStateData.cities.map((ct) => (
-            <Link
-              key={ct.slug}
-              href={`/branches/${selectedStateData.slug}/${ct.slug}`}
-              className={styles.cityCard}
-            >
-              <div className={styles.cityCardContent}>
-                <span className={styles.pinIcon}>📍</span>
-                <div>
-                  <h4 className={styles.cityName}>{ct.name}</h4>
-                  <span className={styles.cityTag}>{ct.tag}</span>
+          <div className={styles.citiesGrid}>
+            {st.cities.map((ct) => (
+              <Link
+                key={ct.slug}
+                href={`/branches/${st.slug}/${ct.slug}`}
+                className={styles.cityCard}
+              >
+                <div className={styles.cityCardContent}>
+                  <span className={styles.pinIcon}>📍</span>
+                  <div>
+                    <h4 className={styles.cityName}>{ct.name}</h4>
+                    <span className={styles.cityTag}>{ct.tag}</span>
+                  </div>
                 </div>
-              </div>
-              <span className={styles.arrowIcon}>→</span>
-            </Link>
-          ))}
-        </div>
+                <span className={styles.arrowIcon}>→</span>
+              </Link>
+            ))}
+          </div>
 
-        <div className={styles.stateFooterRow}>
-          <Link href={`/branches/${selectedStateData.slug}`} className={styles.viewStateBtn}>
-            Explore All Branches in {selectedStateData.name} State Directory →
-          </Link>
+          <div className={styles.stateFooterRow}>
+            <Link href={`/branches/${st.slug}`} className={styles.viewStateBtn}>
+              Explore All Branches in {st.name} State Directory →
+            </Link>
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 }

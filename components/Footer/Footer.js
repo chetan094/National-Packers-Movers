@@ -40,14 +40,17 @@ const branches = [
     { name: 'Bhubaneswar', slug: 'bhubaneswar' },
     { name: 'Cuttack', slug: 'cuttack' },
     { name: 'Rourkela', slug: 'rourkela' },
-    { name: 'Sambalpur', slug: 'sambalpur' }
+    { name: 'Sambalpur', slug: 'sambalpur' },
+    { name: 'Puri', slug: 'puri' },
+    { name: 'Brahmapur', slug: 'brahmapur' }
   ]},
   { state: 'Uttar Pradesh', slug: 'uttar-pradesh', cities: [
     { name: 'Lucknow', slug: 'lucknow' },
     { name: 'Noida', slug: 'noida' },
     { name: 'Kanpur', slug: 'kanpur' },
     { name: 'Ghaziabad', slug: 'ghaziabad' },
-    { name: 'Prayagraj', slug: 'prayagraj' }
+    { name: 'Prayagraj', slug: 'prayagraj' },
+    { name: 'Varanasi', slug: 'varanasi' }
   ]},
 ];
 
@@ -192,6 +195,7 @@ export default function Footer() {
               <li><Link href="/faqs" className={styles.footerLink}>→ FAQs</Link></li>
               <li><Link href="/blog" className={styles.footerLink}>→ Blog</Link></li>
               <li><Link href="/contact" className={styles.footerLink}>→ Contact</Link></li>
+              <li><Link href="/routes" className={styles.footerLink}>→ Interstate Routes</Link></li>
               <li><Link href="/billing-claim-kit" className={styles.footerLink}>→ Relocation Claim Kit</Link></li>
             </ul>
             <div className={styles.ctaBox}>

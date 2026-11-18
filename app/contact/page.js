@@ -35,48 +35,66 @@ export async function generateMetadata() {
 const branches = [
   {
     state: 'Jharkhand (HQ)',
+    stateSlug: 'jharkhand',
     icon: '⭐',
     isHQ: true,
     cities: [
-      { name: 'Dhanbad — HQ', address: 'Kasturba Nagar, Near Dhanbad Thana, Dhanbad — 826001', phone: '9835168368' },
-      { name: 'Ranchi', address: 'Ranchi, Jharkhand', phone: '9835168368' },
-      { name: 'Bokaro', address: 'Bokaro Steel City, Jharkhand', phone: '9835168368' },
-      { name: 'Deoghar', address: 'Deoghar, Jharkhand', phone: '9835168368' },
+      { name: 'Dhanbad — HQ', slug: 'dhanbad', address: 'Kasturba Nagar, Near Dhanbad Thana, Dhanbad — 826001', phone: '9835168368' },
+      { name: 'Ranchi', slug: 'ranchi', address: 'Ranchi, Jharkhand', phone: '9835168368' },
+      { name: 'Bokaro', slug: 'bokaro', address: 'Bokaro Steel City, Jharkhand', phone: '9835168368' },
+      { name: 'Deoghar', slug: 'deoghar', address: 'Deoghar, Jharkhand', phone: '9835168368' },
     ],
   },
   {
     state: 'West Bengal',
+    stateSlug: 'west-bengal',
     icon: '📍',
     cities: [
-      { name: 'Kolkata', address: 'Kolkata, West Bengal', phone: '9835168368' },
-      { name: 'Durgapur', address: 'Durgapur, West Bengal', phone: '9835168368' },
-      { name: 'Asansol', address: 'Asansol, West Bengal', phone: '9835168368' },
+      { name: 'Kolkata', slug: 'kolkata', address: 'Kolkata, West Bengal', phone: '9835168368' },
+      { name: 'Durgapur', slug: 'durgapur', address: 'Durgapur, West Bengal', phone: '9835168368' },
+      { name: 'Asansol', slug: 'asansol', address: 'Asansol, West Bengal', phone: '9835168368' },
     ],
   },
   {
     state: 'Bihar',
+    stateSlug: 'bihar',
     icon: '📍',
     cities: [
-      { name: 'Patna', address: 'Patna, Bihar', phone: '9835168368' },
-      { name: 'Bhagalpur', address: 'Bhagalpur, Bihar', phone: '9835168368' },
+      { name: 'Patna', slug: 'patna', address: 'Patna, Bihar', phone: '9835168368' },
+      { name: 'Bhagalpur', slug: 'bhagalpur', address: 'Bhagalpur, Bihar', phone: '9835168368' },
     ],
   },
   {
     state: 'Madhya Pradesh',
+    stateSlug: 'madhya-pradesh',
     icon: '📍',
     cities: [
-      { name: 'Singrauli', address: 'Singrauli, Madhya Pradesh', phone: '9835168368' },
+      { name: 'Singrauli', slug: 'singrauli', address: 'Singrauli, Madhya Pradesh', phone: '9835168368' },
     ],
   },
   {
     state: 'Odisha',
+    stateSlug: 'odisha',
     icon: '📍',
-    cities: [{ name: 'Virtual Office', address: 'Enquiries via HQ', phone: '9835168368' }],
+    cities: [
+      { name: 'Bhubaneswar', slug: 'bhubaneswar', address: 'Bhubaneswar, Odisha', phone: '9835168368' },
+      { name: 'Cuttack', slug: 'cuttack', address: 'Cuttack, Odisha', phone: '9835168368' },
+      { name: 'Rourkela', slug: 'rourkela', address: 'Rourkela, Odisha', phone: '9835168368' },
+      { name: 'Sambalpur', slug: 'sambalpur', address: 'Sambalpur, Odisha', phone: '9835168368' },
+      { name: 'Puri', slug: 'puri', address: 'Puri, Odisha', phone: '9835168368' },
+    ],
   },
   {
     state: 'Uttar Pradesh',
+    stateSlug: 'uttar-pradesh',
     icon: '📍',
-    cities: [{ name: 'Coming Soon', address: 'Enquiries via HQ', phone: '9835168368' }],
+    cities: [
+      { name: 'Lucknow', slug: 'lucknow', address: 'Lucknow, Uttar Pradesh', phone: '9835168368' },
+      { name: 'Noida', slug: 'noida', address: 'Noida, Uttar Pradesh', phone: '9835168368' },
+      { name: 'Kanpur', slug: 'kanpur', address: 'Kanpur, Uttar Pradesh', phone: '9835168368' },
+      { name: 'Varanasi', slug: 'varanasi', address: 'Varanasi, Uttar Pradesh', phone: '9835168368' },
+      { name: 'Prayagraj', slug: 'prayagraj', address: 'Prayagraj, Uttar Pradesh', phone: '9835168368' },
+    ],
   },
 ];
 
@@ -228,7 +246,13 @@ export default function ContactPage() {
                 <div className={styles.branchCities}>
                   {b.cities.map((c, j) => (
                     <div key={j} className={styles.branchCity}>
-                      <div className={styles.branchCityName}>{c.name}</div>
+                      {c.slug ? (
+                        <Link href={`/branches/${b.stateSlug}/${c.slug}`} className={styles.branchCityName} style={{ color: 'var(--gold, #F7B731)', textDecoration: 'none' }}>
+                          {c.name} ➔
+                        </Link>
+                      ) : (
+                        <div className={styles.branchCityName}>{c.name}</div>
+                      )}
                       <a href={`tel:${c.phone}`} className={styles.branchPhone}>📞 {c.phone}</a>
                     </div>
                   ))}

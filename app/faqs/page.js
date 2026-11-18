@@ -9,7 +9,7 @@ export async function generateMetadata() {
 
   const title = custom?.meta_title || 'Frequently Asked Questions (FAQs) | National Packers & Movers';
   const description = custom?.meta_description || 'Get answers to your shifting queries. Learn about household shifting charges, packing quality, insurance policies, and PSU relocation reimbursement bills.';
-  const keywords = custom?.meta_keywords || 'packers and movers charges, movers and packers faqs, shifting cost calculator, house shifting process, original agarwal packers, best movers india';
+  const keywords = custom?.meta_keywords || 'packers and movers charges, movers and packers faqs, shifting cost calculator, house shifting process, trusted moving company, best movers india';
   const isNoindex = custom?.is_noindex ?? false;
 
   return {
@@ -88,8 +88,8 @@ const FAQ_DATA = [
     icon: '🛡️',
     items: [
       {
-        q: 'Which is the original Agarwal Packers and Movers?',
-        a: 'Agarwal Packers and Movers (associated with the DRS Group) is a well-known logistics brand in India. However, due to its popularity, hundreds of fake and copycat operators use similar names, causing confusion. To ensure you do not get scammed by copycats, choose a fully independent, legally registered, and verified brand. National Packers & Movers (established in 1987 by Debabrata Jhampaty) has physical offices in Jharkhand (Dhanbad, Ranchi, Bokaro, Deoghar), West Bengal, Bihar, and MP, and operates with its own fleet and 100% transparent GST billing.'
+        q: 'How do I choose an authentic, verified packers and movers company?',
+        a: 'Because the relocation industry in India has many aggregators and unverified operators, it is critical to choose an established, legally registered enterprise. National Packers & Movers (established in 1987 by Debabrata Jhampaty) operates with direct physical offices across Jharkhand (Dhanbad HQ, Ranchi, Bokaro, Deoghar), West Bengal, Bihar, MP, UP, and Odisha. We operate our own closed-container fleet and provide 100% transparent GST billing, comprehensive transit insurance, and IBA-compliant claim documentation.'
       },
       {
         q: 'Which is the best movers and packers in India?',

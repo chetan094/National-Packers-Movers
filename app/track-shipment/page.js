@@ -5,16 +5,29 @@ import { getCustomMetadata } from '@/lib/supabase';
 export async function generateMetadata() {
   const path = '/track-shipment';
   const custom = await getCustomMetadata(path);
+  const title = custom?.meta_title || 'Live Consignment & Shipment Tracker | National Packers & Movers';
+  const description = custom?.meta_description || 'Track your household, corporate, or vehicle shipment in real-time. Enter your Consignment Note (CN) number to view live transit progress milestones.';
+  const keywords = custom?.meta_keywords || 'track shipment, consignment tracker, awb tracking, national packers movers tracking, shifting progress';
+
   return {
-    title: custom?.meta_title || 'Live Consignment & Shipment Tracker | National Packers & Movers',
-    description: custom?.meta_description || 'Track your household, corporate, or vehicle shipment in real-time. Enter your Consignment Note (CN) number to view live transit progress milestones.',
-    keywords: custom?.meta_keywords || 'track shipment, consignment tracker, awb tracking, national packers movers tracking, shifting progress'
+    title,
+    description,
+    keywords,
+    alternates: {
+      canonical: `https://www.thenationalpackersmovers.com${path}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://www.thenationalpackersmovers.com${path}`,
+    },
   };
 }
 
 export default function TrackShipmentPage() {
   return (
-    <main className={styles.page}>
+    <div className={styles.page}>
       {/* ── BREADCRUMB / HERO HEADER ────────────────────────── */}
       <section className={styles.hero}>
         <div className={styles.heroBg} />
@@ -61,6 +74,6 @@ export default function TrackShipmentPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

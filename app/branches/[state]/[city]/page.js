@@ -2,6 +2,10 @@ import { notFound } from 'next/navigation';
 import { branchesData } from '@/data/branchesData';
 import BranchPage from '@/components/BranchPage/BranchPage';
 import { getCustomMetadata, getCustomerReviews } from '@/lib/supabase';
+import { CANONICAL_STATE_CITIES } from '@/data/allCitiesData';
+
+// Revalidate public branch city pages every 30s
+export const revalidate = 30;
 
 const ALLOWED_STATES = {
   'jharkhand': 'Jharkhand',
@@ -12,41 +16,7 @@ const ALLOWED_STATES = {
   'uttar-pradesh': 'Uttar Pradesh'
 };
 
-const STATE_CITIES = {
-  'jharkhand': [
-    'dhanbad', 'ranchi', 'bokaro', 'deoghar', 'jamshedpur', 'hazaribagh', 'giridih', 
-    'ramgarh', 'medininagar', 'daltonganj', 'chas', 'adityapur', 'dumka', 'chatra', 
-    'gumla', 'kodarma', 'koderma', 'pakur', 'sahibganj', 'sahebganj', 'simdega', 
-    'latehar', 'khunti', 'saraikela', 'garhwa', 'lohardaga', 'ghatsila', 'phusro', 
-    'katras', 'jharia', 'govindpur', 'dhansar', 'chirkunda', 'sindri', 'jasidih', 'madhupur'
-  ],
-  'west-bengal': [
-    'kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur', 
-    'haldia', 'bardhaman', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia', 
-    'bankura', 'midnapore', 'medinipur', 'krishnanagar', 'barasat', 'barrackpore', 
-    'serampore', 'chinsurah', 'shantiniketan', 'bolpur', 'raniganj', 'burnpur', 'salt-lake', 'newtown', 'rajarhat'
-  ],
-  'bihar': [
-    'patna', 'bhagalpur', 'gaya', 'muzaffarpur', 'purnia', 'darbhanga', 'bihar-sharif', 
-    'ara', 'arrah', 'begusarai', 'katihar', 'munger', 'chhapra', 'danapur', 'bettiah', 
-    'saharsa', 'hajipur', 'sasaram', 'motihari', 'siwan', 'madhubani', 'buxar', 'jehanabad', 
-    'aurangabad', 'nawada', 'jamui', 'kishanganj', 'samastipur', 'lakhisarai', 'gopalganj'
-  ],
-  'madhya-pradesh': [
-    'singrauli', 'waidhan', 'bhopal', 'indore', 'jabalpur', 'gwalior', 'ujjain', 'sagar', 
-    'dewas', 'satna', 'ratlam', 'rewa', 'katni', 'morwa', 'vindhyanagar', 'jayant', 'dudhichua'
-  ],
-  'odisha': [
-    'bhubaneswar', 'cuttack', 'rourkela', 'brahmapur', 'berhampur', 'sambalpur', 'puri', 
-    'balasore', 'bhadrak', 'baripada', 'jharsuguda', 'jeypore', 'rayagada', 'angul', 'balangir'
-  ],
-  'uttar-pradesh': [
-    'lucknow', 'kanpur', 'ghaziabad', 'agra', 'meerut', 'varanasi', 'prayagraj', 'allahabad', 
-    'bareilly', 'aligarh', 'moradabad', 'saharanpur', 'gorakhpur', 'noida', 'greater-noida', 
-    'jhansi', 'muzaffarnagar', 'mathura', 'ayodhya', 'faizabad', 'firozabad', 'mirzapur', 
-    'jaunpur', 'hapur', 'loni', 'pilkhuwa'
-  ]
-};
+const STATE_CITIES = CANONICAL_STATE_CITIES;
 
 function formatCityName(slug) {
   return slug

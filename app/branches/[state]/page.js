@@ -3,6 +3,9 @@ import { branchesData } from '@/data/branchesData';
 import BranchPage from '@/components/BranchPage/BranchPage';
 import { getCustomMetadata, getCustomerReviews } from '@/lib/supabase';
 
+// Revalidate public state division page every 30s
+export const revalidate = 30;
+
 // Enable static generation for all state routes at build time
 export async function generateStaticParams() {
   return Object.keys(branchesData.states).map((state) => ({

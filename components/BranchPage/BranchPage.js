@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { branchesData } from '@/data/branchesData';
 import { ratesData } from '@/data/ratesData';
 import { routesData, getRoutesForCity, getRoutesForState } from '@/data/routesData';
+import { CANONICAL_STATE_CITIES } from '@/data/allCitiesData';
 import styles from './BranchPage.module.css';
 import SlotCounter from '@/components/animations/SlotCounter';
 import GalleryCarousel from '@/components/GalleryCarousel/GalleryCarousel';
@@ -137,41 +138,7 @@ const LOCALITY_MAP = {
   singrauli: ['Waidhan', 'Vindhyanagar', 'Jayant', 'Dudhichua', 'Morwa', 'Shaktinagar']
 };
 
-const STATE_CITIES = {
-  'jharkhand': [
-    'dhanbad', 'ranchi', 'bokaro', 'deoghar', 'jamshedpur', 'hazaribagh', 'giridih',
-    'ramgarh', 'medininagar', 'daltonganj', 'chas', 'adityapur', 'dumka', 'chatra',
-    'gumla', 'kodarma', 'koderma', 'pakur', 'sahibganj', 'sahebganj', 'simdega',
-    'latehar', 'khunti', 'saraikela', 'garhwa', 'lohardaga', 'ghatsila', 'phusro',
-    'katras', 'jharia', 'govindpur', 'dhansar', 'chirkunda', 'sindri', 'jasidih', 'madhupur'
-  ],
-  'west-bengal': [
-    'kolkata', 'durgapur', 'asansol', 'siliguri', 'howrah', 'darjeeling', 'kharagpur',
-    'haldia', 'bardhaman', 'malda', 'jalpaiguri', 'cooch-behar', 'purulia',
-    'bankura', 'midnapore', 'medinipur', 'krishnanagar', 'barasat', 'barrackpore',
-    'serampore', 'chinsurah', 'shantiniketan', 'bolpur', 'raniganj', 'burnpur', 'salt-lake', 'newtown', 'rajarhat'
-  ],
-  'bihar': [
-    'patna', 'bhagalpur', 'gaya', 'muzaffarpur', 'purnia', 'darbhanga', 'bihar-sharif',
-    'ara', 'arrah', 'begusarai', 'katihar', 'munger', 'chhapra', 'danapur', 'bettiah',
-    'saharsa', 'hajipur', 'sasaram', 'motihari', 'siwan', 'madhubani', 'buxar', 'jehanabad',
-    'aurangabad', 'nawada', 'jamui', 'kishanganj', 'samastipur', 'lakhisarai', 'gopalganj'
-  ],
-  'madhya-pradesh': [
-    'singrauli', 'waidhan', 'bhopal', 'indore', 'jabalpur', 'gwalior', 'ujjain', 'sagar',
-    'dewas', 'satna', 'ratlam', 'rewa', 'katni', 'morwa', 'vindhyanagar', 'jayant', 'dudhichua'
-  ],
-  'odisha': [
-    'bhubaneswar', 'cuttack', 'rourkela', 'brahmapur', 'berhampur', 'sambalpur', 'puri',
-    'balasore', 'bhadrak', 'baripada', 'jharsuguda', 'jeypore', 'rayagada', 'angul', 'balangir'
-  ],
-  'uttar-pradesh': [
-    'lucknow', 'kanpur', 'ghaziabad', 'agra', 'meerut', 'varanasi', 'prayagraj', 'allahabad',
-    'bareilly', 'aligarh', 'moradabad', 'saharanpur', 'gorakhpur', 'noida', 'greater-noida',
-    'jhansi', 'muzaffarnagar', 'mathura', 'ayodhya', 'faizabad', 'firozabad', 'mirzapur',
-    'jaunpur', 'hapur', 'loni', 'pilkhuwa'
-  ]
-};
+const STATE_CITIES = CANONICAL_STATE_CITIES;
 
 const COORDINATES_MAP = {
   'jharkhand': { lat: 23.6102, lon: 85.2799 },
@@ -503,9 +470,10 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
       'closes': '23:59'
     },
     'sameAs': [
-      'https://www.facebook.com/thenationalpackersmovers/',
-      'https://twitter.com/natpackers',
-      'https://www.youtube.com/@nationalpackersmovers',
+      'https://www.youtube.com/@NationalPackersandMovers11',
+      'https://www.instagram.com/national.packers.and.movers/',
+      'https://www.facebook.com/people/National-Packers-Movers/100077275401485/',
+      'https://www.threads.com/@national.packers.and.movers',
       ...(data.justdial ? [data.justdial] : [])
     ],
     'parentOrganization': {
@@ -559,7 +527,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
         '@type': 'ListItem',
         'position': 2,
         'name': 'Branches',
-        'item': 'https://www.thenationalpackersmovers.com#branches'
+        'item': 'https://www.thenationalpackersmovers.com/branches'
       },
       {
         '@type': 'ListItem',
@@ -707,7 +675,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
               {/* Detailed Shifting & Logistics Services */}
               <div className={styles.detailedServicesSection} data-reveal="up" data-delay="150">
                 <h3 className={styles.detailedServicesMainTitle}>
-                  Shifting &amp; Logistics Services in <span>{cleanCityName}</span>
+                  Household, Corporate &amp; Vehicle Shifting Services in <span>{cleanCityName}</span>
                 </h3>
                 <div className={styles.detailedServicesList}>
                   {DETAILED_SERVICES_TEMPLATE.map((service) => {
@@ -820,10 +788,10 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                   {/* Areas Served Card (City Pages Only) */}
                   {isCity && localitiesList.length > 0 && (
                     <div className={styles.localitiesCard} data-reveal="up" data-delay="250">
-                      <h3 className={styles.sidebarTitle}>📍 Areas Served in {data.name.replace(/ \(hq\)/i, '')}</h3>
+                      <h3 className={styles.sidebarTitle}>📍 Localities, Neighborhoods &amp; Pincodes Served in {cleanCityName}</h3>
                       <div className={styles.sidebarDivider} />
                       <p className={styles.localitiesIntro}>
-                        We offer doorstep packing and shifting services across all major localities in {data.name.replace(/ \(hq\)/i, '')}:
+                        We offer doorstep packing and shifting services across all major localities in {cleanCityName}:
                       </p>
                       <div className={styles.localitiesGrid}>
                         {localitiesList.map((locality, idx) => (
@@ -838,7 +806,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                   {/* ⏱️ TRANSIT DISTANCE & DURATION Card (when localData.transitMatrix exists) */}
                   {isCity && localData && localData.transitMatrix ? (
                     <div className={styles.sidebarCard} data-reveal="up" data-delay="260">
-                      <h3 className={styles.sidebarTitle}>⏱️ TRANSIT DISTANCE & DURATION</h3>
+                      <h3 className={styles.sidebarTitle}>⏱️ Interstate Transit Routes &amp; Delivery Timelines from {cleanCityName}</h3>
                       <div className={styles.sidebarDivider} />
                       <p className={styles.localitiesIntro}>
                         Direct container shipping timelines from {cleanCityName} to major hubs:
@@ -871,10 +839,10 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                     /* 🚚 POPULAR TRANSIT LANES Card (Fallback for cities without transitMatrix) */
                     isCity && activeRoutes.length > 0 && (
                       <div className={styles.sidebarCard} data-reveal="up" data-delay="260">
-                        <h3 className={styles.sidebarTitle}>🚚 POPULAR TRANSIT LANES</h3>
+                        <h3 className={styles.sidebarTitle}>🚚 Interstate Transit Routes from {cleanCityName}</h3>
                         <div className={styles.sidebarDivider} />
                         <p className={styles.localitiesIntro}>
-                          Direct container transport and packers services connecting {data.name.replace(/ \(hq\)/i, '')} to major national destinations:
+                          Direct container transport and packers services connecting {cleanCityName} to major national destinations:
                         </p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
                           {activeRoutes.map((r, idx) => (
@@ -1008,10 +976,10 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
 
               {/* 📋 PSU Shifting Reimbursement Kit Card */}
               <div className={styles.reimbursementCard} data-reveal="up" data-delay="290">
-                <h3 className={styles.sidebarTitle}>📋 PSU Claim Documents</h3>
+                <h3 className={styles.sidebarTitle}>📋 IBA-Approved Relocation Bills for PSU &amp; Bank Staff in {cleanCityName}</h3>
                 <div className={styles.sidebarDivider} />
                 <p className={styles.reimbursementIntro}>
-                  We provide 100% compliant documentation kit to guarantee seamless relocation allowance claims for PSU, Bank, and Railway transfers in {data.name}:
+                  We provide 100% compliant documentation kit to guarantee seamless relocation allowance claims for PSU, Bank, and Railway transfers in {cleanCityName}:
                 </p>
                 <ul className={styles.reimbursementList}>
                   <li><span>✓</span> GST-Registered Tax Invoice (SAC 9965)</li>
@@ -1034,6 +1002,28 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
                   <Link href="/branches/uttar-pradesh" className={styles.networkLink}>Uttar Pradesh</Link>
                 </div>
               </div>
+
+              {/* Nearby Sibling Cities in Same State */}
+              {isCity && stateData && stateData.cities && stateData.cities.length > 1 && (
+                <div className={styles.sidebarNav} style={{ marginTop: '1.25rem' }} data-reveal="up" data-delay="310">
+                  <h4 className={styles.sidebarNavTitle}>Nearby Branches in {stateName}</h4>
+                  <div className={styles.networkLinks}>
+                    {stateData.cities
+                      .filter(c => c !== cityKey)
+                      .slice(0, 10)
+                      .map(siblingSlug => {
+                        const siblingName = siblingSlug === 'dhanbad' 
+                          ? 'Dhanbad (HQ)' 
+                          : siblingSlug.split('-').map(w => w === 'hq' ? '(HQ)' : w === 'bsl' ? 'BSL' : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                        return (
+                          <Link key={siblingSlug} href={`/branches/${stateSlug}/${siblingSlug}`} className={styles.networkLink}>
+                            📍 {siblingName}
+                          </Link>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
 
             </div>
 
@@ -1074,7 +1064,7 @@ export default async function BranchPage({ data, isCity = false, stateData = nul
         <div className="container">
           <div className="section-header" data-reveal="up">
             <span className="section-tag">Pricing Guide</span>
-            <h2 className="section-title">Estimated Shifting <span>Rates in {data.name}</span></h2>
+            <h2 className="section-title">Packers and Movers Charges &amp; <span>Shifting Rate Chart in {cleanCityName}</span></h2>
             <div className="divider" />
             <p className="section-subtitle">
               Get an approximate estimate of our shifting charges in {data.name} for local and domestic relocations.

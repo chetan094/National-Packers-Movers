@@ -87,9 +87,11 @@ const branches = [
     slug: 'odisha',
     cities: [
       { name: 'Bhubaneswar', slug: 'bhubaneswar' },
+      { name: 'Cuttack', slug: 'cuttack' },
       { name: 'Rourkela', slug: 'rourkela' },
       { name: 'Sambalpur', slug: 'sambalpur' },
-      { name: 'Puri', slug: 'puri' }
+      { name: 'Puri', slug: 'puri' },
+      { name: 'Brahmapur', slug: 'brahmapur' }
     ],
   },
   {
@@ -99,12 +101,13 @@ const branches = [
       { name: 'Lucknow', slug: 'lucknow' },
       { name: 'Kanpur', slug: 'kanpur' },
       { name: 'Ghaziabad', slug: 'ghaziabad' },
+      { name: 'Varanasi', slug: 'varanasi' },
       { name: 'Prayagraj', slug: 'prayagraj' },
       { name: 'Moradabad', slug: 'moradabad' },
       { name: 'Gorakhpur', slug: 'gorakhpur' },
       { name: 'Noida', slug: 'noida' },
       { name: 'Greater Noida', slug: 'greater-noida' },
-      { name: 'Faizabad', slug: 'faizabad' }
+      { name: 'Ayodhya', slug: 'ayodhya' }
     ],
   },
 ];
@@ -283,6 +286,10 @@ export default function Header() {
                   <span className={styles.dropdownIcon}>📋</span>
                   <span>Claim Kit</span>
                 </Link>
+                <Link href="/routes" className={styles.dropdownItem}>
+                  <span className={styles.dropdownIcon}>🛣️</span>
+                  <span>Interstate Routes</span>
+                </Link>
               </div>
             </div>
           </li>
@@ -434,6 +441,9 @@ export default function Header() {
                 </Link>
                 <Link href="/billing-claim-kit" className={styles.mobileSubLink} onClick={() => { setMobileOpen(false); setMobileExpanded(null); }}>
                   📋 Claim Kit
+                </Link>
+                <Link href="/routes" className={styles.mobileSubLink} onClick={() => { setMobileOpen(false); setMobileExpanded(null); }}>
+                  🛣️ Interstate Routes
                 </Link>
               </div>
             )}

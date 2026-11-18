@@ -55,48 +55,34 @@ export default function BranchesIndexPage() {
         <div className="container">
           <div className={styles.statesGrid}>
             {states.map(([stateSlug, state], i) => {
-              const isVirtual = state.cities[0] === 'virtual-office';
-              const isComingSoon = state.cities[0] === 'coming-soon';
-              
               return (
                 <div key={stateSlug} className={styles.stateCard} data-reveal="up" data-delay={i * 80}>
                   <div className={styles.cardHeader}>
                     <span className={styles.pin}>📍</span>
                     <h2 className={styles.stateName}>{state.name}</h2>
-                    {isVirtual && <span className={styles.badgeVirtual}>Virtual</span>}
-                    {isComingSoon && <span className={styles.badgeSoon}>Coming Soon</span>}
                   </div>
                   
                   <p className={styles.stateDesc}>{state.description}</p>
                   
                   <div className={styles.citiesWrapper}>
-                    <h4 className={styles.citiesLabel}>Active Cities:</h4>
+                    <h4 className={styles.citiesLabel}>Active Operational Cities:</h4>
                     <div className={styles.citiesGrid}>
-                      {!isVirtual && !isComingSoon ? (
-                        state.cities.map((citySlug) => {
-                          // Format city slug nicely
-                          const cityName = citySlug === 'dhanbad' 
-                            ? 'Dhanbad (HQ)' 
-                            : citySlug.split('-').map(w => w === 'hq' ? '(HQ)' : w === 'bsl' ? 'BSL' : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                            
-                          return (
-                            <Link 
-                              key={citySlug} 
-                              href={`/branches/${stateSlug}/${citySlug}`}
-                              className={styles.cityLink}
-                            >
-                              🏙️ {cityName}
-                            </Link>
-                          );
-                        })
-                      ) : (
-                        <p className={styles.noticeText}>
-                          {isVirtual 
-                            ? 'Services coordinated remotely. Contact HQ for full coverage.' 
-                            : 'Establishing physical hubs. Currently handling inter-state transport.'
-                          }
-                        </p>
-                      )}
+                      {state.cities.map((citySlug) => {
+                        // Format city slug nicely
+                        const cityName = citySlug === 'dhanbad' 
+                          ? 'Dhanbad (HQ)' 
+                          : citySlug.split('-').map(w => w === 'hq' ? '(HQ)' : w === 'bsl' ? 'BSL' : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                          
+                        return (
+                          <Link 
+                            key={citySlug} 
+                            href={`/branches/${stateSlug}/${citySlug}`}
+                            className={styles.cityLink}
+                          >
+                            🏙️ {cityName}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
 

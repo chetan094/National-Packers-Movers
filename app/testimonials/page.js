@@ -6,6 +6,9 @@ import TestimonialsForms from '@/components/TestimonialsForms/TestimonialsForms'
 import YouTubePlayer from '@/components/YouTubePlayer/YouTubePlayer';
 import { getCustomMetadata, getCustomerReviews } from '@/lib/supabase';
 
+// Revalidate public testimonials page every 30s
+export const revalidate = 30;
+
 // Collage Images
 const COLLAGE_IMAGES = [
   { src: '/photos/premium-cushion-sofa-wrapping.jpg', alt: 'Premium Sofa Packing' },

@@ -58,6 +58,7 @@ const GLOBAL_MOVING_SCHEMA = {
   'logo': 'https://www.thenationalpackersmovers.com/icon.png',
   'image': 'https://www.thenationalpackersmovers.com/icon.png',
   'telephone': '+91-9835168368',
+  'email': 'info@thenationalpackersmovers.com',
   'priceRange': '₹₹',
   'currenciesAccepted': 'INR',
   'paymentAccepted': 'Cash, Credit Card, Debit Card, UPI, Net Banking',
@@ -69,7 +70,7 @@ const GLOBAL_MOVING_SCHEMA = {
   },
   'address': {
     '@type': 'PostalAddress',
-    'streetAddress': 'National Packers & Movers HQ, Near City Center',
+    'streetAddress': 'Kasturba Nagar, Near Dhanbad Thana',
     'addressLocality': 'Dhanbad',
     'addressRegion': 'Jharkhand',
     'postalCode': '826001',
@@ -90,8 +91,10 @@ const GLOBAL_MOVING_SCHEMA = {
     'Jharkhand', 'West Bengal', 'Bihar', 'Madhya Pradesh', 'Uttar Pradesh', 'Odisha'
   ],
   'sameAs': [
-    'https://www.facebook.com/nationalpackersmovers',
-    'https://www.youtube.com/@nationalpackersmovers'
+    'https://www.youtube.com/@NationalPackersandMovers11',
+    'https://www.instagram.com/national.packers.and.movers/',
+    'https://www.facebook.com/people/National-Packers-Movers/100077275401485/',
+    'https://www.threads.com/@national.packers.and.movers'
   ]
 };
 
